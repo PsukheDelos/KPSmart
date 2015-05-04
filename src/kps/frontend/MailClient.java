@@ -4,6 +4,14 @@ import kps.backend.users.User;
 
 public class MailClient {
 	
-	User currentUser;
+	private User currentUser;
+
+	public User getCurrentUser() {
+		return currentUser;
+	}
+
+	public void setCurrentUser(User currentUser) {
+		this.currentUser = currentUser;
+	}
 
 }
