@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/jack.robinson/Documents/GitHub/KPSmart/lib/sqlite-jdbc-3.8.7.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+=======
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
@@ -6,3 +16,4 @@
 	<classpathentry kind="lib" path="sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
+>>>>>>> ff23f6e636ae04169b0c8be4e75a062e6b2e326e
