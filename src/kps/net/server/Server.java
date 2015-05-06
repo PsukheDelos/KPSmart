@@ -1,7 +1,6 @@
 package kps.net.server;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -11,8 +10,8 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import kps.backend.Event;
 import kps.backend.MailSystem;
+import kps.net.event.Event;
 
 public class Server extends Thread{
 
@@ -21,10 +20,12 @@ public class Server extends Thread{
 	private ServerSocket serverSocket;
 	private MailSystem mailSystem;
 	
+	private boolean isRunning = true;
+	
 	private Map<Integer, ServerConnection> connections;
 	private int globalID = 0;
 	
-	private BlockingQueue<Event> updates = new LinkedBlockingQueue<Event>();
+	private BlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
 	
 	public Server(){
 		
@@ -46,28 +47,35 @@ public class Server extends Thread{
 	}
 	
 	public void run(){
-		int id = 0;		
-		while(true){
-			try {			
-				Socket client = serverSocket.accept();
-				if(isConnected(client))
-					processEvent(client);
-				else
-					addNewConnection(client);
-			} catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
+		
+		try{
+			int id = 0;
+			UpdateThread updateThread = new UpdateThread(this, mailSystem);
+			WorkerThread workerThread = new WorkerThread(this);
+			while(isRunning){
+				Socket socket = serverSocket.accept();
+				ServerConnection newConnection = new ServerConnection(socket, new ObjectOutputStream(socket.getOutputStream()));
+				connections.put(id, newConnection);
+				workerThread.addConnection(id, newConnection);
+				
+				// You could setup initialisations here.
+				// I don't think we should on this end, and instead we should probably put them on the Client Side
+				// Such as a UserAuthenticationEvent should be sent through the WorkerThread
+				// Talk to Jack if you have thoughts otherwise.
+				
+				System.out.println(this + "Client Added: [" + id + "] on address " + newConnection.socket.getInetAddress());
+				id++;
+			}
+		}catch(IOException ex){
+			ex.printStackTrace();
 		}
+		
+		
 	}
 	
-	private void processEvent(Socket client) throws IOException, ClassNotFoundException{
-		ServerConnection clientConnection = getServerConnection(client);
-		ObjectInputStream in = new ObjectInputStream(clientConnection.socket.getInputStream());
-		Object obj = in.readObject();
-		if(!(obj instanceof Event)) return;
-		else mailSystem.processEvent((Event) obj);
-	}
-	
-	private void addNewConnection(Socket client) throws IOException{
-		connections.put(globalID++, new ServerConnection(client, new ObjectOutputStream(client.getOutputStream())));
+	public void shutdown(){
+		this.isRunning = false;
+		// TODO: Handle the Shutdown HERE;
 	}
 	
 	private ServerConnection getServerConnection(Socket client){
@@ -84,9 +92,27 @@ public class Server extends Thread{
 		return false;
 	}
 	
+	public void addEvent(Update event){
+		updates.add(event);
+	}
+	
+	public Update popEvent(){
+		try { return updates.take(); } catch (InterruptedException e) { e.printStackTrace();}
+		// Shouldn't reach here.
+		return null;
+	}
+	
+	public Event processEvent(Event event){
+		return mailSystem.processEvent(event);
+	}
+	
 	
 	public String toString(){
 		return "[Server: " + serverSocket.getLocalPort() + "] "; 
+	}
+
+	public Map<Integer, ServerConnection> getClients() {
+		return connections;
 	}
 	
 	
