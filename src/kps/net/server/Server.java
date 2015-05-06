@@ -22,7 +22,7 @@ public class Server extends Thread{
 	
 	private boolean isRunning = true;
 	
-	private Map<Integer, ServerConnection> connections;
+	private Map<Integer, ServerToClientConnection> connections;
 	private int globalID = 0;
 	
 	private BlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
@@ -38,7 +38,7 @@ public class Server extends Thread{
 			e.printStackTrace();
 		}
 		
-		connections = new HashMap<Integer, ServerConnection>();
+		connections = new HashMap<Integer, ServerToClientConnection>();
 	}
 	
 	public void start(){
@@ -54,7 +54,7 @@ public class Server extends Thread{
 			WorkerThread workerThread = new WorkerThread(this);
 			while(isRunning){
 				Socket socket = serverSocket.accept();
-				ServerConnection newConnection = new ServerConnection(socket, new ObjectOutputStream(socket.getOutputStream()));
+				ServerToClientConnection newConnection = new ServerToClientConnection(socket, new ObjectOutputStream(socket.getOutputStream()));
 				connections.put(id, newConnection);
 				workerThread.addConnection(id, newConnection);
 				
@@ -78,15 +78,15 @@ public class Server extends Thread{
 		// TODO: Handle the Shutdown HERE;
 	}
 	
-	private ServerConnection getServerConnection(Socket client){
-		for(ServerConnection sc : connections.values()){
+	private ServerToClientConnection getServerConnection(Socket client){
+		for(ServerToClientConnection sc : connections.values()){
 			if(sc.socket.equals(client)) return sc;
 		}
 		return null;
 	}
 	
 	private boolean isConnected(Socket socket){
-		for(ServerConnection sc : connections.values()){
+		for(ServerToClientConnection sc : connections.values()){
 			if(sc.socket.equals(socket)) return true;
 		}
 		return false;
@@ -111,7 +111,7 @@ public class Server extends Thread{
 		return "[Server: " + serverSocket.getLocalPort() + "] "; 
 	}
 
-	public Map<Integer, ServerConnection> getClients() {
+	public Map<Integer, ServerToClientConnection> getClients() {
 		return connections;
 	}
 	

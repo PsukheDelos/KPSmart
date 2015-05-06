@@ -9,11 +9,11 @@ import kps.net.event.Event;
 
 public class WorkerThread extends Thread{
 	
-	private volatile Map<Integer, ServerConnection> connections;
+	private volatile Map<Integer, ServerToClientConnection> connections;
 	private Server server;
 	
 	public WorkerThread(Server server){
-		connections = new HashMap<Integer, ServerConnection>();
+		connections = new HashMap<Integer, ServerToClientConnection>();
 		this.server = server;
 		start();
 	}
@@ -26,7 +26,7 @@ public class WorkerThread extends Thread{
 	public void run(){
 		while(true){
 			
-			for(Map.Entry<Integer, ServerConnection> entry : connections.entrySet()){
+			for(Map.Entry<Integer, ServerToClientConnection> entry : connections.entrySet()){
 				ObjectInputStream in = null;
 				try {
 					in = new ObjectInputStream(entry.getValue().socket.getInputStream());
@@ -47,7 +47,7 @@ public class WorkerThread extends Thread{
 		}
 	}
 	
-	public void addConnection(int id, ServerConnection connection){
+	public void addConnection(int id, ServerToClientConnection connection){
 		System.out.println(this + "Connection Added to the Worker Thread: " + connection.socket.getInetAddress());
 		connections.put(id, connection);
 	}

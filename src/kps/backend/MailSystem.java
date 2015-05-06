@@ -9,7 +9,7 @@ public class MailSystem {
 	}
 	
 	/**
-	 * Kinda holds onto the idea that there is ALWAYS a return event
+	 * Kinda holds onto the idea that there is ALWAYS a return event to be made
 	 * @param event
 	 * @return
 	 */
