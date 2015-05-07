@@ -1,4 +1,4 @@
-package distributionNetwork;
+package kps.distributionNetwork;
 
 public class Route {
 	private Location origin;

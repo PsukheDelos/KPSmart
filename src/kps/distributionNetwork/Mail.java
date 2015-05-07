@@ -1,4 +1,4 @@
-package distributionNetwork;
+package kps.distributionNetwork;
 
 import java.util.Date;
 
