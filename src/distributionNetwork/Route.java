@@ -10,7 +10,9 @@ public class Route {
 	// cost per cubic centimeter
 	private float volumeCost;
 	
+	// max weight in grams
 	private float maxWeight;
+	//max volume in cubic centimeters
 	private float maxVolume;
 	
 	private float duration;
@@ -19,6 +21,18 @@ public class Route {
 	
 	public Route(){
 		
+	}
+	
+	public Company getCompany(){
+		return this.company;
+	}
+	
+	public Location getOrigin(){
+		return this.origin;
+	}
+	
+	public Location getDestination(){
+		return this.destination;
 	}
 	
 	public boolean canShip(Mail mail){
