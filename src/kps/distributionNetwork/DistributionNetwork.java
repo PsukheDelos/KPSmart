@@ -1,10 +1,11 @@
-package distributionNetwork;
+package kps.distributionNetwork;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import kps.dijkstra.Dijkstra;
 
 public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();
@@ -29,11 +30,24 @@ public class DistributionNetwork {
 		route.getOrigin().addRouteOut(route);
 	}
 	
-	public Collection<Location> getLocations(){
-		return this.locations.values();
+	public MailDelivery deliver(Mail mail){
+		Dijkstra dijkstra = new Dijkstra(mail);
+		return dijkstra.getPath();
+	}
+	
+	public Set<Location> getLocations(){
+		return new HashSet<Location>(this.locations.values());
 	}
 	
 	public Map<String, Location> getLocationMap(){
 		return locations;
+	}
+	
+	public Set<Route> getRoutes(){
+		return this.routes;
+	}
+	
+	public Set<Company> getCompanies(){
+		return this.companies;
 	}
 }

@@ -1,4 +1,4 @@
-package distributionNetwork;
+package kps.distributionNetwork;
 
 public class Company {
 	public final String name;
