@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import kps.backend.database.KPSDatabase;
-import kps.backend.users.UserRepository;
 
 import org.junit.Test;
 
@@ -18,6 +17,24 @@ public class DatabaseTests {
 		Connection db = KPSDatabase.createConnection();
 		// Assert
 		assertFalse(db == null);
+		try { db.close(); } catch (SQLException e) { e.printStackTrace(); }
+	}
+	
+	@Test
+	public void testDatabaseConnectionIsOpen(){
+		// Act
+		Connection db = KPSDatabase.createConnection();
+		// Assert
+		try {assertFalse(db.isClosed());} catch (SQLException e1) {e1.printStackTrace();}
+		try { db.close(); } catch (SQLException e) { e.printStackTrace(); }
+	}
+	
+	@Test
+	public void testDatabaseConnectionIsWritable(){
+		// Act
+		Connection db = KPSDatabase.createConnection();
+		// Assert
+		try {assertFalse(db.isReadOnly());} catch (SQLException e1) {e1.printStackTrace();}
 		try { db.close(); } catch (SQLException e) { e.printStackTrace(); }
 	}
 
