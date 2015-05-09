@@ -1,13 +1,13 @@
-package kps.dijkstra;
+package kps.pathFinder;
 
 import kps.distributionNetwork.Location;
 import kps.distributionNetwork.Route;
 
 public class DijkstraNode implements Comparable<DijkstraNode>{
-	private Location location;
-	private DijkstraNode fromNode;
-	private Route routeToHere;
-	private float costToHere;
+	public final Location location;
+	public final DijkstraNode fromNode;
+	public final Route routeToHere;
+	public final float costToHere;
 
 	public DijkstraNode(Location location, DijkstraNode fromNode,
 						Route routeToHere, float costToHere) {
@@ -15,22 +15,6 @@ public class DijkstraNode implements Comparable<DijkstraNode>{
 		this.fromNode = fromNode;
 		this.routeToHere = routeToHere;
 		this.costToHere = costToHere;
-	}
-	
-	public Location getLocation(){
-		return this.location;
-	}
-	
-	public DijkstraNode getFromNode(){
-		return this.fromNode;
-	}
-	
-	public Route routeToHere(){
-		return this.routeToHere;
-	}
-	
-	public float costToHere(){
-		return this.costToHere;
 	}
 
 	@Override
