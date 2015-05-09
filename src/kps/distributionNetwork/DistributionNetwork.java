@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import kps.dijkstra.Dijkstra;
+import kps.pathFinder.Dijkstra;
+import kps.pathFinder.PathNotFoundException;
 
 public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();
@@ -32,7 +33,12 @@ public class DistributionNetwork {
 	}
 	
 	public MailDelivery deliver(Mail mail){
-		return pathFinder.getPath(mail);
+		try {
+			return pathFinder.getPath(mail);
+		} catch (PathNotFoundException e) {
+			// TODO: respond to path not found better
+			return null;
+		}
 	}
 	
 	public Set<Location> getLocations(){

@@ -1,4 +1,4 @@
-package kps.dijkstra;
+package kps.pathFinder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,36 +17,36 @@ public class Dijkstra implements PathFinder{
 	private PriorityQueue<DijkstraNode> fringe = new PriorityQueue<DijkstraNode>();
 	private Set<Location> visited = new HashSet<Location>();
 	
-	public MailDelivery getPath(Mail mail){
+	public MailDelivery getPath(Mail mail) throws PathNotFoundException{
 		this.mail = mail;
 		
 		fringe.add(new DijkstraNode(mail.origin, null, null, 0));
 
 		while (!fringe.isEmpty()) {
 			DijkstraNode node = fringe.poll();
-			if (node.getLocation() == mail.destination)
-				return new MailDelivery(mail, node.costToHere(), pathTo(node));
-			if (visited.contains(node.getLocation())) 
+			if (node.location == mail.destination)
+				return new MailDelivery(mail, node.costToHere, pathTo(node));
+			if (visited.contains(node.location)) 
 				continue;
-			visited.add(node.getLocation());
+			visited.add(node.location);
 		    evaluateNeighbors(node);
 		}
 		
-		return null; //no path found
+		throw new PathNotFoundException();
 	}
 
 	private List<Route> pathTo(DijkstraNode node) {
 		List<Route> path = new ArrayList<Route>();
-		while (node.routeToHere() != null){
-			path.add(0, node.routeToHere());
-			node = node.getFromNode();
+		while (node.routeToHere != null){
+			path.add(0, node.routeToHere);
+			node = node.fromNode;
 		}
 		return path;
 	}
 
 	private void evaluateNeighbors(DijkstraNode node){
-		for (Route route : node.getLocation().getRoutesOut()) {
-			float cost = node.costToHere() + route.getCost(mail);
+		for (Route route : node.location.getRoutesOut()) {
+			float cost = node.costToHere + route.getCost(mail);
 			DijkstraNode neighbour = new DijkstraNode(route.getDestination(), node, route, cost);
 			fringe.add(neighbour);
 		}
