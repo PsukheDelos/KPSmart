@@ -18,19 +18,30 @@ public class Dijkstra implements PathFinder{
 	private Set<Location> visited = new HashSet<Location>();
 	
 	public MailDelivery getPath(Mail mail){
-		float cost = 0;
-		List<Route> path = new ArrayList<Route>();
+		this.mail = mail;
 		
 		fringe.add(new DijkstraNode(mail.origin, null, null, 0));
 
 		while (!fringe.isEmpty()) {
 			DijkstraNode node = fringe.poll();
-			if (visited.contains(node.getLocation())) continue;
+			if (node.getLocation() == mail.destination)
+				return new MailDelivery(mail, node.costToHere(), pathTo(node));
+			if (visited.contains(node.getLocation())) 
+				continue;
 			visited.add(node.getLocation());
 		    evaluateNeighbors(node);
 		}
 		
-		return new MailDelivery(mail, cost, path);
+		return null; //no path found
+	}
+
+	private List<Route> pathTo(DijkstraNode node) {
+		List<Route> path = new ArrayList<Route>();
+		while (node.routeToHere() != null){
+			path.add(0, node.routeToHere());
+			node = node.getFromNode();
+		}
+		return path;
 	}
 
 	private void evaluateNeighbors(DijkstraNode node){

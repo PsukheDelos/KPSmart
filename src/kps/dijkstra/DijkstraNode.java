@@ -35,9 +35,9 @@ public class DijkstraNode implements Comparable<DijkstraNode>{
 
 	@Override
 	public int compareTo(DijkstraNode o) {
-		if (o == null) return 1;
-		if (this.costToHere < o.costToHere) return 1;
-		if (this.costToHere > o.costToHere) return -1;
+		if (o == null) return -1;
+		if (this.costToHere < o.costToHere) return -1;
+		if (this.costToHere > o.costToHere) return 1;
 		return 0;
 	}
 }

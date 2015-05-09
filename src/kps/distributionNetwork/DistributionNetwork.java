@@ -23,7 +23,7 @@ public class DistributionNetwork {
 		if (!getLocations().contains(route.getDestination()))
 			throw new InvalidRouteException("Destination location does not exist");
 		if (!companies.contains(route.getCompany()))
-			throw new InvalidRouteException("Company does not exist");
+			companies.add(route.getCompany());
 		if (routes.contains(route))
 			throw new InvalidRouteException("Route already exists");
 		
