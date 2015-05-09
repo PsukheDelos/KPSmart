@@ -13,7 +13,14 @@ public class MailDelivery {
 		this.path = path;
 	}
 	
-	public Mail getMail(){
-		return this.mail;
+	public String toString(){
+		if (path.isEmpty()) return "No delivery path";
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < path.size(); i++){
+			Route r = path.get(i);
+			sb.append(i + ". " + r.getOrigin() + " to " + r.getDestination()
+					    + " via " + r.getType() + " with " + r.getCompany());
+		}
+		return sb.toString();
 	}
 }
