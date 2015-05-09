@@ -11,12 +11,13 @@ import kps.distributionNetwork.Location;
 import kps.distributionNetwork.Mail;
 import kps.distributionNetwork.MailDelivery;
 import kps.distributionNetwork.Route;
+import kps.pathFinder.PathNotFoundException;
 
 import org.junit.Test;
 
 public class DijkstraTests {
 	@Test
-	public void testSinglePath() throws InvalidRouteException{
+	public void testSinglePath() throws Exception{
 		// Act
 		Location a = new Location("A");
 		Location b = new Location("B");
@@ -33,9 +34,9 @@ public class DijkstraTests {
 		assertTrue(delivery.path.contains(route));
 		assertTrue(delivery.path.size() == 1);
 	}
-	
+
 	@Test
-	public void choosesCheapesOfTwoPaths() throws InvalidRouteException{
+	public void choosesCheapesOfTwoPaths() throws Exception{
 		// Act
 		Location a = new Location("A");
 		Location b = new Location("B");
@@ -53,5 +54,42 @@ public class DijkstraTests {
 		MailDelivery delivery = network.deliver(mail);
 		assertTrue(delivery.path.contains(cheapRoute));
 		assertTrue(!delivery.path.contains(expensiveRoute));
+	}
+
+	@Test
+	public void followsPathOfLengthTwo() throws Exception{
+		// Act
+		Location a = new Location("A");
+		Location b = new Location("B");
+		Location c = new Location("C");
+		Route pathA = new Route(a, b, new Company("D"), 1, 2, 1000, 1000, 1, 1, "Air");
+		Route pathB = new Route(b, c, new Company("E"), 10, 20, 1000, 1000, 1, 1, "Sea");
+		Mail mail = new Mail(a, c, 10, 30, "priority", new Date());
+
+		DistributionNetwork network = new DistributionNetwork();
+		network.addLocation(a);
+		network.addLocation(b);
+		network.addLocation(c);
+		network.addRoute(pathA);
+		network.addRoute(pathB);
+
+		// Assert
+		MailDelivery delivery = network.deliver(mail);
+		assertTrue(delivery.path.size() == 2);
+		assertTrue(delivery.path.contains(pathA));
+		assertTrue(delivery.path.contains(pathB));
+	}
+
+	@Test(expected=PathNotFoundException.class)
+	public void pathNotFoundThrowsException() throws Exception{
+		Location a = new Location("A");
+		Location b = new Location("B");
+		Mail mail = new Mail(a, b, 10, 30, "priority", new Date());
+
+		DistributionNetwork network = new DistributionNetwork();
+		network.addLocation(a);
+		network.addLocation(b);
+
+		network.deliver(mail);
 	}
 }
