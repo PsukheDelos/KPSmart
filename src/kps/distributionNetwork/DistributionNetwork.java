@@ -1,5 +1,6 @@
 package kps.distributionNetwork;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,11 +14,17 @@ public class DistributionNetwork {
 	private Set<Route> routes = new HashSet<Route>();
 	private Set<Company> companies = new HashSet<Company>();
 	private PathFinder pathFinder = new Dijkstra();
-	
+
 	public void addLocation(Location location){
 		locations.put(location.getName(), location);
 	}
-	
+
+	public void addLocations(Collection<Location> locations){
+		for (Location location : locations){
+			addLocation(location);
+		}
+	}
+
 	public void addRoute(Route route) throws InvalidRouteException{
 		if (!getLocations().contains(route.getOrigin()))
 			throw new InvalidRouteException("Origin location does not exist");
@@ -31,28 +38,29 @@ public class DistributionNetwork {
 		routes.add(route);
 		route.getOrigin().addRouteOut(route);
 	}
-	
-	public MailDelivery deliver(Mail mail){
-		try {
-			return pathFinder.getPath(mail);
-		} catch (PathNotFoundException e) {
-			// TODO: respond to path not found better
-			return null;
+
+	public void addRoutes(Collection<Route> routes) throws InvalidRouteException{
+		for (Route route : routes){
+			addRoute(route);
 		}
 	}
-	
+
+	public MailDelivery deliver(Mail mail) throws PathNotFoundException {
+		return pathFinder.getPath(mail);
+	}
+
 	public Set<Location> getLocations(){
 		return new HashSet<Location>(this.locations.values());
 	}
-	
+
 	public Map<String, Location> getLocationMap(){
 		return locations;
 	}
-	
+
 	public Set<Route> getRoutes(){
 		return this.routes;
 	}
-	
+
 	public Set<Company> getCompanies(){
 		return this.companies;
 	}
