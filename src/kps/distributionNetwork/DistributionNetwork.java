@@ -11,6 +11,7 @@ public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();
 	private Set<Route> routes = new HashSet<Route>();
 	private Set<Company> companies = new HashSet<Company>();
+	private PathFinder pathFinder = new Dijkstra();
 	
 	public void addLocation(Location location){
 		locations.put(location.getName(), location);
@@ -22,7 +23,7 @@ public class DistributionNetwork {
 		if (!getLocations().contains(route.getDestination()))
 			throw new InvalidRouteException("Destination location does not exist");
 		if (!companies.contains(route.getCompany()))
-			throw new InvalidRouteException("Company does not exist");
+			companies.add(route.getCompany());
 		if (routes.contains(route))
 			throw new InvalidRouteException("Route already exists");
 		
@@ -31,8 +32,7 @@ public class DistributionNetwork {
 	}
 	
 	public MailDelivery deliver(Mail mail){
-		Dijkstra dijkstra = new Dijkstra(mail);
-		return dijkstra.getPath();
+		return pathFinder.getPath(mail);
 	}
 	
 	public Set<Location> getLocations(){
