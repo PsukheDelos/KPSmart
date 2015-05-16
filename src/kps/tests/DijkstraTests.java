@@ -6,7 +6,6 @@ import java.util.Date;
 
 import kps.distribution.network.Company;
 import kps.distribution.network.DistributionNetwork;
-import kps.distribution.network.InvalidRouteException;
 import kps.distribution.network.Location;
 import kps.distribution.network.Mail;
 import kps.distribution.network.MailDelivery;
