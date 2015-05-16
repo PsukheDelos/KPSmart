@@ -1,4 +1,4 @@
-package kps.distributionNetwork;
+package kps.distribution.network;
 
 import java.util.HashSet;
 import java.util.Set;
