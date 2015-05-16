@@ -1,20 +1,20 @@
-package kps.distributionNetwork;
+package kps.distribution.network;
 
 public class Route {
 	private Location origin;
 	private Location destination;
 	private Company company;
-	
+
 	// cost per gram
 	private float weightCost;
 	// cost per cubic centimeter
 	private float volumeCost;
-	
+
 	// max weight in grams
 	private float maxWeight;
 	//max volume in cubic centimeters
 	private float maxVolume;
-	
+
 	private float duration;
 	private float frequency;
 	private String type;
@@ -33,7 +33,7 @@ public class Route {
 		this.frequency = frequency;
 		this.type = type;
 	}
-	
+
 	public Company getCompany(){
 		return this.company;
 	}

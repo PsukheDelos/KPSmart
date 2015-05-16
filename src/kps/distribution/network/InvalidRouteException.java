@@ -1,4 +1,4 @@
-package kps.distributionNetwork;
+package kps.distribution.network;
 
 public class InvalidRouteException extends Exception {
 	private String message;
