@@ -15,12 +15,13 @@ import kps.distribution.network.Route;
 
 public class Dijkstra implements PathFinder{
 	private Mail mail;
-	private PriorityQueue<DijkstraNode> fringe = new PriorityQueue<DijkstraNode>();
+	private PriorityQueue<DijkstraNode> fringe;
 	private Set<Location> visited = new HashSet<Location>();
 	private PathCondition pathCondition;
 
 	public Dijkstra(PathCondition pathCondition){
 		this.pathCondition = pathCondition;
+		this.fringe = new PriorityQueue<DijkstraNode>(pathCondition);
 	}
 
 	public MailDelivery getPath(Mail mail) throws PathNotFoundException{
