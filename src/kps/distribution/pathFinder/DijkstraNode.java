@@ -11,6 +11,8 @@ public class DijkstraNode implements PathFinderNode{
 	public final float costToHere;
 	public final float timeToHere;
 
+	private boolean isStartNode = false;
+
 	public DijkstraNode(Location location, DijkstraNode fromNode,
 						Route routeToHere, float costToHere, float timeToHere) {
 		this.location = location;
@@ -32,5 +34,15 @@ public class DijkstraNode implements PathFinderNode{
 
 	public float getTime() {
 		return timeToHere;
+	}
+
+	public boolean isStartNode(){
+		return this.isStartNode;
+	}
+
+	public static DijkstraNode startNode(Location startLocation){
+		DijkstraNode node = new DijkstraNode(startLocation, null, null, 0, 0);
+		node.isStartNode = true;
+		return node;
 	}
 }

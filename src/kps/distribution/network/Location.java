@@ -36,4 +36,12 @@ public class Location {
 	public Set<Route> getRoutesOut(){
 		return new HashSet<Route>(this.routesOut);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		return name != null && name.equals(((Location) obj).name);
+	}
 }

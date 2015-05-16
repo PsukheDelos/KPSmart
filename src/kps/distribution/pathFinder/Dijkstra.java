@@ -26,12 +26,12 @@ public class Dijkstra implements PathFinder{
 
 	public MailDelivery getPath(Mail mail) throws PathNotFoundException{
 		this.mail = mail;
-		fringe.add(new DijkstraNode(mail.origin, null, null, 0, 0));
+		fringe.add(DijkstraNode.startNode(mail.origin));
 
 		while (!fringe.isEmpty()) {
 			DijkstraNode node = fringe.poll();
 
-			if (node.location == mail.destination)
+			if (node.location.equals(mail.destination))
 				return new MailDelivery(mail, node.costToHere, pathTo(node));
 
 			if (visited.contains(node.location))
@@ -46,7 +46,7 @@ public class Dijkstra implements PathFinder{
 
 	private List<Route> pathTo(DijkstraNode node) {
 		List<Route> path = new ArrayList<Route>();
-		while (node.routeToHere != null){
+		while (!node.isStartNode()){
 			path.add(node.routeToHere);
 			node = node.fromNode;
 		}
@@ -61,7 +61,7 @@ public class Dijkstra implements PathFinder{
 
 		for (Route route : routesToCheck) {
 			DijkstraNode neighbour = node.plusRoute(route, mail);
-			if (pathCondition.accepts(neighbour.costToHere, neighbour.timeToHere));
+			if (pathCondition.accepts(neighbour));
 				fringe.add(neighbour);
 		}
 	}

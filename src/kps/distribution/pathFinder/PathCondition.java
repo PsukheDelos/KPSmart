@@ -16,8 +16,8 @@ public class PathCondition implements Comparator<PathFinderNode>{
 		this.optimisation = optimisation;
 	}
 
-	public boolean accepts(float cost, float time){
-		return cost <= maxCost && time <= maxTime;
+	public boolean accepts(PathFinderNode node) {
+		return node.getCost() <= maxCost && node.getTime() <= maxTime;
 	}
 
 	public int compare(PathFinderNode o1, PathFinderNode o2) {
