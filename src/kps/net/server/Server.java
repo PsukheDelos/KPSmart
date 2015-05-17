@@ -51,12 +51,11 @@ public class Server extends Thread{
 		try{
 			int id = 0;
 			UpdateThread updateThread = new UpdateThread(this, mailSystem);
-			WorkerThread workerThread = new WorkerThread(this);
 			while(isRunning){
 				Socket socket = serverSocket.accept();
 				ServerToClientConnection newConnection = new ServerToClientConnection(socket, new ObjectOutputStream(socket.getOutputStream()));
 				connections.put(id, newConnection);
-				workerThread.addConnection(id, newConnection);
+				WorkerThread workerThread = new WorkerThread(this, id, socket);
 				
 				// You could setup initialisations here.
 				// I don't think we should on this end, and instead we should probably put them on the Client Side
@@ -108,7 +107,7 @@ public class Server extends Thread{
 	
 	
 	public String toString(){
-		return "[Server: " + serverSocket.getLocalPort() + "] "; 
+		return "[Server: " + serverSocket.getInetAddress().getHostAddress() + ":"+ serverSocket.getLocalPort() + "] "; 
 	}
 
 	public Map<Integer, ServerToClientConnection> getClients() {
