@@ -10,6 +10,7 @@ public class Client {
 	
 	public Client(String ip){
 		this.connection = new ClientToServerConnection(ip);
+		connection.start();
 	}
 	
 	public void update(){

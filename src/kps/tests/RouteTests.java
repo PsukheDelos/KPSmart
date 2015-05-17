@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.Random;
 
-import kps.distributionNetwork.Company;
-import kps.distributionNetwork.Location;
-import kps.distributionNetwork.Mail;
-import kps.distributionNetwork.Route;
+import kps.distribution.network.Company;
+import kps.distribution.network.Location;
+import kps.distribution.network.Mail;
+import kps.distribution.network.Route;
 
 import org.junit.Test;
 

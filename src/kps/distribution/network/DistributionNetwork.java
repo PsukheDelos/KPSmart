@@ -1,4 +1,4 @@
-package kps.distributionNetwork;
+package kps.distribution.network;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,14 +6,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import kps.pathFinder.Dijkstra;
-import kps.pathFinder.PathNotFoundException;
+import kps.distribution.pathFinder.Dijkstra;
+import kps.distribution.pathFinder.Optimisation;
+import kps.distribution.pathFinder.PathCondition;
+import kps.distribution.pathFinder.PathFinder;
+import kps.distribution.pathFinder.PathNotFoundException;
 
 public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();
 	private Set<Route> routes = new HashSet<Route>();
 	private Set<Company> companies = new HashSet<Company>();
-	private PathFinder pathFinder = new Dijkstra();
+	private PathFinder pathFinder;
 
 	public void addLocation(Location location){
 		locations.put(location.getName(), location);
@@ -30,11 +33,12 @@ public class DistributionNetwork {
 			throw new InvalidRouteException("Origin location does not exist");
 		if (!getLocations().contains(route.getDestination()))
 			throw new InvalidRouteException("Destination location does not exist");
-		if (!companies.contains(route.getCompany()))
-			companies.add(route.getCompany());
 		if (routes.contains(route))
 			throw new InvalidRouteException("Route already exists");
-		
+
+		if (!companies.contains(route.getCompany()))
+			companies.add(route.getCompany());
+
 		routes.add(route);
 		route.getOrigin().addRouteOut(route);
 	}
@@ -46,6 +50,13 @@ public class DistributionNetwork {
 	}
 
 	public MailDelivery deliver(Mail mail) throws PathNotFoundException {
+		//TODO: determine cost limit and time limit based on mail.priority
+		PathCondition pathCondition = new PathCondition(
+			PathCondition.NO_COST_LIMIT,
+			PathCondition.NO_TIME_LIMIT,
+			Optimisation.LOWEST_COST
+		);
+		pathFinder = new Dijkstra(pathCondition);
 		return pathFinder.getPath(mail);
 	}
 

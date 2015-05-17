@@ -2,19 +2,25 @@ package kps.net.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.HashMap;
+import java.net.Socket;
 import java.util.Map;
 
 import kps.net.event.Event;
 
 public class WorkerThread extends Thread{
 	
-	private volatile Map<Integer, ServerToClientConnection> connections;
+	private int id;
+	private Socket socket;
 	private Server server;
 	
-	public WorkerThread(Server server){
-		connections = new HashMap<Integer, ServerToClientConnection>();
+	public WorkerThread(Server server, int id, Socket socket){
+		this.socket = socket;
+		this.id = id;
 		this.server = server;
+		System.out.println(this + " Client Worker ["+ id + "] on ip " + socket.getInetAddress());
+		// Then we should start the thread
+		// We'll also set this as Daemon so we don't have any messy leftovers
+		setDaemon(true);
 		start();
 	}
 	
@@ -24,32 +30,23 @@ public class WorkerThread extends Thread{
 	}
 	
 	public void run(){
-		while(true){
-			
-			for(Map.Entry<Integer, ServerToClientConnection> entry : connections.entrySet()){
-				ObjectInputStream in = null;
+			Object obj = null;
+			ObjectInputStream in = null;
+			try{
+				in = new ObjectInputStream(socket.getInputStream());
+			}catch(IOException ex){
+				ex.printStackTrace();
+			}
+			while(true){
 				try {
-					in = new ObjectInputStream(entry.getValue().socket.getInputStream());
-				} catch (IOException e) {
+					obj = in.readObject();
+				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 				}
-				Object obj = null;
-				try{
-					obj = in.readObject();
-					if(!(obj instanceof Event)) continue;
-					else server.addEvent(new Update(entry.getKey(), (Event) obj));
-				}catch(ClassNotFoundException | IOException ex){
-					ex.printStackTrace();
-				}
-			}
-			
-			
+				
+				if(!(obj instanceof Event)) continue;
+				else server.addEvent(new Update(id, (Event) obj));
 		}
-	}
-	
-	public void addConnection(int id, ServerToClientConnection connection){
-		System.out.println(this + "Connection Added to the Worker Thread: " + connection.socket.getInetAddress());
-		connections.put(id, connection);
 	}
 
 	public String toString(){
