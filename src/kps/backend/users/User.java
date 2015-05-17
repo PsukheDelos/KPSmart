@@ -10,7 +10,6 @@ public class User {
 	public User(String username, UserPermissions permissions){
 		this.username = username;
 		this.permissions = permissions;
-		
 	}
 
 }
