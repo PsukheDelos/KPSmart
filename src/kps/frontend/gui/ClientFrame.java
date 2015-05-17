@@ -12,8 +12,8 @@ import javafx.scene.transform.Scale;
 import javax.swing.*;
 
 import kps.frontend.MailClient;
-import kps.frontend.gui.map.MapBean;
-import kps.frontend.gui.map.layer.shape.ShapeLayer;
+//import kps.frontend.gui.map.MapBean;
+//import kps.frontend.gui.map.layer.shape.ShapeLayer;
 
 public class ClientFrame extends JFrame{
 	
@@ -55,7 +55,7 @@ public class ClientFrame extends JFrame{
 	
 	protected void createTabbedPane(){
 		JTabbedPane tabbedPane = new JTabbedPane();
-		
+		System.out.println(getClass().getResource("/img/dash-icon.png"));
 		ImageIcon icon = createImageIcon("img/dash-icon.png");
 		JComponent panel1 = makeTextPanel("Welcome to the dashboard, here you can view the current financial status of KPSmart.");
 		tabbedPane.addTab("Dashboard", icon, panel1,
@@ -88,36 +88,36 @@ public class ClientFrame extends JFrame{
 		
 
         // Create a Swing frame
-        JFrame frame = new JFrame("Simple Map");
-
-        // Size the frame appropriately
-        frame.setSize(640, 480);
-
-        // Create a MapBean
-        MapBean mapBean = new MapBean();
-
-        // Create a ShapeLayer to show world political boundaries.
-        // Set the properties of the layer. This assumes that the
-        // datafiles "dcwpo-browse.shp" and "dcwpo-browse.ssx" are in
-        // a path specified in the CLASSPATH variable. These files
-        // are distributed with OpenMap and reside in the toplevel
-        // "share" subdirectory.
-        ShapeLayer shapeLayer = new ShapeLayer();
-        Properties shapeLayerProps = new Properties();
-        shapeLayerProps.put("prettyName", "Political Solid");
-        shapeLayerProps.put("lineColor", "000000");
-        shapeLayerProps.put("fillColor", "BDDE83");
-        shapeLayerProps.put("shapeFile", "data/shape/dcwpo-browse.shp");
-        shapeLayerProps.put("spatialIndex", "data/shape/dcwpo-browse.ssx");
-        shapeLayer.setProperties(shapeLayerProps);
-
-        // Add the political layer to the map
-        mapBean.add(shapeLayer);
+//        JFrame frame = new JFrame("Simple Map");
+//
+//        // Size the frame appropriately
+//        frame.setSize(640, 480);
+//
+//        // Create a MapBean
+//        MapBean mapBean = new MapBean();
+//
+//        // Create a ShapeLayer to show world political boundaries.
+//        // Set the properties of the layer. This assumes that the
+//        // datafiles "dcwpo-browse.shp" and "dcwpo-browse.ssx" are in
+//        // a path specified in the CLASSPATH variable. These files
+//        // are distributed with OpenMap and reside in the toplevel
+//        // "share" subdirectory.
+//        ShapeLayer shapeLayer = new ShapeLayer();
+//        Properties shapeLayerProps = new Properties();
+//        shapeLayerProps.put("prettyName", "Political Solid");
+//        shapeLayerProps.put("lineColor", "000000");
+//        shapeLayerProps.put("fillColor", "BDDE83");
+//        shapeLayerProps.put("shapeFile", "data/shape/dcwpo-browse.shp");
+//        shapeLayerProps.put("spatialIndex", "data/shape/dcwpo-browse.ssx");
+//        shapeLayer.setProperties(shapeLayerProps);
+//
+//        // Add the political layer to the map
+//        mapBean.add(shapeLayer);
 		
         icon = createImageIcon("img/map-icon.png");
 		JComponent panel6 = makeTextPanel("View a map of all our locations!");
-		panel6.add(mapBean);
-		tabbedPane.addTab("Locations", icon, mapBean,
+//		panel6.add(mapBean);
+		tabbedPane.addTab("Locations", icon, panel6,
 		                  "View a map of all our locations!");
 		tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 		
