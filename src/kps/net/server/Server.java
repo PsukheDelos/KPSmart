@@ -84,6 +84,10 @@ public class Server extends Thread{
 		return null;
 	}
 	
+	public ServerToClientConnection getConnection(int id){
+		return connections.get(id);
+	}
+	
 	private boolean isConnected(Socket socket){
 		for(ServerToClientConnection sc : connections.values()){
 			if(sc.socket.equals(socket)) return true;

@@ -19,10 +19,10 @@ public class UserRepository {
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT username, permission FROM users WHERE username=" + username + " AND password=" + passwordHash;
+			String query = "SELECT username,permission FROM users WHERE username='" + username + "' AND password='" + passwordHash + "'";
 			ResultSet result = statement.executeQuery(query);
-			result.first();
-			return new User(result.getString(0), UserPermissions.values()[result.getInt(1)]);
+			//result.first();
+			return new User(result.getString(1), UserPermissions.values()[result.getInt(2)]);
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}

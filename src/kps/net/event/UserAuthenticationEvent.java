@@ -4,10 +4,12 @@ import kps.backend.users.User;
 
 public class UserAuthenticationEvent extends Event{
 	
-	public final User user;
+	public final String username;
+	public final String password;
 	
-	public UserAuthenticationEvent(User user){
-		this.user = user;
+	public UserAuthenticationEvent(String username, String password){
+		this.username = username;
+		this.password = password;
 	}
 
 }
