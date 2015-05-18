@@ -1,8 +1,11 @@
 package kps.frontend.gui;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Properties;
 
@@ -21,7 +24,7 @@ public class ClientFrame extends JFrame{
 
 	private MailClient client;
 
-	private ClientListener listener = new ClientListener();
+//	private ClientListener listener = new ClientListener();
 
 	public ClientFrame(){
 		super("--// KPSmart Mail System (Version 0.1) ");
@@ -37,10 +40,10 @@ public class ClientFrame extends JFrame{
 		setVisible(true);
 
 		// We should check if a user is logged in (Most likely not, but a check is gooood.
-		if(client.getCurrentUser() == null){
-			setEnabled(false);
-			new ClientLoginFrame(client, this);
-		}
+//		if(client.getCurrentUser() == null){
+//			setEnabled(false);
+//			new ClientLoginFrame(client, this);
+//		}
 	}
 
 	private void initialise() {
@@ -112,7 +115,7 @@ public class ClientFrame extends JFrame{
 		path.replace("/", File.separator);
 		java.net.URL imgURL = ClientFrame.class.getResource(path);
 		if (imgURL != null) {
-			return new ImageIcon(imgURL);
+			return new ImageIcon(((new ImageIcon(imgURL)).getImage()).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
 		} else {
 			System.err.println("Couldn't find file: " + path);
 			return null;
