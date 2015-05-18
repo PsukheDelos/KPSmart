@@ -1,19 +1,27 @@
 package kps.frontend.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Properties;
 
 import javax.swing.*;
 
+import kps.backend.database.LocationRepository;
 import kps.frontend.MailClient;
 
+import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
+import com.bbn.openmap.MapHandler;
+import com.bbn.openmap.MouseDelegator;
+import com.bbn.openmap.event.OMMouseMode;
+import com.bbn.openmap.gui.EmbeddedNavPanel;
+import com.bbn.openmap.gui.EmbeddedScaleDisplayPanel;
+import com.bbn.openmap.gui.MapPanel;
+import com.bbn.openmap.gui.OverlayMapPanel;
+import com.bbn.openmap.gui.ToolPanel;
 import com.bbn.openmap.layer.shape.ShapeLayer;
 
 public class ClientFrame extends JFrame{
@@ -39,7 +47,7 @@ public class ClientFrame extends JFrame{
 
 		setVisible(true);
 
-		// We should check if a user is logged in (Most likely not, but a check is gooood.
+//		 We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			new ClientLoginFrame(client, this);
@@ -74,22 +82,43 @@ public class ClientFrame extends JFrame{
 				"Here you can update and add new routes between ports.");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-		icon = createImageIcon("img/carrier-icon.png");
-		JComponent panel4 = makeTextPanel("View a list of KPSmart carriers—add, update or delete them to your hearts content!");
-		tabbedPane.addTab("Carriers", icon, panel4,
-				"View a list of KPSmart carriers—add, update or delete them to your hearts content!");
-		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		//Don't think we need carriers, leaving just in case we want later
+		//		icon = createImageIcon("img/carrier-icon.png");
+		//		JComponent panel4 = makeTextPanel("View a list of KPSmart carriers—add, update or delete them to your hearts content!");
+		//		tabbedPane.addTab("Carriers", icon, panel4,
+		//				"View a list of KPSmart carriers—add, update or delete them to your hearts content!");
+		//		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 		icon = createImageIcon("img/price-icon.png");
 		JComponent panel5 = makeTextPanel("Charge the customers exorbitant amounts using our friendly UI.");
 		tabbedPane.addTab("Prices", icon, panel5,
 				"Charge the customers exorbitant amounts using our friendly UI.");
-		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 		// Create a MapBean
-		MapBean mapBean = new MapBean();
+        MapPanel mapPanel = new OverlayMapPanel();
 
-		// Create a ShapeLayer to show world political boundaries.
+        // Get the default MapHandler the BasicMapPanel created.
+        MapHandler mapHandler = mapPanel.getMapHandler();
+        mapHandler.add(new LayerHandler());
+        // Add navigation tools over the map
+        mapHandler.add(new EmbeddedNavPanel());
+        // Add scale display widget over the map
+        mapHandler.add(new EmbeddedScaleDisplayPanel());
+        // Add MouseDelegator, which handles mouse modes (managing mouse events)
+        mapHandler.add(new MouseDelegator());
+        // Add OMMouseMode, which handles how the map reacts to mouse movements
+        mapHandler.add(new OMMouseMode());
+        // Add a ToolPanel for widgets on the north side of the map.
+        mapHandler.add(new ToolPanel());
+        
+        // Get the default MapBean that the BasicMapPanel created.
+        MapBean mapBean = mapPanel.getMapBean();
+
+		mapBean.setCenter(LocationRepository.getCity("Wellington").lat, LocationRepository.getCity("Wellington").lon);
+//        mapBean.setScale(10000000f);  //good level for just NZ
+
+        // Create a ShapeLayer to show world political boundaries.
 		ShapeLayer shapeLayer = new ShapeLayer();
 		Properties shapeLayerProps = new Properties();
 		shapeLayerProps.put("prettyName", "Political Solid");
@@ -97,15 +126,15 @@ public class ClientFrame extends JFrame{
 		shapeLayerProps.put("fillColor", "BDDE83");
 		shapeLayerProps.put("shapeFile", "data"+File.separator+"shape"+File.separator+"dcwpo-browse.shp");
 		shapeLayerProps.put("spatialIndex", "data"+File.separator+"shape"+File.separator+"dcwpo-browse.ssx");
-		shapeLayer.setProperties(shapeLayerProps);
-
+		shapeLayer.setProperties(shapeLayerProps);		
+		
 		// Add the political layer to the map
 		mapBean.add(shapeLayer);
-		
+				
 		icon = createImageIcon("img/map-icon.png");
-		tabbedPane.addTab("Locations", icon, mapBean,
+		tabbedPane.addTab("Locations", icon, (Component) mapPanel,
 				"View a map of all our locations!");
-		tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
+		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
 		this.add(tabbedPane);
 	}
@@ -115,7 +144,7 @@ public class ClientFrame extends JFrame{
 		path.replace("/", File.separator);
 		java.net.URL imgURL = ClientFrame.class.getResource(path);
 		if (imgURL != null) {
-			return new ImageIcon(((new ImageIcon(imgURL)).getImage()).getScaledInstance(10, 10, java.awt.Image.SCALE_SMOOTH));
+			return new ImageIcon(((new ImageIcon(imgURL)).getImage()).getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH));
 		} else {
 			System.err.println("Couldn't find file: " + path);
 			return null;
