@@ -6,10 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import kps.backend.UserPermissions;
-import kps.backend.users.DuplicateUserException;
-import kps.backend.users.User;
-
 public class LocationRepository {
 
 	private static Connection db = null;
@@ -21,7 +17,6 @@ public class LocationRepository {
 	public static Location getCity(String city){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
-			ArrayList<Location> cities = new ArrayList<Location>();
 			Statement statement = db.createStatement();
 			String query = "SELECT * FROM cities WHERE city_name=\""+city+"\"";
 			ResultSet result = statement.executeQuery(query);
