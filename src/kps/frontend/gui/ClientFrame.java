@@ -22,6 +22,10 @@ import com.bbn.openmap.gui.EmbeddedScaleDisplayPanel;
 import com.bbn.openmap.gui.MapPanel;
 import com.bbn.openmap.gui.OverlayMapPanel;
 import com.bbn.openmap.gui.ToolPanel;
+import com.bbn.openmap.layer.location.BasicLocation;
+import com.bbn.openmap.layer.location.BasicLocationHandler;
+import com.bbn.openmap.layer.location.LocationHandler;
+import com.bbn.openmap.layer.location.LocationLayer;
 import com.bbn.openmap.layer.shape.ShapeLayer;
 
 public class ClientFrame extends JFrame{
@@ -32,10 +36,10 @@ public class ClientFrame extends JFrame{
 
 	private MailClient client;
 
-//	private ClientListener listener = new ClientListener();
+	private ClientListener listener = new ClientListener();
 
 	public ClientFrame(){
-		super("--// KPSmart Mail System (Version 0.1) ");
+		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -54,12 +58,12 @@ public class ClientFrame extends JFrame{
 		}
 	}
 
-	private void initialise() {
-		createTabbedPane();
-	}
-
 	public static void main(String[] args){
 		new ClientFrame();
+	}
+	
+	private void initialise() {
+		createTabbedPane();
 	}
 
 	protected void createTabbedPane(){
@@ -82,20 +86,15 @@ public class ClientFrame extends JFrame{
 				"Here you can update and add new routes between ports.");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-		//Don't think we need carriers, leaving just in case we want later
-		//		icon = createImageIcon("img/carrier-icon.png");
-		//		JComponent panel4 = makeTextPanel("View a list of KPSmart carriers—add, update or delete them to your hearts content!");
-		//		tabbedPane.addTab("Carriers", icon, panel4,
-		//				"View a list of KPSmart carriers—add, update or delete them to your hearts content!");
-		//		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-
 		icon = createImageIcon("img/price-icon.png");
 		JComponent panel5 = makeTextPanel("Charge the customers exorbitant amounts using our friendly UI.");
 		tabbedPane.addTab("Prices", icon, panel5,
 				"Charge the customers exorbitant amounts using our friendly UI.");
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-		// Create a MapBean
+		
+		
+		// Create a MapPanel
         MapPanel mapPanel = new OverlayMapPanel();
 
         // Get the default MapHandler the BasicMapPanel created.
@@ -112,9 +111,10 @@ public class ClientFrame extends JFrame{
         // Add a ToolPanel for widgets on the north side of the map.
         mapHandler.add(new ToolPanel());
         
+//        mapHandler.
+        
         // Get the default MapBean that the BasicMapPanel created.
         MapBean mapBean = mapPanel.getMapBean();
-
 		mapBean.setCenter(LocationRepository.getCity("Wellington").lat, LocationRepository.getCity("Wellington").lon);
 //        mapBean.setScale(10000000f);  //good level for just NZ
 
@@ -130,7 +130,17 @@ public class ClientFrame extends JFrame{
 		
 		// Add the political layer to the map
 		mapBean.add(shapeLayer);
+		
+		LocationLayer locationLayer = new LocationLayer();
+		BasicLocation basicLocation= new BasicLocation(LocationRepository.getCity("Wellington").lat, LocationRepository.getCity("Wellington").lon,"name",null);
+		LocationHandler locationHandler = new BasicLocationHandler();
+		
+		basicLocation.setLocationHandler(locationHandler);
+		locationHandler.setLayer(locationLayer);
 				
+		mapBean.add(locationLayer);
+		
+		// Create Map tab
 		icon = createImageIcon("img/map-icon.png");
 		tabbedPane.addTab("Locations", icon, (Component) mapPanel,
 				"View a map of all our locations!");
