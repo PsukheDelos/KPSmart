@@ -1,5 +1,3 @@
-
-
 import kps.net.server.Server;
 
 public class BeginServer {

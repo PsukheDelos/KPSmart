@@ -1,6 +1,8 @@
 package kps.frontend.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
@@ -44,26 +46,37 @@ public class ClientLoginFrame extends JFrame{
 	
 	private void initialise(JPanel panel){
 		setMinimumSize(new Dimension(300, 150));
-		panel.setLayout(null);
-
+		
+		JPanel loginForm = new JPanel();
+		loginForm.setLayout(new GridLayout(3, 1));
+		
+		JPanel usernamePanel = new JPanel();
+		usernamePanel.setLayout(new GridLayout(1, 2));
+		
 		userLabel = new JLabel("Username");
-		userLabel.setBounds(10, 10, 80, 25);
-		panel.add(userLabel);
+		//userLabel.setBounds(10, 10, 80, 25);
+		usernamePanel.add(userLabel);
 
 		userText = new JTextField(20);
-		userText.setBounds(100, 10, 160, 25);
-		panel.add(userText);
+		//userText.setBounds(100, 10, 160, 25);
+		usernamePanel.add(userText);
+		
+		JPanel passwordPanel = new JPanel();
+		passwordPanel.setLayout(new GridLayout(1, 2));
 
 		passwordLabel = new JLabel("Password");
-		passwordLabel.setBounds(10, 40, 80, 25);
-		panel.add(passwordLabel);
+		//passwordLabel.setBounds(10, 40, 80, 25);
+		passwordPanel.add(passwordLabel);
 
 		passwordText = new JPasswordField(20);
-		passwordText.setBounds(100, 40, 160, 25);
-		panel.add(passwordText);
+		//passwordText.setBounds(100, 40, 160, 25);
+		passwordPanel.add(passwordText);
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(1, 2, 20, 10));
 
 		loginButton = new JButton("Login");
-		loginButton.setBounds(10, 80, 80, 25);
+		//loginButton.setBounds(10, 80, 80, 25);
 		loginButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				// Plain Text Username
@@ -101,16 +114,27 @@ public class ClientLoginFrame extends JFrame{
 			       return new BigInteger(1, digest.digest(new String(cs).getBytes("UTF-8"))).toString(16);				
 			}
 		});
-		panel.add(loginButton);
+		buttonPanel.add(loginButton);
 		
 		JButton cancelButton = new JButton("Cancel");
-		cancelButton.setBounds(180, 80, 80, 25);
+		//cancelButton.setBounds(180, 80, 80, 25);
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);	
 			}
 		});
-		panel.add(cancelButton);
+		buttonPanel.add(cancelButton);
+		
+		loginForm.add(usernamePanel);
+		loginForm.add(passwordPanel);
+		loginForm.add(buttonPanel);
+		// Padding for Styling.
+		add(new JPanel(), BorderLayout.NORTH);
+		add(new JPanel(), BorderLayout.SOUTH);
+		add(new JPanel(), BorderLayout.EAST);
+		add(new JPanel(), BorderLayout.WEST);
+		
+		add(loginForm, BorderLayout.CENTER);
 			
 		pack();
 		setLocationRelativeTo(null);
