@@ -8,13 +8,13 @@ public class DijkstraNode implements PathFinderNode{
 	public final Location location;
 	public final DijkstraNode fromNode;
 	public final Route routeToHere;
-	public final float costToHere;
-	public final float timeToHere;
+	public final double costToHere;
+	public final double timeToHere;
 
 	private boolean isStartNode = false;
 
 	public DijkstraNode(Location location, DijkstraNode fromNode,
-						Route routeToHere, float costToHere, float timeToHere) {
+						Route routeToHere, double costToHere, double timeToHere) {
 		this.location = location;
 		this.fromNode = fromNode;
 		this.routeToHere = routeToHere;
@@ -23,16 +23,16 @@ public class DijkstraNode implements PathFinderNode{
 	}
 
 	public DijkstraNode plusRoute(Route route, Mail mail) {
-		float cost = costToHere + route.getCost(mail);
-		float time = timeToHere + route.getDuration();
+		double cost = costToHere + route.getCost(mail);
+		double time = timeToHere + route.getDuration();
 		return new DijkstraNode(route.getDestination(), this, route, cost, time);
 	}
 
-	public float getCost() {
+	public double getCost() {
 		return costToHere;
 	}
 
-	public float getTime() {
+	public double getTime() {
 		return timeToHere;
 	}
 

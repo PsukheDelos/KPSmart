@@ -33,6 +33,9 @@ public class Location {
 		return this.routesOut.remove(route);
 	}
 
+	/**
+	 * @return A Set of all the Routes for which this Location is the origin
+	 */
 	public Set<Route> getRoutesOut(){
 		return new HashSet<Route>(this.routesOut);
 	}
