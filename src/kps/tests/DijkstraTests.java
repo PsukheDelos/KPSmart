@@ -9,7 +9,9 @@ import kps.distribution.network.DistributionNetwork;
 import kps.distribution.network.Location;
 import kps.distribution.network.Mail;
 import kps.distribution.network.MailDelivery;
+import kps.distribution.network.Priority;
 import kps.distribution.network.Route;
+import kps.distribution.network.TransportType;
 import kps.distribution.pathFinder.PathNotFoundException;
 
 import org.junit.Test;
@@ -20,8 +22,8 @@ public class DijkstraTests {
 		// Act
 		Location a = new Location("A");
 		Location b = new Location("B");
-		Route route = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, "Air");
-		Mail mail = new Mail(a, b, 10, 30, "priority", new Date());
+		Route route = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
+		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
 		
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
@@ -39,9 +41,9 @@ public class DijkstraTests {
 		// Act
 		Location a = new Location("A");
 		Location b = new Location("B");
-		Route cheapRoute = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, "Air");
-		Route expensiveRoute = new Route(a, b, new Company("D"), 10, 20, 1000, 1000, 1, 1, "Sea");
-		Mail mail = new Mail(a, b, 10, 30, "priority", new Date());
+		Route cheapRoute = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
+		Route expensiveRoute = new Route(a, b, new Company("D"), 10, 20, 1000, 1000, 1, 1, TransportType.SEA);
+		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
 		
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
@@ -61,9 +63,9 @@ public class DijkstraTests {
 		Location a = new Location("A");
 		Location b = new Location("B");
 		Location c = new Location("C");
-		Route pathA = new Route(a, b, new Company("D"), 1, 2, 1000, 1000, 1, 1, "Air");
-		Route pathB = new Route(b, c, new Company("E"), 10, 20, 1000, 1000, 1, 1, "Sea");
-		Mail mail = new Mail(a, c, 10, 30, "priority", new Date());
+		Route pathA = new Route(a, b, new Company("D"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
+		Route pathB = new Route(b, c, new Company("E"), 10, 20, 1000, 1000, 1, 1, TransportType.SEA);
+		Mail mail = new Mail(a, c, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
 
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
@@ -83,7 +85,7 @@ public class DijkstraTests {
 	public void pathNotFoundThrowsException() throws Exception{
 		Location a = new Location("A");
 		Location b = new Location("B");
-		Mail mail = new Mail(a, b, 10, 30, "priority", new Date());
+		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
 
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
