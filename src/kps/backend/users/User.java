@@ -12,7 +12,6 @@ public class User implements Serializable{
 	public User(String username, UserPermissions permissions){
 		this.username = username;
 		this.permissions = permissions;
-		
 	}
 
 }
