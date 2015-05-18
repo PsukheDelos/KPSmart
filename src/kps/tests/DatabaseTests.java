@@ -44,9 +44,10 @@ public class DatabaseTests {
 	@Test
 	public void testDatabaseLocations(){
 		ArrayList<Location> locations = LocationRepository.getLocations();
-		System.out.println("There are " + locations.size() + " cities in the database.");
-		System.out.println("The first city is " + locations.get(0).city + ".");
-		System.out.println("The last city is " + locations.get(locations.size()-1).city + ".");
+		System.out.println("Database.getLocations() Test: ");
+		System.out.println("\tThere are " + locations.size() + " cities in the database.");
+		System.out.println("\tThe first city is " + locations.get(0).city + ".");
+		System.out.println("\tThe last city is " + locations.get(locations.size()-1).city + ".");
 	}
 
 }
