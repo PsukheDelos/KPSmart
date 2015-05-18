@@ -177,8 +177,7 @@ public class ClientFrame extends JFrame{
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
-			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.city, point);
-
+			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
