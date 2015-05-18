@@ -55,14 +55,15 @@ public class Dijkstra implements PathFinder{
 	}
 
 	private void evaluateNeighbors(DijkstraNode node){
-		List<Route> routesToCheck = node.location.getRoutesOut().stream()
-			.filter(r -> r.canShip(mail) && !visited.contains(r.getDestination()))
+		List<Route> routesToAdd = node.location.getRoutesOut().stream()
+			.filter(r -> r.canShip(mail)
+				&& !visited.contains(r.getDestination())
+				&& pathCondition.accepts(r))
 			.collect(Collectors.toList());
 
-		for (Route route : routesToCheck) {
+		for (Route route : routesToAdd) {
 			DijkstraNode neighbour = node.plusRoute(route, mail);
-			if (pathCondition.accepts(neighbour));
-				fringe.add(neighbour);
+			fringe.add(neighbour);
 		}
 	}
 }
