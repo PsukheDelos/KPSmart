@@ -1,23 +1,30 @@
 package kps.distribution.pathFinder;
 
+import java.security.InvalidParameterException;
 import java.util.Comparator;
 
-public class PathCondition implements Comparator<PathFinderNode>{
-	public static final float NO_TIME_LIMIT = Float.POSITIVE_INFINITY;
-	public static final float NO_COST_LIMIT = Float.POSITIVE_INFINITY;
+import kps.distribution.network.PathType;
+import kps.distribution.network.Route;
+import kps.distribution.network.TransportType;
 
-	public final float maxCost;
-	public final float maxTime;
+public class PathCondition implements Comparator<PathFinderNode>{
+	public final PathType pathType;
 	public final Optimisation optimisation;
 
-	public PathCondition(float maxCost, float maxTime, Optimisation optimisation){
-		this.maxCost = maxCost;
-		this.maxTime = maxTime;
+	public PathCondition(PathType pathType, Optimisation optimisation){
+		this.pathType = pathType;
 		this.optimisation = optimisation;
 	}
 
-	public boolean accepts(PathFinderNode node) {
-		return node.getCost() <= maxCost && node.getTime() <= maxTime;
+	public boolean accepts(Route route) {
+		switch(pathType){
+		case AIR_ONLY:
+			return route.getType() == TransportType.AIR;
+		case AIR_SEA_LAND:
+			return true;
+		default:
+			throw new InvalidParameterException("Unexpected path type");
+		}
 	}
 
 	public int compare(PathFinderNode o1, PathFinderNode o2) {
