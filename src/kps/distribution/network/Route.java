@@ -17,11 +17,11 @@ public class Route {
 
 	private float duration;
 	private float frequency;
-	private String type;
+	private TransportType type;
 
 	public Route(Location origin, Location destination, Company company,
 			float weightCost, float volumeCost, float maxWeight,
-			float maxVolume, float duration, float frequency, String type) {
+			float maxVolume, float duration, float frequency, TransportType type) {
 		this.origin = origin;
 		this.destination = destination;
 		this.company = company;
@@ -54,7 +54,7 @@ public class Route {
 		return this.frequency;
 	}
 
-	public String getType(){
+	public TransportType getType(){
 		return this.type;
 	}
 
