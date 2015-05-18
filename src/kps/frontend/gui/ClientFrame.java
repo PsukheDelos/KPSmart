@@ -178,12 +178,6 @@ public class ClientFrame extends JFrame{
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
 			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
-<<<<<<< HEAD
-=======
-			if(mapBean.getScale()<120000000f){
-				System.err.println("HEY");
-			}
->>>>>>> master
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
