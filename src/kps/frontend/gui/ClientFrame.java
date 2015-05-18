@@ -39,18 +39,11 @@ public class ClientFrame extends JFrame{
 			new ClientLoginFrame(client, this);
 		}
 	}
-	
-	
-<<<<<<< HEAD
-	
+
 	private void initialise() {
 		createTabbedPane();
 	}
 
-//kk
-
-=======
->>>>>>> master
 	public static void main(String[] args){
 		new ClientFrame();
 	}
