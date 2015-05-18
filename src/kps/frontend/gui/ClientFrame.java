@@ -11,8 +11,8 @@ import java.util.Properties;
 
 import javax.swing.*;
 
-import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
+import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
 import com.bbn.openmap.LayerHandler;
@@ -177,7 +177,7 @@ public class ClientFrame extends JFrame{
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
-			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.city, point);
+			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
 			if(mapBean.getScale()<120000000f){
 				System.err.println("HEY");
 			}
