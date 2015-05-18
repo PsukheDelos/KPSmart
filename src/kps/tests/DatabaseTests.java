@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import kps.backend.database.KPSDatabase;
 import kps.backend.database.LocationRepository;
-import kps.distribution.network.Location;
+import kps.backend.database.Location;
 
 import org.junit.Test;
 
@@ -46,8 +46,8 @@ public class DatabaseTests {
 		ArrayList<Location> locations = LocationRepository.getLocations();
 		System.out.println("Database.getLocations() Test: ");
 		System.out.println("\tThere are " + locations.size() + " cities in the database.");
-		System.out.println("\tThe first city is " + locations.get(0).name + ".");
-		System.out.println("\tThe last city is " + locations.get(locations.size()-1).name + ".");
+		System.out.println("\tThe first city is " + locations.get(0).city + ".");
+		System.out.println("\tThe last city is " + locations.get(locations.size()-1).city + ".");
 	}
 
 }

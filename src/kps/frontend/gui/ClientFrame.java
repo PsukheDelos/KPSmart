@@ -11,8 +11,8 @@ import java.util.Properties;
 
 import javax.swing.*;
 
+import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
-import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
 import com.bbn.openmap.LayerHandler;
@@ -61,7 +61,7 @@ public class ClientFrame extends JFrame{
 
 		setVisible(true);
 
-		//		We should check if a user is logged in (Most likely not, but a check is gooood.
+		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			new ClientLoginFrame(client, this);
@@ -80,7 +80,7 @@ public class ClientFrame extends JFrame{
 		JTabbedPane tabbedPane = new JTabbedPane();
 		ImageIcon icon = createImageIcon("img/dash-icon.png");
 		JComponent panel1 = makeTextPanel("Welcome to the dashboard, here you can view the current financial status of KPSmart.");
-		tabbedPane.addTab("Dashboard", icon, new DashboardPanel(),
+		tabbedPane.addTab("Dashboard", icon, panel1,
 				"Does  here you can view the current financial status of KPSmart");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -177,7 +177,10 @@ public class ClientFrame extends JFrame{
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
-			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
+			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.city, point);
+			if(mapBean.getScale()<120000000f){
+				System.err.println("HEY");
+			}
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
@@ -191,7 +194,7 @@ public class ClientFrame extends JFrame{
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
-		omList.add(routeList);
+		//		omList.add(routeList);
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
 

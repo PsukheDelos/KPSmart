@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import kps.distribution.network.Location;
-
 public class LocationRepository {
 
 	private static Connection db = null;
@@ -22,7 +20,7 @@ public class LocationRepository {
 			Statement statement = db.createStatement();
 			String query = "SELECT * FROM cities WHERE city_name=\""+city+"\"";
 			ResultSet result = statement.executeQuery(query);
-			return new Location(result.getString(1), result.getDouble(3), result.getDouble(4));		
+			return new Location(result.getString(1), result.getString(2), result.getDouble(3), result.getDouble(4));		
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
@@ -35,7 +33,7 @@ public class LocationRepository {
 			String query = "SELECT * FROM cities";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-				cities.add(new Location(result.getString(1), result.getDouble(3), result.getDouble(4)));		
+				cities.add(new Location(result.getString(1), result.getString(2), result.getDouble(3), result.getDouble(4)));		
 			}
 			return cities;
 		} catch (SQLException e) {e.printStackTrace();}
