@@ -4,15 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Location {
-	private String name;
 	private Set<Route> routesOut = new HashSet<Route>();
+	public final String name;
+	public final double lat;
+	public final double lon;
 
-	public Location(String name){
+	public Location(String name, double lat, double lon){
 		this.name = name;
-	}
-
-	public String getName(){
-		return this.name;
+		this.lat = lat;
+		this.lon = lon;
 	}
 
 	/**

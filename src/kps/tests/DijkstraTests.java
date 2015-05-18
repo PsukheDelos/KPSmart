@@ -20,8 +20,8 @@ public class DijkstraTests {
 	@Test
 	public void testSinglePath() throws Exception{
 		// Act
-		Location a = new Location("A");
-		Location b = new Location("B");
+		Location a = new Location("A", 1, 1);
+		Location b = new Location("B", 2, 2);
 		Route route = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
 		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
 		
@@ -39,8 +39,8 @@ public class DijkstraTests {
 	@Test
 	public void choosesCheapesOfTwoPaths() throws Exception{
 		// Act
-		Location a = new Location("A");
-		Location b = new Location("B");
+		Location a = new Location("A", 1, 1);
+		Location b = new Location("B", 2, 2);
 		Route cheapRoute = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
 		Route expensiveRoute = new Route(a, b, new Company("D"), 10, 20, 1000, 1000, 1, 1, TransportType.SEA);
 		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
@@ -60,9 +60,9 @@ public class DijkstraTests {
 	@Test
 	public void followsPathOfLengthTwo() throws Exception{
 		// Act
-		Location a = new Location("A");
-		Location b = new Location("B");
-		Location c = new Location("C");
+		Location a = new Location("A", 1, 1);
+		Location b = new Location("B", 2, 2);
+		Location c = new Location("C", 3, 3);
 		Route pathA = new Route(a, b, new Company("D"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
 		Route pathB = new Route(b, c, new Company("E"), 10, 20, 1000, 1000, 1, 1, TransportType.SEA);
 		Mail mail = new Mail(a, c, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
@@ -83,8 +83,8 @@ public class DijkstraTests {
 
 	@Test(expected=PathNotFoundException.class)
 	public void pathNotFoundThrowsException() throws Exception{
-		Location a = new Location("A");
-		Location b = new Location("B");
+		Location a = new Location("A", 1, 1);
+		Location b = new Location("B", 2, 2);
 		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
 
 		DistributionNetwork network = new DistributionNetwork();
