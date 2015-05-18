@@ -11,8 +11,8 @@ import java.util.Properties;
 
 import javax.swing.*;
 
-import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
+import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
 import com.bbn.openmap.LayerHandler;
@@ -178,6 +178,7 @@ public class ClientFrame extends JFrame{
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
 			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.city, point);
+
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
