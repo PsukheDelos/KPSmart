@@ -115,7 +115,7 @@ public class ClientFrame extends JFrame{
 		path.replace("/", File.separator);
 		java.net.URL imgURL = ClientFrame.class.getResource(path);
 		if (imgURL != null) {
-			return new ImageIcon(((new ImageIcon(imgURL)).getImage()).getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+			return new ImageIcon(((new ImageIcon(imgURL)).getImage()).getScaledInstance(10, 10, java.awt.Image.SCALE_SMOOTH));
 		} else {
 			System.err.println("Couldn't find file: " + path);
 			return null;
