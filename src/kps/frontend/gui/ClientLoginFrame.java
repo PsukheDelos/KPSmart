@@ -46,9 +46,10 @@ public class ClientLoginFrame extends JFrame{
 	
 	private void initialise(JPanel panel){
 		setMinimumSize(new Dimension(300, 150));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel loginForm = new JPanel();
-		loginForm.setLayout(new GridLayout(3, 1));
+		loginForm.setLayout(new GridLayout(3, 1, 10, 10));
 		
 		JPanel usernamePanel = new JPanel();
 		usernamePanel.setLayout(new GridLayout(1, 2));
@@ -88,10 +89,7 @@ public class ClientLoginFrame extends JFrame{
 				} catch (NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException ex) {
 					ex.printStackTrace();
 				}
-				
-				System.out.println("Username: "+ username);
-				System.out.println("Password: "+ password);
-				
+						
 				mailClient.authenticateUser(username, password);
 				User user = mailClient.getCurrentUser();
 				while(user == null){
@@ -120,25 +118,32 @@ public class ClientLoginFrame extends JFrame{
 		//cancelButton.setBounds(180, 80, 80, 25);
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);	
+				setVisible(false);
+				dispose();
 			}
 		});
 		buttonPanel.add(cancelButton);
-		
+				
 		loginForm.add(usernamePanel);
 		loginForm.add(passwordPanel);
 		loginForm.add(buttonPanel);
 		// Padding for Styling.
-		add(new JPanel(), BorderLayout.NORTH);
-		add(new JPanel(), BorderLayout.SOUTH);
+		
 		add(new JPanel(), BorderLayout.EAST);
 		add(new JPanel(), BorderLayout.WEST);
+		add(new JPanel(), BorderLayout.NORTH);
+		add(new JPanel(), BorderLayout.SOUTH);
 		
-		add(loginForm, BorderLayout.CENTER);
-			
+		
+		add(loginForm);
+		
 		pack();
 		setLocationRelativeTo(null);
+		// Rendering wasn't really happening, so adding this in to fix
+		validate();
+		repaint();
 		setVisible(true);
+		
 	
 	}
 	
