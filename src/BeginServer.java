@@ -1,4 +1,4 @@
-package kps.server.main;
+
 
 import kps.net.server.Server;
 

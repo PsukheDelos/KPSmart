@@ -23,6 +23,10 @@ public class UpdateThread extends Thread{
 			Update update = server.popEvent();
 			Event event = server.processEvent(update.event);
 			
+			if(event != null){
+				sendClient(event, server.getConnection(update.client));
+			}
+			
 			// Here, we should send the return event;
 			// Should really be only to a single client, but the functionality is now there.
 		}
