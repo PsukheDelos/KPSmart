@@ -4,10 +4,10 @@ import java.util.List;
 
 public class MailDelivery {
 	public final Mail mail;
-	public final float cost;
+	public final double cost;
 	public final List<Route> path;
 
-	public MailDelivery(Mail mail, float cost, List<Route> path){
+	public MailDelivery(Mail mail, double cost, List<Route> path){
 		this.mail = mail;
 		this.cost = cost;
 		this.path = path;

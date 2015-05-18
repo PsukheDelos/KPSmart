@@ -1,6 +1,6 @@
 package kps.distribution.pathFinder;
 
 public interface PathFinderNode{
-	public abstract float getCost();
-	public abstract float getTime();
+	public abstract double getCost();
+	public abstract double getTime();
 }
