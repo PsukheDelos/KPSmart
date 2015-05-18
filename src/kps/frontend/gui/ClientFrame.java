@@ -59,13 +59,7 @@ public class ClientFrame extends JFrame{
 		pack();
 		setLocationRelativeTo(null);
 
-<<<<<<< HEAD
-		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
-=======
-		setVisible(true);
-
 		//		We should check if a user is logged in (Most likely not, but a check is gooood.
->>>>>>> fe6b258e0c790dc7fe0bdc68a24d55c8225b3f34
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
