@@ -33,10 +33,15 @@ public class ClientFrame extends JFrame{
 		
 		setVisible(true);
 		
-		
+		// We should check if a user is logged in (Most likely not, but a check is gooood.
+		if(client.getCurrentUser() == null){
+			setEnabled(false);
+			new ClientLoginFrame(client, this);
+		}
 	}
 	
 	
+<<<<<<< HEAD
 	
 	private void initialise() {
 		createTabbedPane();
@@ -44,6 +49,8 @@ public class ClientFrame extends JFrame{
 
 //kk
 
+=======
+>>>>>>> master
 	public static void main(String[] args){
 		new ClientFrame();
 	}
