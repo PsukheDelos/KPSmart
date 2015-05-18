@@ -9,10 +9,10 @@ public class Mail {
 	public final float volume;
 	public final float weight;
 
-	public final String priority;
+	public final Priority priority;
 	public final Date sentDate;
 
-	public Mail(Location origin, Location destination, float weight, float volume, String priority, Date sentDate){
+	public Mail(Location origin, Location destination, float weight, float volume, Priority priority, Date sentDate){
 		this.origin = origin;
 		this.destination = destination;
 		this.weight = weight;
