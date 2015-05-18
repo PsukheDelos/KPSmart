@@ -3,8 +3,8 @@ package kps.backend;
 import java.util.ArrayList;
 import java.util.List;
 
+import kps.backend.database.UserRepository;
 import kps.backend.users.User;
-import kps.backend.users.UserRepository;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;

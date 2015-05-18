@@ -1,4 +1,4 @@
-package kps.backend.users;
+package kps.backend.database;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import kps.backend.UserPermissions;
-import kps.backend.database.KPSDatabase;
+import kps.backend.users.DuplicateUserException;
+import kps.backend.users.User;
 
 public class UserRepository {
 	
@@ -39,7 +40,6 @@ public class UserRepository {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	public static boolean thereIsAConnectionToTheDatabase(){

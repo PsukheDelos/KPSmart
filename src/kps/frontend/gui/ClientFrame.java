@@ -101,7 +101,7 @@ public class ClientFrame extends JFrame{
 
 		// Add the political layer to the map
 		mapBean.add(shapeLayer);
-
+		
 		icon = createImageIcon("img/map-icon.png");
 		tabbedPane.addTab("Locations", icon, mapBean,
 				"View a map of all our locations!");
