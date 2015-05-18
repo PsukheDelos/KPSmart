@@ -8,11 +8,9 @@
 	<classpathentry kind="lib" path="lib/omcorba.jar"/>
 	<classpathentry kind="lib" path="lib/omj3d.jar"/>
 	<classpathentry kind="lib" path="lib/omsvg.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.7.jar"/>
-	<classpathentry kind="lib" path="lib/seaglasslookandfeel-0.2.jar"/>
-	<classpathentry kind="lib" path="lib/weblaf-complete-1.28.jar"/>
 	<classpathentry kind="lib" path="lib/openmap.jar"/>
-	<classpathentry kind="lib" path="lib/JMapViewer.jar"/>
-	<classpathentry kind="lib" path="lib/OpenMapFX-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/seaglasslookandfeel-0.2.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.7.jar"/>
+	<classpathentry kind="lib" path="lib/weblaf-complete-1.28.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
