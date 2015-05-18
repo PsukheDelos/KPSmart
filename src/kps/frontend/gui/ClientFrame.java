@@ -59,7 +59,13 @@ public class ClientFrame extends JFrame{
 		pack();
 		setLocationRelativeTo(null);
 
+<<<<<<< HEAD
 		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
+=======
+		setVisible(true);
+
+		//		We should check if a user is logged in (Most likely not, but a check is gooood.
+>>>>>>> fe6b258e0c790dc7fe0bdc68a24d55c8225b3f34
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
@@ -82,7 +88,7 @@ public class ClientFrame extends JFrame{
 		JTabbedPane tabbedPane = new JTabbedPane();
 		ImageIcon icon = createImageIcon("img/dash-icon.png");
 		JComponent panel1 = makeTextPanel("Welcome to the dashboard, here you can view the current financial status of KPSmart.");
-		tabbedPane.addTab("Dashboard", icon, panel1,
+		tabbedPane.addTab("Dashboard", icon, new DashboardPanel(),
 				"Does  here you can view the current financial status of KPSmart");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -180,9 +186,6 @@ public class ClientFrame extends JFrame{
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
 			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
-			if(mapBean.getScale()<120000000f){
-				System.err.println("HEY");
-			}
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
@@ -196,7 +199,7 @@ public class ClientFrame extends JFrame{
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
-		//		omList.add(routeList);
+		omList.add(routeList);
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
 
