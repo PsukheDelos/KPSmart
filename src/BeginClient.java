@@ -1,11 +1,11 @@
 import kps.frontend.gui.ClientFrame;
-import kps.net.client.Client;
-import kps.net.event.DummyEvent;
+
+import com.alee.laf.WebLookAndFeel;
 
 public class BeginClient {
 
 	public static void main(String[] args){
-		
+		WebLookAndFeel.install();
 		new ClientFrame();
 		
 	}
