@@ -1,5 +1,6 @@
 package kps.frontend.gui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -29,8 +30,12 @@ import com.bbn.openmap.layer.learn.BasicLayer;
 import com.bbn.openmap.layer.location.BasicLocation;
 import com.bbn.openmap.layer.shape.BufferedShapeLayer;
 import com.bbn.openmap.layer.shape.ShapeLayer;
+import com.bbn.openmap.omGraphics.OMGraphic;
+import com.bbn.openmap.omGraphics.OMGraphicConstants;
 import com.bbn.openmap.omGraphics.OMGraphicList;
+import com.bbn.openmap.omGraphics.OMLine;
 import com.bbn.openmap.omGraphics.OMPoint;
+import com.bbn.openmap.omGraphics.OMTextLabeler;
 import com.bbn.openmap.proj.coords.LatLonPoint;
 
 public class ClientFrame extends JFrame{
@@ -105,6 +110,8 @@ public class ClientFrame extends JFrame{
 		 */
 		MapPanel mapPanel = new OverlayMapPanel();
 
+		LatLonPoint wellingtonLocation = new LatLonPoint.Double(LocationRepository.getCity("Wellington").lat, LocationRepository.getCity("Wellington").lon);
+
 		// Get the default MapHandler the BasicMapPanel created.
 		MapHandler mapHandler = mapPanel.getMapHandler();
 
@@ -112,7 +119,7 @@ public class ClientFrame extends JFrame{
 		MapBean mapBean = mapPanel.getMapBean();
 
 		// Set the map's center
-		mapBean.setCenter(new LatLonPoint.Double(LocationRepository.getCity("Wellington").lat, LocationRepository.getCity("Wellington").lon));
+		mapBean.setCenter(wellingtonLocation);
 
 		// Set the map's scale 1:120 million
 		mapBean.setScale(120000000f);
@@ -160,22 +167,39 @@ public class ClientFrame extends JFrame{
 
 		// Last on top.
 		mapHandler.add(shapeLayer);
-		BasicLayer bl = new BasicLayer();
+		BasicLayer basicLayer = new BasicLayer();
 
-		OMGraphicList pointList = new OMGraphicList();
+		OMGraphicList omList = new OMGraphicList();
 
+		OMGraphicList cityList = new OMGraphicList();
+		OMGraphicList routeList = new OMGraphicList();
 		for(Location city: LocationRepository.getLocations()){
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
-			pointList.add(new BasicLocation(city.lat, city.lon, city.city, point));
+			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.city, point);
+			if(mapBean.getScale()<120000000f){
+				System.err.println("HEY");
+			}
+			basicLocation.setShowName(false);
+
+			// Add an OMLine
+			OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
+			// line.addArrowHead(true);
+			line.setStroke(new BasicStroke(2));
+			line.setLinePaint(Color.red);
+			line.putAttribute(OMGraphicConstants.LABEL, new OMTextLabeler("Line Label"));
+
+			routeList.add(line);
+			cityList.add(basicLocation);
 		}
+		omList.add(cityList);
+		//		omList.add(routeList);
+		basicLayer.setList(omList);
+		mapHandler.add(basicLayer);
 
-		bl.setList(pointList);
-
-		mapHandler.add(bl);
-
-		mapHandler.add(new DayNightLayer());
+		//Optional: Do we want this?
+		//mapHandler.add(new DayNightLayer());
 
 		// Create Map tab
 		icon = createImageIcon("img/map-icon.png");
