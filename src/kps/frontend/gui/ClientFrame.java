@@ -13,6 +13,7 @@ import javax.swing.*;
 
 //import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
+import kps.backend.database.PriceRepository;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
@@ -97,9 +98,15 @@ public class ClientFrame extends JFrame{
 				"Here you can update and add new routes between ports.");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
+		JTable jt = PriceRepository.getPricesTable();
+//		jt.disable();
+		//		panel3.add(jt);
+		
 		icon = createImageIcon("img/price-icon.png");
-		JComponent panel5 = makeTextPanel("Charge the customers exorbitant amounts using our friendly UI.");
-		tabbedPane.addTab("Prices", icon, panel5,
+//		JComponent panel5 = new JPanel();
+//		panel5.add(new JButton("+"));
+//		panel5.add(new JScrollPane(jt));
+		tabbedPane.addTab("Prices", icon, new JScrollPane(jt),
 				"Charge the customers exorbitant amounts using our friendly UI.");
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
@@ -225,5 +232,7 @@ public class ClientFrame extends JFrame{
 		panel.add(filler);
 		return panel;
 	}
+	
+	
 
 }
