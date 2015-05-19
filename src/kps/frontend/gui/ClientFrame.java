@@ -4,11 +4,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Properties;
 
@@ -16,12 +15,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-
-
 
 //import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
@@ -29,8 +27,6 @@ import kps.backend.database.PriceRepository;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
-import com.bbn.openmap.BufferedMapBean;
-import com.bbn.openmap.HintsMapBeanRepaintPolicy;
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.MapHandler;
@@ -67,7 +63,15 @@ public class ClientFrame extends JFrame{
 	public ClientFrame(){
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		         int answer = JOptionPane.showConfirmDialog(null, "You want to quit?", "Quit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		         if (answer == JOptionPane.YES_OPTION)
+		             System.exit(0);
+		    }
+		});
 		
 		client = new MailClient();
 		initialise();

@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -15,6 +17,7 @@ import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -46,7 +49,13 @@ public class ClientLoginFrame extends JFrame{
 	
 	private void initialise(JPanel panel){
 		setMinimumSize(new Dimension(300, 150));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		        showExitDialog();
+		    }
+		});
 		
 		JPanel loginForm = new JPanel();
 		loginForm.setLayout(new GridLayout(3, 1, 10, 10));
@@ -118,8 +127,7 @@ public class ClientLoginFrame extends JFrame{
 		//cancelButton.setBounds(180, 80, 80, 25);
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				dispose();
+				showExitDialog();
 			}
 		});
 		buttonPanel.add(cancelButton);
@@ -145,6 +153,14 @@ public class ClientLoginFrame extends JFrame{
 		
 	
 	}
+
+	protected void showExitDialog() {
+		 int answer = JOptionPane.showConfirmDialog(null, "You want to quit?", "Quit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+         if (answer == JOptionPane.YES_OPTION)
+             System.exit(0);
+	}
+	
+
 	
 	
 	

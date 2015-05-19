@@ -1,3 +1,4 @@
+package kps.main;
 import kps.frontend.gui.ClientFrame;
 import kps.net.server.Server;
 
