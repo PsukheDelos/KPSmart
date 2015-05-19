@@ -135,8 +135,7 @@ public class ClientLoginFrame extends JFrame{
 		add(new JPanel(), BorderLayout.SOUTH);
 		
 		
-		add(loginForm);
-		
+		add(loginForm);		
 		pack();
 		setLocationRelativeTo(null);
 		// Rendering wasn't really happening, so adding this in to fix

@@ -7,8 +7,6 @@ public class BeginClient {
 	public static void main(String[] args){
 		//WebLookAndFeel.install();
 		new ClientFrame();
-		
-		
 	}
 
 }

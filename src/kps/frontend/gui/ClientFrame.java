@@ -65,8 +65,9 @@ public class ClientFrame extends JFrame{
 		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
-			new ClientLoginFrame(client, this);
-			new ClientLoginPane();
+			ClientLoginFrame frame = new ClientLoginFrame(client, this);
+			frame.revalidate();
+			//new ClientLoginPane(client, this);
 		}
 	}
 
