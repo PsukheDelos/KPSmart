@@ -6,22 +6,22 @@ public class Route {
 	private Company company;
 
 	// cost per gram
-	private float weightCost;
+	private double weightCost;
 	// cost per cubic centimeter
-	private float volumeCost;
+	private double volumeCost;
 
 	// max weight in grams
-	private float maxWeight;
+	private double maxWeight;
 	//max volume in cubic centimeters
-	private float maxVolume;
+	private double maxVolume;
 
-	private float duration;
-	private float frequency;
+	private double duration;
+	private double frequency;
 	private TransportType type;
 
 	public Route(Location origin, Location destination, Company company,
-			float weightCost, float volumeCost, float maxWeight,
-			float maxVolume, float duration, float frequency, TransportType type) {
+			double weightCost, double volumeCost, double maxWeight,
+			double maxVolume, double duration, double frequency, TransportType type) {
 		this.origin = origin;
 		this.destination = destination;
 		this.company = company;
@@ -46,11 +46,11 @@ public class Route {
 		return this.destination;
 	}
 
-	public float getDuration() {
+	public double getDuration() {
 		return duration;
 	}
 
-	public float getFrequency(){
+	public double getFrequency(){
 		return this.frequency;
 	}
 
@@ -63,7 +63,7 @@ public class Route {
 			&& mail.volume <= maxVolume;
 	}
 
-	public float getCost(Mail mail){
+	public double getCost(Mail mail){
 		return (mail.weight * weightCost)
 			 + (mail.volume * volumeCost);
 	}
