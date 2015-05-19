@@ -12,5 +12,12 @@ public class ServerToClientConnection {
 		this.socket = socket;
 		this.out = out;
 	}
+	
+	public boolean equals(Object o){
+		if(!(o instanceof ServerToClientConnection)) return false;
+		ServerToClientConnection other = (ServerToClientConnection)o;
+		// Put our faith into the Java Overlords.
+		return other.socket.equals(socket) && other.out.equals(out);
+	}
 
 }

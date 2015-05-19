@@ -24,6 +24,10 @@ public class Client {
 		}
 	}
 	
+	public ClientToServerConnection getConnection(){
+		return connection;
+	}
+	
 	public void sendEvent(Event event){
 		connection.send(event);
 	}

@@ -1,4 +1,4 @@
-package kps.distribution.pathFinder;
+package kps.distribution.exception;
 
 public class PathNotFoundException extends Exception {
 

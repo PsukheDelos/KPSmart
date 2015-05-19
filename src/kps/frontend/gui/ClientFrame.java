@@ -6,10 +6,20 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Properties;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 
 //import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
@@ -27,9 +37,9 @@ import com.bbn.openmap.gui.EmbeddedScaleDisplayPanel;
 import com.bbn.openmap.gui.MapPanel;
 import com.bbn.openmap.gui.OverlayMapPanel;
 import com.bbn.openmap.gui.ToolPanel;
-import com.bbn.openmap.layer.daynight.DayNightLayer;
 import com.bbn.openmap.layer.learn.BasicLayer;
 import com.bbn.openmap.layer.location.BasicLocation;
+import com.bbn.openmap.layer.policy.BufferedImageRenderPolicy;
 import com.bbn.openmap.layer.shape.BufferedShapeLayer;
 import com.bbn.openmap.layer.shape.ShapeLayer;
 import com.bbn.openmap.omGraphics.OMGraphic;
@@ -53,7 +63,15 @@ public class ClientFrame extends JFrame{
 	public ClientFrame(){
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e) {
+		         int answer = JOptionPane.showConfirmDialog(null, "You want to quit?", "Quit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		         if (answer == JOptionPane.YES_OPTION)
+		             System.exit(0);
+		    }
+		});
 		
 		client = new MailClient();
 		initialise();
@@ -62,17 +80,14 @@ public class ClientFrame extends JFrame{
 		setLocationRelativeTo(null);
 		setVisible(true);
 
-		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
+		// We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
 			frame.revalidate();
+			// This is kept below as a backup, just in case
 			//new ClientLoginPane(client, this);
 		}
-	}
-
-	public static void main(String[] args){
-		new ClientFrame();
 	}
 
 	private void initialise() {
@@ -123,10 +138,9 @@ public class ClientFrame extends JFrame{
 
 		// Get the default MapHandler the BasicMapPanel created.
 		MapHandler mapHandler = mapPanel.getMapHandler();
-
 		// Get the default MapBean that the BasicMapPanel created.
 		MapBean mapBean = mapPanel.getMapBean();
-
+		
 		// Set the map's center
 		mapBean.setCenter(wellingtonLocation);
 
@@ -153,6 +167,8 @@ public class ClientFrame extends JFrame{
 		mapHandler.add(new OMMouseMode());
 		// Add a ToolPanel for widgets on the north side of the map.
 		mapHandler.add(new ToolPanel());
+		
+		mapBean.setBackgroundColor(new Color((float)0.255, (float)0.412, (float)0.882));
 
 		/*
 		 * Create a ShapeLayer to show world political boundaries. Set the
@@ -169,8 +185,9 @@ public class ClientFrame extends JFrame{
 		Properties shapeLayerProps = new Properties();
 		shapeLayerProps.put("prettyName", "Political Solid");
 		shapeLayerProps.put("lineColor", "000000");
-		shapeLayerProps.put("fillColor", "BDDE83");
+		shapeLayerProps.put("fillColor", "4ECD21");
 		shapeLayerProps.put("shapeFile", "data/shape/cntry02/cntry02.shp");
+		shapeLayerProps.put("lineWidth", 0);
 		shapeLayer.setProperties(shapeLayerProps);
 		shapeLayer.setVisible(true);
 
@@ -185,6 +202,7 @@ public class ClientFrame extends JFrame{
 		for(Location city: LocationRepository.getLocations()){
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
+			point.setStroke(new BasicStroke(0));
 			point.setOval(true);
 			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
 			basicLocation.setShowName(false);
@@ -201,6 +219,7 @@ public class ClientFrame extends JFrame{
 		}
 		omList.add(cityList);
 		//		omList.add(routeList);
+		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
 

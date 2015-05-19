@@ -117,6 +117,13 @@ public class Server extends Thread{
 	public Map<Integer, ServerToClientConnection> getClients() {
 		return connections;
 	}
+
+	public void removeConnection(ServerToClientConnection player) {
+		for(Map.Entry<Integer, ServerToClientConnection> e : connections.entrySet()){
+			if(player.equals(e.getValue()))
+				connections.remove(e.getKey());
+		}
+	}
 	
 	
 	

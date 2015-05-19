@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 
+import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.network.Company;
 import kps.distribution.network.DistributionNetwork;
 import kps.distribution.network.Location;
@@ -12,7 +13,6 @@ import kps.distribution.network.MailDelivery;
 import kps.distribution.network.Priority;
 import kps.distribution.network.Route;
 import kps.distribution.network.TransportType;
-import kps.distribution.pathFinder.PathNotFoundException;
 
 import org.junit.Test;
 
