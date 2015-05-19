@@ -34,9 +34,15 @@ public class MailClient {
 	public void processEvent(Event e) {
 		if(e instanceof LoginResponseEvent){
 			LoginResponseEvent evt = (LoginResponseEvent)e;
+
+			System.out.println(this + "Response Recieved for " + evt.user.username);
 			setCurrentUser(evt.user);
 		}
 		
+	}
+	
+	public String toString(){
+		return "[MAIL CLIENT] ";
 	}
 
 }

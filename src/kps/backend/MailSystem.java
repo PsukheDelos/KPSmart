@@ -31,7 +31,7 @@ public class MailSystem {
 			System.out.println(((DummyEvent)event).message);
 		}else if(event instanceof UserAuthenticationEvent){
 			UserAuthenticationEvent auth = (UserAuthenticationEvent)event;
-			System.out.println("Authenicating User: " + auth.username);
+			System.out.println(this + "Authenicating User: " + auth.username);
 			User user = UserRepository.authenticateUser(auth.username, auth.password);
 			returnEvent = new LoginResponseEvent(user);
 		}

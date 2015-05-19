@@ -4,12 +4,24 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Properties;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+
+
 
 //import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
@@ -17,6 +29,8 @@ import kps.backend.database.PriceRepository;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
+import com.bbn.openmap.BufferedMapBean;
+import com.bbn.openmap.HintsMapBeanRepaintPolicy;
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.MapHandler;
@@ -27,9 +41,9 @@ import com.bbn.openmap.gui.EmbeddedScaleDisplayPanel;
 import com.bbn.openmap.gui.MapPanel;
 import com.bbn.openmap.gui.OverlayMapPanel;
 import com.bbn.openmap.gui.ToolPanel;
-import com.bbn.openmap.layer.daynight.DayNightLayer;
 import com.bbn.openmap.layer.learn.BasicLayer;
 import com.bbn.openmap.layer.location.BasicLocation;
+import com.bbn.openmap.layer.policy.BufferedImageRenderPolicy;
 import com.bbn.openmap.layer.shape.BufferedShapeLayer;
 import com.bbn.openmap.layer.shape.ShapeLayer;
 import com.bbn.openmap.omGraphics.OMGraphic;
@@ -62,17 +76,14 @@ public class ClientFrame extends JFrame{
 		setLocationRelativeTo(null);
 		setVisible(true);
 
-		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
+		// We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
 			frame.revalidate();
+			// This is kept below as a backup, just in case
 			//new ClientLoginPane(client, this);
 		}
-	}
-
-	public static void main(String[] args){
-		new ClientFrame();
 	}
 
 	private void initialise() {
@@ -123,10 +134,9 @@ public class ClientFrame extends JFrame{
 
 		// Get the default MapHandler the BasicMapPanel created.
 		MapHandler mapHandler = mapPanel.getMapHandler();
-
 		// Get the default MapBean that the BasicMapPanel created.
 		MapBean mapBean = mapPanel.getMapBean();
-
+		
 		// Set the map's center
 		mapBean.setCenter(wellingtonLocation);
 
@@ -153,6 +163,8 @@ public class ClientFrame extends JFrame{
 		mapHandler.add(new OMMouseMode());
 		// Add a ToolPanel for widgets on the north side of the map.
 		mapHandler.add(new ToolPanel());
+		
+		mapBean.setBackgroundColor(new Color((float)0.255, (float)0.412, (float)0.882));
 
 		/*
 		 * Create a ShapeLayer to show world political boundaries. Set the
@@ -169,8 +181,9 @@ public class ClientFrame extends JFrame{
 		Properties shapeLayerProps = new Properties();
 		shapeLayerProps.put("prettyName", "Political Solid");
 		shapeLayerProps.put("lineColor", "000000");
-		shapeLayerProps.put("fillColor", "BDDE83");
+		shapeLayerProps.put("fillColor", "4ECD21");
 		shapeLayerProps.put("shapeFile", "data/shape/cntry02/cntry02.shp");
+		shapeLayerProps.put("lineWidth", 0);
 		shapeLayer.setProperties(shapeLayerProps);
 		shapeLayer.setVisible(true);
 
@@ -185,6 +198,7 @@ public class ClientFrame extends JFrame{
 		for(Location city: LocationRepository.getLocations()){
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
+			point.setStroke(new BasicStroke(0));
 			point.setOval(true);
 			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
 			basicLocation.setShowName(false);
@@ -201,6 +215,7 @@ public class ClientFrame extends JFrame{
 		}
 		omList.add(cityList);
 		//		omList.add(routeList);
+		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
 

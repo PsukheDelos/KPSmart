@@ -44,7 +44,8 @@ public class UpdateThread extends Thread{
 			player.out.reset();
 			player.out.writeObject(event);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("[ERROR] Unable to find Client! Will Remove from Server");
+			server.removeConnection(player);
 		}
 	}
 
