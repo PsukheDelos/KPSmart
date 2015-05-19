@@ -20,7 +20,7 @@ public class DistributionNetwork {
 	private PathFinder pathFinder;
 
 	public void addLocation(Location location){
-		locations.put(location.name, location);
+		locations.put(location.getName(), location);
 	}
 
 	public void addLocations(Collection<Location> locations){

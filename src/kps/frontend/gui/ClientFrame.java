@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import javax.swing.*;
 
+//import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
@@ -52,7 +53,7 @@ public class ClientFrame extends JFrame{
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		client = new MailClient();
 		initialise();
 
@@ -61,10 +62,11 @@ public class ClientFrame extends JFrame{
 
 		setVisible(true);
 
-		//		We should check if a user is logged in (Most likely not, but a check is gooood.
+		//		 We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			new ClientLoginFrame(client, this);
+			new ClientLoginPane();
 		}
 	}
 
@@ -80,7 +82,7 @@ public class ClientFrame extends JFrame{
 		JTabbedPane tabbedPane = new JTabbedPane();
 		ImageIcon icon = createImageIcon("img/dash-icon.png");
 		JComponent panel1 = makeTextPanel("Welcome to the dashboard, here you can view the current financial status of KPSmart.");
-		tabbedPane.addTab("Dashboard", icon, new DashboardPanel(),
+		tabbedPane.addTab("Dashboard", icon, panel1,
 				"Does  here you can view the current financial status of KPSmart");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -191,12 +193,9 @@ public class ClientFrame extends JFrame{
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
-		omList.add(routeList);
+		//		omList.add(routeList);
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
-
-		//Optional: Do we want this?
-		//mapHandler.add(new DayNightLayer());
 
 		// Create Map tab
 		icon = createImageIcon("img/map-icon.png");
