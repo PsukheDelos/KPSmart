@@ -1,8 +1,6 @@
 package kps.distribution.event;
 
-import kps.net.event.Event;
-
-public class CustomerPriceUpdateEvent extends Event {
+public class CustomerPriceUpdateEvent extends DistributionNetworkEvent {
 	public final String to;
 	public final String from;
 	public final String priority;

@@ -1,8 +1,6 @@
 package kps.distribution.event;
 
-import kps.net.event.Event;
-
-public class MailDeliveryEvent extends Event{
+public class MailDeliveryEvent extends DistributionNetworkEvent{
 	public final String day;
 	public final String to;
 	public final String from;

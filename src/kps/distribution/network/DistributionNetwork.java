@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.DistributionNetworkEvent;
+import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.TransportCostUpdateEvent;
+import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.exception.InvalidRouteException;
 import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.pathFinder.Dijkstra;
@@ -112,5 +117,20 @@ public class DistributionNetwork {
 
 	public Set<Company> getCompanies(){
 		return this.companies;
+	}
+
+	public void processEvent(DistributionNetworkEvent event) {
+		if (event instanceof MailDeliveryEvent){
+			
+		}
+		else if (event instanceof CustomerPriceUpdateEvent){
+			
+		}
+		else if (event instanceof TransportCostUpdateEvent){
+			
+		}
+		else if (event instanceof TransportDiscontinuedEvent){
+			
+		}
 	}
 }

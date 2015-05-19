@@ -6,10 +6,12 @@ import java.util.List;
 import kps.backend.database.UserRepository;
 import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.TransportCostUpdateEvent;
 import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.network.DistributionNetwork;
+import kps.distribution.network.Route;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
@@ -40,14 +42,9 @@ public class MailSystem {
 			System.out.println("Authenicating User: " + auth.username);
 			User user = UserRepository.authenticateUser(auth.username, auth.password);
 			returnEvent = new LoginResponseEvent(user);
-		}else if(event instanceof MailDeliveryEvent){
-			
-		}else if(event instanceof CustomerPriceUpdateEvent){
-			
-		}else if(event instanceof TransportCostUpdateEvent){
-			
-		}else if(event instanceof TransportDiscontinuedEvent){
-			
+		}else if(event instanceof DistributionNetworkEvent){
+			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
+			network.processEvent(networkEvent);
 		}
 		return returnEvent;
 	}

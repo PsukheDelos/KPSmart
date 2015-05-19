@@ -1,8 +1,6 @@
 package kps.distribution.event;
 
-import kps.net.event.Event;
-
-public class TransportCostUpdateEvent extends Event {
+public class TransportCostUpdateEvent extends DistributionNetworkEvent {
 	public final String company;
 	public final String to;
 	public final String from;
