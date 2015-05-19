@@ -32,7 +32,7 @@ public class Dijkstra implements PathFinder{
 			DijkstraNode node = fringe.poll();
 
 			if (node.location.equals(mail.destination))
-				return new MailDelivery(mail, node.costToHere, pathTo(node));
+				return new MailDelivery(mail, node.costToHere, node.timeToHere, pathTo(node));
 
 			if (visited.contains(node.location))
 				continue;
