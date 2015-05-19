@@ -11,8 +11,9 @@ import java.util.Properties;
 
 import javax.swing.*;
 
-import kps.backend.database.Location;
+//import kps.backend.database.Location;
 import kps.backend.database.LocationRepository;
+import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 
 import com.bbn.openmap.LayerHandler;
@@ -52,7 +53,7 @@ public class ClientFrame extends JFrame{
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		client = new MailClient();
 		initialise();
 
@@ -65,6 +66,7 @@ public class ClientFrame extends JFrame{
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			new ClientLoginFrame(client, this);
+			new ClientLoginPane();
 		}
 	}
 
@@ -177,10 +179,7 @@ public class ClientFrame extends JFrame{
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
 			point.setOval(true);
-			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.city, point);
-			if(mapBean.getScale()<120000000f){
-				System.err.println("HEY");
-			}
+			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
@@ -197,9 +196,6 @@ public class ClientFrame extends JFrame{
 		//		omList.add(routeList);
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
-
-		//Optional: Do we want this?
-		//mapHandler.add(new DayNightLayer());
 
 		// Create Map tab
 		icon = createImageIcon("img/map-icon.png");

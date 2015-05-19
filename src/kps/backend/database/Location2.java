@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import kps.backend.UserPermissions;
 
-public class Location implements Serializable{
+public class Location2 implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	public final String city;
@@ -12,7 +12,7 @@ public class Location implements Serializable{
 	public final Double lon;
 	public final Double lat;
 	
-	public Location(String city, String country, Double lon, Double lat){
+	public Location2(String city, String country, Double lon, Double lat){
 		this.city = city;
 		this.country = country;
 		this.lon = lon;

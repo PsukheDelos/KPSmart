@@ -15,8 +15,8 @@ import kps.distribution.network.TransportType;
 import org.junit.Test;
 
 public class RouteTests {
-	private Location a = new Location("A");
-	private Location b = new Location("B");
+	private Location a = new Location("A",1,1);
+	private Location b = new Location("B",1,1);
 	private Company c = new Company("C");
 	private Random random = new Random();
 
