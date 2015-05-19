@@ -41,7 +41,8 @@ public class WorkerThread extends Thread{
 				try {
 					obj = in.readObject();
 				} catch (ClassNotFoundException | IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
+					System.exit(1);
 				}
 				
 				if(!(obj instanceof Event)) continue;
