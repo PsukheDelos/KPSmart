@@ -5,9 +5,13 @@ import java.util.List;
 
 import kps.backend.database.UserRepository;
 import kps.backend.users.User;
+import kps.net.event.CustomerPriceUpdateEvent;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
+import kps.net.event.MailDeliveryEvent;
+import kps.net.event.TransportCostUpdateEvent;
+import kps.net.event.TransportDiscontinuedEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailSystem {
@@ -34,9 +38,16 @@ public class MailSystem {
 			System.out.println("Authenicating User: " + auth.username);
 			User user = UserRepository.authenticateUser(auth.username, auth.password);
 			returnEvent = new LoginResponseEvent(user);
+		}else if(event instanceof MailDeliveryEvent){
+			
+		}else if(event instanceof CustomerPriceUpdateEvent){
+			
+		}else if(event instanceof TransportCostUpdateEvent){
+			
+		}else if(event instanceof TransportDiscontinuedEvent){
+			
 		}
 		return returnEvent;
-		
 	}
 	
 	public String toString(){
