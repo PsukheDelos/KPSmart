@@ -21,11 +21,7 @@ public class ClientToServerConnection extends Thread{
 	private ObjectInputStream input;
 	
 	public ClientToServerConnection(String ip) {
-		try{
-			connectToServer(ip);
-		}catch(IOException ex){
-			ex.printStackTrace();
-		}
+		try{ connectToServer(ip); }catch(IOException ex){ System.out.println(this + "Unable to connect to server!: " + ip);}
 	}
 	
 	private void connectToServer(String addr) throws IOException{
@@ -76,6 +72,10 @@ public class ClientToServerConnection extends Thread{
 			return null;
 		}
 		return (Event) in;
+	}
+	
+	public String toString(){
+		return "[CLIENT CONNECTION] "; 
 	}
 	
 	
