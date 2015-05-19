@@ -8,7 +8,7 @@ public enum Priority {
 	DOMESTIC_AIR,
 	DOMESTIC_STANDARD;
 
-	public Priority fromString(String s) throws InvalidPriorityException{
+	public static Priority fromString(String s){
 		String lower = s.toLowerCase();
 		if (lower.contains("international") && lower.contains("air"))
 			return INTERNATIONAL_AIR;

@@ -2,6 +2,7 @@ package kps.distribution.network;
 
 import java.security.InvalidParameterException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,6 +55,12 @@ public class DistributionNetwork {
 		for (Route route : routes){
 			addRoute(route);
 		}
+	}
+	
+	public Company getOrAddCompany(String name){
+		Company company = new Company(name);
+		companies.add(company);
+		return company;
 	}
 
 	/**
@@ -121,7 +128,9 @@ public class DistributionNetwork {
 
 	public void processEvent(DistributionNetworkEvent event) {
 		if (event instanceof MailDeliveryEvent){
-			
+			MailDeliveryEvent med = (MailDeliveryEvent)event;
+			Mail mail = new Mail(locations.get(med.from), locations.get(med.to),
+					med.weight, med.volume, Priority.fromString(med.priority), new Date(med.day));
 		}
 		else if (event instanceof CustomerPriceUpdateEvent){
 			

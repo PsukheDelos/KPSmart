@@ -1,6 +1,6 @@
 package kps.distribution.exception;
 
-public class InvalidPriorityException extends Exception {
+public class InvalidPriorityException extends RuntimeException {
 
 	private String msg;
 
