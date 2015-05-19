@@ -5,18 +5,20 @@ import java.util.List;
 
 import kps.backend.database.UserRepository;
 import kps.backend.users.User;
-import kps.net.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.TransportCostUpdateEvent;
+import kps.distribution.event.TransportDiscontinuedEvent;
+import kps.distribution.network.DistributionNetwork;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
-import kps.net.event.MailDeliveryEvent;
-import kps.net.event.TransportCostUpdateEvent;
-import kps.net.event.TransportDiscontinuedEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailSystem {
 	
 	private List<User> loggedInUsers = new ArrayList<User>();
+	private DistributionNetwork network = new DistributionNetwork();
 	
 	public MailSystem(){
 		

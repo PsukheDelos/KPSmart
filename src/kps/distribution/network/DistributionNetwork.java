@@ -7,11 +7,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import kps.distribution.exception.InvalidRouteException;
+import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.pathFinder.Dijkstra;
 import kps.distribution.pathFinder.Optimisation;
 import kps.distribution.pathFinder.PathCondition;
 import kps.distribution.pathFinder.PathFinder;
-import kps.distribution.pathFinder.PathNotFoundException;
 
 public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();

@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.network.Location;
 import kps.distribution.network.Mail;
 import kps.distribution.network.MailDelivery;
