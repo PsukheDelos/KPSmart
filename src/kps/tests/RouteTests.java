@@ -22,8 +22,8 @@ public class RouteTests {
 
 	@Test
 	public void routeCalculatesCorrectWeightCost(){
-		float weightCost = random.nextInt(10);
-		float weight = random.nextInt(10);
+		double weightCost = random.nextInt(10);
+		double weight = random.nextInt(10);
 		Route r = new Route(a, b, c, weightCost, 0, 1000, 1000, 5, 5, TransportType.AIR);
 		Mail mail = new Mail(a, b, weight, 0, Priority.DOMESTIC_STANDARD, new Date());
 		
@@ -32,8 +32,8 @@ public class RouteTests {
 
 	@Test
 	public void routeCalculatesCorrectVolumeCost(){
-		float volumeCost = random.nextInt(10);
-		float volume = random.nextInt(10);
+		double volumeCost = random.nextInt(10);
+		double volume = random.nextInt(10);
 		Route r = new Route(a, b, c, 0, volumeCost, 1000, 1000, 5, 5, TransportType.AIR);
 		Mail mail = new Mail(a, b, 0, volume, Priority.DOMESTIC_STANDARD, new Date());
 		
@@ -42,10 +42,10 @@ public class RouteTests {
 	
 	@Test
 	public void combinesWeightAndVolumeCost(){
-		float weightCost = random.nextInt(10);
-		float weight = random.nextInt(10);
-		float volumeCost = random.nextInt(10);
-		float volume = random.nextInt(10);
+		double weightCost = random.nextInt(10);
+		double weight = random.nextInt(10);
+		double volumeCost = random.nextInt(10);
+		double volume = random.nextInt(10);
 		Route r = new Route(a, b, c, weightCost, volumeCost, 1000, 1000, 5, 5, TransportType.AIR);
 		Mail mail = new Mail(a, b, weight, volume, Priority.DOMESTIC_STANDARD, new Date());
 		

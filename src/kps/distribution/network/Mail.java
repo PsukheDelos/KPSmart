@@ -6,13 +6,13 @@ public class Mail {
 	public final Location origin;
 	public final Location destination;
 
-	public final float volume;
-	public final float weight;
+	public final double volume;
+	public final double weight;
 
 	public final Priority priority;
 	public final Date sentDate;
 
-	public Mail(Location origin, Location destination, float weight, float volume, Priority priority, Date sentDate){
+	public Mail(Location origin, Location destination, double weight, double volume, Priority priority, Date sentDate){
 		this.origin = origin;
 		this.destination = destination;
 		this.weight = weight;

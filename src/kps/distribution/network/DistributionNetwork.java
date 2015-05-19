@@ -2,16 +2,23 @@ package kps.distribution.network;
 
 import java.security.InvalidParameterException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.DistributionNetworkEvent;
+import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.TransportCostUpdateEvent;
+import kps.distribution.event.TransportDiscontinuedEvent;
+import kps.distribution.exception.InvalidRouteException;
+import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.pathFinder.Dijkstra;
 import kps.distribution.pathFinder.Optimisation;
 import kps.distribution.pathFinder.PathCondition;
 import kps.distribution.pathFinder.PathFinder;
-import kps.distribution.pathFinder.PathNotFoundException;
 
 public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();
@@ -48,6 +55,12 @@ public class DistributionNetwork {
 		for (Route route : routes){
 			addRoute(route);
 		}
+	}
+	
+	public Company getOrAddCompany(String name){
+		Company company = new Company(name);
+		companies.add(company);
+		return company;
 	}
 
 	/**
@@ -111,5 +124,22 @@ public class DistributionNetwork {
 
 	public Set<Company> getCompanies(){
 		return this.companies;
+	}
+
+	public void processEvent(DistributionNetworkEvent event) {
+		if (event instanceof MailDeliveryEvent){
+			MailDeliveryEvent med = (MailDeliveryEvent)event;
+			Mail mail = new Mail(locations.get(med.from), locations.get(med.to),
+					med.weight, med.volume, Priority.fromString(med.priority), new Date(med.day));
+		}
+		else if (event instanceof CustomerPriceUpdateEvent){
+			
+		}
+		else if (event instanceof TransportCostUpdateEvent){
+			
+		}
+		else if (event instanceof TransportDiscontinuedEvent){
+			
+		}
 	}
 }

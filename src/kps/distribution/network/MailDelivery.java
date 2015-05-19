@@ -5,11 +5,13 @@ import java.util.List;
 public class MailDelivery {
 	public final Mail mail;
 	public final double cost;
+	public final double time;
 	public final List<Route> path;
 
-	public MailDelivery(Mail mail, double cost, List<Route> path){
+	public MailDelivery(Mail mail, double cost, double time, List<Route> path){
 		this.mail = mail;
 		this.cost = cost;
+		this.time = time;
 		this.path = path;
 	}
 

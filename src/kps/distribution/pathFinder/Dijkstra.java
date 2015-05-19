@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.network.Location;
 import kps.distribution.network.Mail;
 import kps.distribution.network.MailDelivery;
@@ -32,7 +33,7 @@ public class Dijkstra implements PathFinder{
 			DijkstraNode node = fringe.poll();
 
 			if (node.location.equals(mail.destination))
-				return new MailDelivery(mail, node.costToHere, pathTo(node));
+				return new MailDelivery(mail, node.costToHere, node.timeToHere, pathTo(node));
 
 			if (visited.contains(node.location))
 				continue;

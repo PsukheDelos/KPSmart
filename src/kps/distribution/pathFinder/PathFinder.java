@@ -1,5 +1,6 @@
 package kps.distribution.pathFinder;
 
+import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.network.Mail;
 import kps.distribution.network.MailDelivery;
 
