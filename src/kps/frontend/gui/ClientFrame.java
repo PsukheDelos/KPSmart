@@ -218,7 +218,7 @@ public class ClientFrame extends JFrame{
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
-		//		omList.add(routeList);
+		omList.add(routeList);
 		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
