@@ -7,10 +7,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.DeliveryEventResult;
+import kps.distribution.event.DiscontinueEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
+import kps.distribution.event.EventResult;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.SuccessEvent;
 import kps.distribution.event.TransportCostUpdateEvent;
 import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.exception.InvalidRouteException;
@@ -23,7 +28,7 @@ import kps.distribution.pathFinder.PathFinder;
 public class DistributionNetwork {
 	private Map<String, Location> locations = new HashMap<String, Location>();
 	private Set<Route> routes = new HashSet<Route>();
-	private Set<Company> companies = new HashSet<Company>();
+	private Map<String, Company> companies = new HashMap<String, Company>();
 	private PathFinder pathFinder;
 
 	public void addLocation(Location location){
@@ -44,8 +49,8 @@ public class DistributionNetwork {
 		if (routes.contains(route))
 			throw new InvalidRouteException("Route already exists");
 
-		if (!companies.contains(route.getCompany()))
-			companies.add(route.getCompany());
+		if (!companies.containsValue(route.getCompany()))
+			companies.put(route.getCompany().name, route.getCompany());
 
 		routes.add(route);
 		route.getOrigin().addRouteOut(route);
@@ -59,7 +64,7 @@ public class DistributionNetwork {
 	
 	public Company getOrAddCompany(String name){
 		Company company = new Company(name);
-		companies.add(company);
+		companies.put(name, company);
 		return company;
 	}
 
@@ -122,24 +127,69 @@ public class DistributionNetwork {
 		return this.routes;
 	}
 
-	public Set<Company> getCompanies(){
+	public Map<String, Company> getCompanies(){
 		return this.companies;
 	}
 
-	public void processEvent(DistributionNetworkEvent event) {
+	public EventResult processEvent(DistributionNetworkEvent event) {
 		if (event instanceof MailDeliveryEvent){
-			MailDeliveryEvent med = (MailDeliveryEvent)event;
-			Mail mail = new Mail(locations.get(med.from), locations.get(med.to),
-					med.weight, med.volume, Priority.fromString(med.priority), new Date(med.day));
+			MailDeliveryEvent mde = (MailDeliveryEvent)event;
+			return processMailDeliveryEvent(mde);
 		}
 		else if (event instanceof CustomerPriceUpdateEvent){
-			
+			CustomerPriceUpdateEvent cpue = (CustomerPriceUpdateEvent)event;
+			return processCustomerPriceUpdateEvent(cpue);
 		}
 		else if (event instanceof TransportCostUpdateEvent){
-			
+			TransportCostUpdateEvent tcue = (TransportCostUpdateEvent)event;
+			return processTransportCostUpdateEvent(tcue);
 		}
 		else if (event instanceof TransportDiscontinuedEvent){
-			
+			TransportDiscontinuedEvent tde = (TransportDiscontinuedEvent)event;
+			return processTransportDiscontinuedEvent(tde);
+		}
+		else{
+			return new InvalidEventResult("Event type '" + event.getClass().getName() + "' not supported");
+		}
+	}
+
+	private EventResult processTransportDiscontinuedEvent(TransportDiscontinuedEvent event) {
+		Company company = companies.get(event.company);
+		Location origin = locations.get(event.from);
+		Location destination = locations.get(event.to);
+		TransportType type = TransportType.fromString(event.type);
+
+		Set<Route> routesToRemove = routes.stream()
+			.filter(r -> r.getCompany().equals(company)
+				&& r.getOrigin().equals(origin)
+				&& r.getDestination().equals(destination)
+				&& r.getType().equals(type))
+			.collect(Collectors.toSet());
+
+		if (routesToRemove.isEmpty()) return new InvalidEventResult("Could not find a matching Route");
+
+		routes.remove(routesToRemove);
+		return new DiscontinueEventResult("Route removed successfully");
+
+	}
+
+	private EventResult processTransportCostUpdateEvent(TransportCostUpdateEvent event) {
+		// TODO
+		return new InvalidEventResult("Not implemented");
+	}
+
+	private EventResult processCustomerPriceUpdateEvent(CustomerPriceUpdateEvent event) {
+		//TODO
+		return new InvalidEventResult("Not implemented");
+	}
+
+	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {
+		Mail mail = new Mail(locations.get(event.from), locations.get(event.to),
+				event.weight, event.volume, Priority.fromString(event.priority), event.day);
+		try {
+			return new DeliveryEventResult(deliver(mail));
+		} catch (PathNotFoundException e) {
+			return new InvalidEventResult("Could not find a path from origin to destination");
 		}
 	}
 }
