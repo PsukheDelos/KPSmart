@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +38,17 @@ public class DistributionNetwork {
 		for (Location location : locations){
 			addLocation(location);
 		}
+	}
+
+	public Set<Location> getLocationsReachableFrom(String locationName){
+		Location location = locations.get(locationName);
+		if (location == null)
+			throw new InvalidParameterException("Location " + locationName + " could not be found");
+		return getLocationsReachableFrom(location);
+	}
+
+	public Set<Location> getLocationsReachableFrom(Location location){
+		return location.getReachableLocations();
 	}
 
 	public Route getRoute(Company company, Location origin, Location destination, TransportType type){
