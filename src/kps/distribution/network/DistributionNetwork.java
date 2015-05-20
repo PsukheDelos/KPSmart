@@ -2,20 +2,19 @@ package kps.distribution.network;
 
 import java.security.InvalidParameterException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kps.distribution.event.CostuUpdateEventResult;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DiscontinueEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.EventResult;
 import kps.distribution.event.MailDeliveryEvent;
-import kps.distribution.event.SuccessEvent;
 import kps.distribution.event.TransportCostUpdateEvent;
 import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.exception.InvalidRouteException;
@@ -39,6 +38,26 @@ public class DistributionNetwork {
 		for (Location location : locations){
 			addLocation(location);
 		}
+	}
+
+	public Set<Location> getLocationsReachableFrom(String locationName){
+		Location location = locations.get(locationName);
+		if (location == null)
+			throw new InvalidParameterException("Location " + locationName + " could not be found");
+		return getLocationsReachableFrom(location);
+	}
+
+	public Set<Location> getLocationsReachableFrom(Location location){
+		return location.getReachableLocations();
+	}
+
+	public Route getRoute(Company company, Location origin, Location destination, TransportType type){
+		return routes.stream()
+			.filter(r -> r.getCompany().equals(company)
+				&& r.getOrigin().equals(origin)
+				&& r.getDestination().equals(destination)
+				&& r.getType().equals(type))
+			.findFirst().orElse(null);
 	}
 
 	public void addRoute(Route route) throws InvalidRouteException{
@@ -170,12 +189,24 @@ public class DistributionNetwork {
 
 		routes.remove(routesToRemove);
 		return new DiscontinueEventResult("Route removed successfully");
-
 	}
 
 	private EventResult processTransportCostUpdateEvent(TransportCostUpdateEvent event) {
-		// TODO
-		return new InvalidEventResult("Not implemented");
+		Company company = getOrAddCompany(event.company);
+		Location origin = locations.get(event.from);
+		Location destination = locations.get(event.to);
+		TransportType type = TransportType.fromString(event.type);
+
+		Route route = getRoute(company, origin, destination, type);
+		if (route != null){
+			route.update(event);
+			return new CostuUpdateEventResult(route);
+		}else{
+			route = new Route(origin, destination, company, event.weightCost, event.volumeCost,
+					event.volumeCost, event.maxWeight, event.maxVolume, event.frequency, type, event.day);
+			routes.add(route);
+			return new CostuUpdateEventResult(route);
+		}
 	}
 
 	private EventResult processCustomerPriceUpdateEvent(CustomerPriceUpdateEvent event) {

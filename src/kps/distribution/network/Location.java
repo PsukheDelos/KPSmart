@@ -44,6 +44,10 @@ public class Location {
 		return new HashSet<Route>(this.routesOut);
 	}
 
+	public Set<Location> getReachableLocations(){
+		return DepthFirstSearch.getReachableNodes(this);
+	}
+
 	@Override
 	public int hashCode() {
 		return name.hashCode();
