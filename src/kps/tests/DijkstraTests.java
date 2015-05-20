@@ -23,7 +23,7 @@ public class DijkstraTests {
 		Location a = new Location("A",1,1);
 		Location b = new Location("B",1,1);
 		Route route = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
-		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
+		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, "Friday");
 		
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
@@ -43,7 +43,7 @@ public class DijkstraTests {
 		Location b = new Location("B",1,1);
 		Route cheapRoute = new Route(a, b, new Company("C"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
 		Route expensiveRoute = new Route(a, b, new Company("D"), 10, 20, 1000, 1000, 1, 1, TransportType.SEA);
-		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
+		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, "Friday");
 		
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
@@ -65,7 +65,7 @@ public class DijkstraTests {
 		Location c = new Location("C",1,1);
 		Route pathA = new Route(a, b, new Company("D"), 1, 2, 1000, 1000, 1, 1, TransportType.AIR);
 		Route pathB = new Route(b, c, new Company("E"), 10, 20, 1000, 1000, 1, 1, TransportType.SEA);
-		Mail mail = new Mail(a, c, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
+		Mail mail = new Mail(a, c, 10, 30, Priority.DOMESTIC_STANDARD, "Friday");
 
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
@@ -85,7 +85,7 @@ public class DijkstraTests {
 	public void pathNotFoundThrowsException() throws Exception{
 		Location a = new Location("A",1,1);
 		Location b = new Location("B",1,1);
-		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, new Date());
+		Mail mail = new Mail(a, b, 10, 30, Priority.DOMESTIC_STANDARD, "Friday");
 
 		DistributionNetwork network = new DistributionNetwork();
 		network.addLocation(a);
