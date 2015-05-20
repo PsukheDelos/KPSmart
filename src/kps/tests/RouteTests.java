@@ -24,7 +24,7 @@ public class RouteTests {
 	public void routeCalculatesCorrectWeightCost(){
 		double weightCost = random.nextInt(10);
 		double weight = random.nextInt(10);
-		Route r = new Route(a, b, c, weightCost, 0, 1000, 1000, 5, 5, TransportType.AIR);
+		Route r = new Route(a, b, c, weightCost, 0, 1000, 1000, 5, 5, TransportType.AIR, "Friday");
 		Mail mail = new Mail(a, b, weight, 0, Priority.DOMESTIC_STANDARD, "Friday");
 		
 		assertTrue(r.getCost(mail) == weight * weightCost);
@@ -34,7 +34,7 @@ public class RouteTests {
 	public void routeCalculatesCorrectVolumeCost(){
 		double volumeCost = random.nextInt(10);
 		double volume = random.nextInt(10);
-		Route r = new Route(a, b, c, 0, volumeCost, 1000, 1000, 5, 5, TransportType.AIR);
+		Route r = new Route(a, b, c, 0, volumeCost, 1000, 1000, 5, 5, TransportType.AIR, "Friday");
 		Mail mail = new Mail(a, b, 0, volume, Priority.DOMESTIC_STANDARD, "Friday");
 		
 		assertTrue(r.getCost(mail) == volume * volumeCost);
@@ -46,7 +46,7 @@ public class RouteTests {
 		double weight = random.nextInt(10);
 		double volumeCost = random.nextInt(10);
 		double volume = random.nextInt(10);
-		Route r = new Route(a, b, c, weightCost, volumeCost, 1000, 1000, 5, 5, TransportType.AIR);
+		Route r = new Route(a, b, c, weightCost, volumeCost, 1000, 1000, 5, 5, TransportType.AIR, "Friday");
 		Mail mail = new Mail(a, b, weight, volume, Priority.DOMESTIC_STANDARD, "Friday");
 		
 		assertTrue(r.getCost(mail) == volume * volumeCost + weight * weightCost);

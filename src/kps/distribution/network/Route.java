@@ -1,5 +1,7 @@
 package kps.distribution.network;
 
+import kps.distribution.event.TransportCostUpdateEvent;
+
 public class Route {
 	private Location origin;
 	private Location destination;
@@ -17,11 +19,12 @@ public class Route {
 
 	private double duration;
 	private double frequency;
+	private String day;
 	private TransportType type;
 
 	public Route(Location origin, Location destination, Company company,
-			double weightCost, double volumeCost, double maxWeight,
-			double maxVolume, double duration, double frequency, TransportType type) {
+			double weightCost, double volumeCost, double maxWeight, double maxVolume,
+			double duration, double frequency, TransportType type, String day) {
 		this.origin = origin;
 		this.destination = destination;
 		this.company = company;
@@ -32,6 +35,7 @@ public class Route {
 		this.duration = duration;
 		this.frequency = frequency;
 		this.type = type;
+		this.day = day;
 	}
 
 	public Company getCompany(){
@@ -56,6 +60,10 @@ public class Route {
 
 	public TransportType getType(){
 		return this.type;
+	}
+
+	public String getDay(){
+		return this.day;
 	}
 
 	public boolean canShip(Mail mail){
@@ -107,5 +115,15 @@ public class Route {
 		if (type != other.type)
 			return false;
 		return true;
+	}
+
+	public void update(TransportCostUpdateEvent event) {
+		this.weightCost = event.weightCost;
+		this.volumeCost = event.volumeCost;
+		this.maxWeight = event.maxWeight;
+		this.maxVolume = event.maxVolume;
+		this.duration = event.duration;
+		this.frequency = event.frequency;
+		this.day = event.day;
 	}
 }
