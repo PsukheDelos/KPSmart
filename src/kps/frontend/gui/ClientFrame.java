@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -13,7 +14,11 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.Properties;
+
 import javax.swing.UIManager.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -65,6 +70,10 @@ public class ClientFrame extends JFrame{
 
 	private ClientListener listener = new ClientListener();
 
+	public static void main(String[] args){
+		new ClientFrame();
+	}
+	
 	public ClientFrame(){
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
@@ -477,10 +486,89 @@ public class ClientFrame extends JFrame{
 		JLabel label = new JLabel("Dashboard");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/dash-icon.png"));
-		JComponent panel0 = makeTextPanel("Dashboard");
-		tabbedPane.addTab("Dashboard", null, panel0,"View the current financial status of KPSmart");
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		tabbedPane.addTab("Dashboard", null, panel,"View the current financial status of KPSmart");
 		tabbedPane.setTabComponentAt(0, label);
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		
+		//Revenue
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		
+		JPanel revenuePanel = new JPanel();
+		revenuePanel.setLayout(new GridLayout(2,1));
+		revenuePanel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));		
+		revenuePanel.setBackground(Color.WHITE);
+
+		JLabel revenueLabel = new JLabel("Revenue: ", SwingConstants.LEFT);
+		revenueLabel.setFont(new Font(revenueLabel.getFont().getFontName(), Font.PLAIN, 30));
+		JLabel revenueDisp = new JLabel("$1000.00", SwingConstants.LEFT);
+		revenueDisp.setFont(new Font(revenueLabel.getFont().getFontName(), Font.BOLD, 40));
+		revenueDisp.setForeground(Color.GREEN);
+		
+		revenuePanel.add(revenueLabel);
+		revenuePanel.add(revenueDisp);
+		
+		panel.add(revenuePanel,c);
+		
+		//Expenditure
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 0;
+		
+		JPanel expPanel = new JPanel();
+		expPanel.setLayout(new GridLayout(2,1));
+		expPanel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));		
+		expPanel.setBackground(Color.white);
+
+		JLabel expLabel = new JLabel("Expenditure: ", SwingConstants.LEFT);
+		expLabel.setFont(new Font(expLabel.getFont().getFontName(), Font.PLAIN, 30));
+		JLabel expDisp = new JLabel("$3000.00", SwingConstants.LEFT);
+		expDisp.setFont(new Font(expLabel.getFont().getFontName(), Font.BOLD, 40));
+		expDisp.setForeground(Color.RED);
+		
+		expPanel.add(expLabel);
+		expPanel.add(expDisp);
+		
+		panel.add(expPanel,c);
+		
+		//Profit
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 2;
+		c.gridy = 0;
+		
+		JPanel profPanel = new JPanel();
+		profPanel.setLayout(new GridLayout(2,1));
+		profPanel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));		
+		profPanel.setBackground(Color.white);
+		JLabel profLabel = new JLabel("Profit: ", SwingConstants.LEFT);
+		profLabel.setFont(new Font(profLabel.getFont().getFontName(), Font.PLAIN, 30));
+		JLabel profDisp = new JLabel("-$2000.00", SwingConstants.LEFT);
+		profDisp.setFont(new Font(profDisp.getFont().getFontName(), Font.BOLD, 40));
+		profDisp.setForeground(Color.RED);
+		
+		profPanel.add(profLabel);
+		profPanel.add(profDisp);
+		
+		panel.add(profPanel,c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 3;
+		
+		JTabbedPane dashTab = new JTabbedPane();
+		dashTab.addTab("Critical routes", null, null,"View the current financial status of KPSmart");
+		dashTab.addTab("Monthly overview", null, null,"View the current financial status of KPSmart");
+		dashTab.addTab("Revenue & expenditure", null, null,"View the current financial status of KPSmart");
+		dashTab.addTab("Number of events", null, null,"View the current financial status of KPSmart");
+		dashTab.addTab("Export", null, null,"View the current financial status of KPSmart");
+		
+		panel.add(dashTab,c);
+		
 	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
