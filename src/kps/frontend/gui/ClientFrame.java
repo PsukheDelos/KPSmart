@@ -76,10 +76,11 @@ public class ClientFrame extends JFrame{
 	private Double entered_weight = (double) 0;
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
+	private JTable jt;
 
 	private MailClient client;
 
-	private ClientListener listener = new ClientListener(); //What is this for?
+//	private ClientListener listener = new ClientListener(); //What is this for?
 
 	public static void main(String[] args){
 		//put for quicker launch
@@ -277,6 +278,7 @@ public class ClientFrame extends JFrame{
 		tabbedPane.addTab("Prices", null, panel,"View and Edit the current prices of KPSmart");
 		tabbedPane.setTabComponentAt(3, label);
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+		jt = PriceRepository.getPricesTable();
 
 		//Title: Prices
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -308,13 +310,29 @@ public class ClientFrame extends JFrame{
 		editPrice.setText("Edit");
 		panel.add(editPrice,c);
 
-		//Button: Add Price
+		//Button: Remove Price
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 2;
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton removePrice = new JButton();
 		removePrice.setText("-");
+		removePrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = jt.getSelectedRow();
+				if(sr!=-1){
+					int dialogButton = JOptionPane.YES_NO_OPTION;
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
+					if(dialogResult == JOptionPane.YES_OPTION){
+						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+						jt.setModel(PriceRepository.getPricesModel());
+					}
+				}
+
+			}
+		});
 		panel.add(removePrice,c);
 
 		//Table: Price Table
@@ -322,7 +340,6 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
-		JTable jt = PriceRepository.getPricesTable();
 		jt.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		jt.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(jt),c);
@@ -332,13 +349,13 @@ public class ClientFrame extends JFrame{
 	 * @param tabbedPane
 	 */
 	private void createRouteTab(JTabbedPane tabbedPane) {
-//		JLabel label = new JLabel("Routes");
-//		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
-//		label.setIcon(createImageIcon("img/route-icon.png"));
-//		JComponent panel2 = makeTextPanel("Here you can update and add new routes between ports.");
-//		tabbedPane.addTab("Routes", null, panel2,"Here you can update and add new routes between ports.");
-//		tabbedPane.setTabComponentAt(2, label);
-//		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+		//		JLabel label = new JLabel("Routes");
+		//		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
+		//		label.setIcon(createImageIcon("img/route-icon.png"));
+		//		JComponent panel2 = makeTextPanel("Here you can update and add new routes between ports.");
+		//		tabbedPane.addTab("Routes", null, panel2,"Here you can update and add new routes between ports.");
+		//		tabbedPane.setTabComponentAt(2, label);
+		//		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 		JLabel label = new JLabel("Routes");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/route-icon.png"));
@@ -408,6 +425,8 @@ public class ClientFrame extends JFrame{
 		label.setIcon(createImageIcon("img/mail-icon.png"));
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
+		//		Border b = BorderFactory.createTitledBorder(new MatteBorder(1,5,1,1,Color.red), "New Mail Delivery");
+		//		panel.setBorder(b);
 		GridBagConstraints c = new GridBagConstraints();
 		tabbedPane.addTab("Mail Delivery", null, panel,"New Mail Delivery");
 		tabbedPane.setTabComponentAt(1, label);
@@ -638,7 +657,7 @@ public class ClientFrame extends JFrame{
 		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
 		title.setForeground(Color.decode("#fffe9a"));
 		panel.add(title,c);
-		
+
 		//Revenue
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -707,7 +726,7 @@ public class ClientFrame extends JFrame{
 		c.gridwidth = 3;
 
 		JTabbedPane dashTab = new JTabbedPane();
-		dashTab.addTab("Critical routes", null, null,"View the current financial status of KPSmart");
+		//		dashTab.addTab("Critical routes", null, null,"View the current financial status of KPSmart");
 		dashTab.addTab("Monthly overview", null, null,"View the current financial status of KPSmart");
 		dashTab.addTab("Revenue & expenditure", null, null,"View the current financial status of KPSmart");
 		dashTab.addTab("Number of events", null, null,"View the current financial status of KPSmart");
