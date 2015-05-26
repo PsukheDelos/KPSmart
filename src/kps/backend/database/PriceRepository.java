@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import kps.distribution.network.Location;
-
 public class PriceRepository {
 
 	private static Connection db = null;
@@ -22,7 +20,14 @@ public class PriceRepository {
 	public static JTable getPricesTable(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
-		    DefaultTableModel model = new DefaultTableModel();
+			DefaultTableModel model = new DefaultTableModel() {
+
+			    @Override
+			    public boolean isCellEditable(int row, int column) {
+			       //all cells false
+			       return false;
+			    }
+			};
 			JTable prices = new JTable(model);
 			model.addColumn("from");
 			model.addColumn("to");
