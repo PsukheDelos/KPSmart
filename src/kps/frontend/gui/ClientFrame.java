@@ -83,8 +83,8 @@ public class ClientFrame extends JFrame{
 
 	public static void main(String[] args){
 		//put for quicker launch
-//		Server server = new Server();
-//		server.start();
+		Server server = new Server();
+		server.start();
 		new ClientFrame();
 	}
 
@@ -296,6 +296,23 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton addPrice = new JButton();
+		addPrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				new PriceFrame(null,"Add");
+//				int sr = jt.getSelectedRow();
+//				if(sr!=-1){
+//					int dialogButton = JOptionPane.YES_NO_OPTION;
+//					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
+//					if(dialogResult == JOptionPane.YES_OPTION){
+//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+//						jt.setModel(PriceRepository.getPricesModel());
+//					}
+//				}
+
+			}
+		});
 		addPrice.setText("+");
 		panel.add(addPrice,c);
 
@@ -305,6 +322,19 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton editPrice = new JButton();
+		editPrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = jt.getSelectedRow();
+				if(sr!=-1){
+					new PriceFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString(),jt.getModel().getValueAt(sr, 4).toString());
+//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+//						jt.setModel(PriceRepository.getPricesModel());
+				}
+
+			}
+		});
 		editPrice.setText("Edit");
 		panel.add(editPrice,c);
 
