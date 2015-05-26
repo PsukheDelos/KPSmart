@@ -41,6 +41,7 @@ import javax.swing.UIManager;
 
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
+import kps.backend.database.RouteRepository;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 import kps.net.server.Server;
@@ -71,8 +72,10 @@ public class ClientFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	public static final int CLIENT_WIDTH = 1200;
 	public static final int CLIENT_HEIGHT = 700;
-	private Double price_weight = (double) 0;;
-	private Double price_volume = (double) 0;
+
+	private Double entered_weight = (double) 0;
+	private Double entered_volume = (double) 0;
+	private Double total_price = (double) 0;
 
 	private MailClient client;
 
@@ -293,7 +296,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton addPrice = new JButton();
-		addPrice.setText("+ Add Price");
+		addPrice.setText("+");
 		panel.add(addPrice,c);
 
 		//Button: Edit Price
@@ -311,7 +314,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton removePrice = new JButton();
-		removePrice.setText("- Remove");
+		removePrice.setText("-");
 		panel.add(removePrice,c);
 
 		//Table: Price Table
@@ -329,13 +332,71 @@ public class ClientFrame extends JFrame{
 	 * @param tabbedPane
 	 */
 	private void createRouteTab(JTabbedPane tabbedPane) {
+//		JLabel label = new JLabel("Routes");
+//		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
+//		label.setIcon(createImageIcon("img/route-icon.png"));
+//		JComponent panel2 = makeTextPanel("Here you can update and add new routes between ports.");
+//		tabbedPane.addTab("Routes", null, panel2,"Here you can update and add new routes between ports.");
+//		tabbedPane.setTabComponentAt(2, label);
+//		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 		JLabel label = new JLabel("Routes");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/route-icon.png"));
-		JComponent panel2 = makeTextPanel("Here you can update and add new routes between ports.");
-		tabbedPane.addTab("Routes", null, panel2,"Here you can update and add new routes between ports.");
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		tabbedPane.addTab("Routes", null, panel,"View and Edit the current Routes of KPSmart");
 		tabbedPane.setTabComponentAt(2, label);
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+
+		//Title: Routes
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+
+		JLabel title = new JLabel("Routes", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
+
+		panel.add(title,c);
+
+		//Button: Add Route
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton addPrice = new JButton();
+		addPrice.setText("+");
+		panel.add(addPrice,c);
+
+		//Button: Edit Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton editPrice = new JButton();
+		editPrice.setText("Edit");
+		panel.add(editPrice,c);
+
+		//Button: Add Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 2;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton removePrice = new JButton();
+		removePrice.setText("-");
+		panel.add(removePrice,c);
+
+		//Table: Price Table
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 4;
+		JTable jt = RouteRepository.getRoutesTable();
+		jt.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		jt.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(jt),c);
 	}
 
 	/**
@@ -356,7 +417,9 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 2;
-		JLabel title = new JLabel("New Mail Event",SwingConstants.CENTER);
+		JLabel title = new JLabel("New Mail Event", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
 		panel.add(title,c);	
 		//
 
@@ -430,15 +493,20 @@ public class ClientFrame extends JFrame{
 		toDropDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String f = (String) fromDropDown.getSelectedItem();
-				String t = (String) toDropDown.getSelectedItem();
-				priorityDropDown.removeAllItems();
-				for (String priority : PriceRepository.getPriorities(f,t)){
-					priorityDropDown.addItem(priority);
+				if(fromDropDown.getItemCount()!=0){
+					String f = (String) fromDropDown.getSelectedItem();
+					String t = (String) toDropDown.getSelectedItem();
+					priorityDropDown.removeAllItems();
+					for (String priority : PriceRepository.getPriorities(f,t)){
+						priorityDropDown.addItem(priority);
+					}
+					priorityDropDown.setSelectedItem(PriceRepository.getPriorities(f,t).get(0));
 				}
 			}
 		});
+
 		priorityDropDown.setSelectedItem(PriceRepository.getPriorities(f,t).get(0));
+
 		JLabel	 totalPrice = new JLabel("$0.00",SwingConstants.LEFT);
 
 		JFormattedTextField	 weightText = new JFormattedTextField(NumberFormat.getNumberInstance());
@@ -453,11 +521,13 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub
-				price_weight = Double.valueOf(weightText.getText());
+				entered_weight = Double.valueOf(weightText.getText());
+
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				Double total_price = (price_weight * price_weight2) + (price_volume * price_volume2);
+
+				total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
+
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
 
@@ -476,68 +546,24 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				price_volume = Double.valueOf(volumeText.getText());
+				entered_volume = Double.valueOf(volumeText.getText());
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				Double total_price = (price_weight * price_weight2) + (price_volume * price_volume2);
+				Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
 
 		});
 
-//		volumeText.getDocument().addDocumentListener(new DocumentListener() {
-//			public void changedUpdate(DocumentEvent e) {
-//				update();
-//			}
-//			public void removeUpdate(DocumentEvent e) {
-//				update();
-//			}
-//			public void insertUpdate(DocumentEvent e) {
-//				update();
-//			}
-//
-//			public void update() {
-//				if (Double.valueOf(volumeText.getText())!=price_volume){
-//					Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-//					Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-//					Double total_price = (price_weight * price_weight2) + (price_volume * price_volume2);
-//					totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
-//				}
-//			}
-//		});
-		//		weightText.addActionListener(new ActionListener() {
-		//		    @Override
-		//		    public void actionPerformed(ActionEvent e) {
-		//		    	Double price_volume = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-		//		    	Double price_weight = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-		//		    	
-		//		    	Double total_price = (price_weight * Double.parseDouble(weightText.getText())) + (price_volume * Double.parseDouble(volumeText.getText()));
-		//		    	totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
-		//		    }
-		//		});
-		//		
-		//		volumeText.addActionListener(new ActionListener() {
-		//		    @Override
-		//		    public void actionPerformed(ActionEvent e) {
-		//		    	Double price_volume = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-		//		    	Double price_weight = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-		//		    	
-		//		    	Double total_price = (price_weight * Double.parseDouble(weightText.getText())) + (price_volume * Double.parseDouble(volumeText.getText()));
-		//		    	totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
-		//		    }
-		//		});
-
-
 		priorityDropDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//		    	System.out.println(fromDropDown.getSelectedItem().toString());
-				//		    	System.out.println(toDropDown.getSelectedItem().toString());
-				//		    	Double price_volume = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				//		    	Double price_weight = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				//		    	
-				//		    	Double total_price = (price_weight * Double.parseDouble(weightText.getText())) + (price_volume * Double.parseDouble(volumeText.getText()));
-				//		    	totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
+				if(priorityDropDown.getItemCount()!=0){
+					Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
+					Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
+					Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
+					totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
+				}
 			}
 		});
 
@@ -605,10 +631,18 @@ public class ClientFrame extends JFrame{
 		tabbedPane.setTabComponentAt(0, label);
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		//Revenue
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
+		JLabel title = new JLabel("Dashboard", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
+		panel.add(title,c);
+		
+		//Revenue
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
 
 		JPanel revenuePanel = new JPanel();
 		revenuePanel.setLayout(new GridLayout(2,1));
@@ -629,7 +663,7 @@ public class ClientFrame extends JFrame{
 		//Expenditure
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 
 		JPanel expPanel = new JPanel();
 		expPanel.setLayout(new GridLayout(2,1));
@@ -650,7 +684,7 @@ public class ClientFrame extends JFrame{
 		//Profit
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 2;
-		c.gridy = 0;
+		c.gridy = 1;
 
 		JPanel profPanel = new JPanel();
 		profPanel.setLayout(new GridLayout(2,1));
@@ -669,7 +703,7 @@ public class ClientFrame extends JFrame{
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.gridwidth = 3;
 
 		JTabbedPane dashTab = new JTabbedPane();
