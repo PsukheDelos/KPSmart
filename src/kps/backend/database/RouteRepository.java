@@ -14,7 +14,14 @@ public class RouteRepository {
 	private static Connection db = null;
 
 	public static boolean thereIsAConnectionToTheDatabase(){
-		return db != null;
+		try {
+			if (db==null || db.isClosed()==true){
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	public static JTable getRoutesTable(){
@@ -41,6 +48,7 @@ public class RouteRepository {
 			while(result.next()){
 			    model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3), result.getString(4)});
 			}
+			db.close();
 			return routes;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
@@ -56,6 +64,7 @@ public class RouteRepository {
 			while(result.next()){
 				fromCities.add(result.getString(1));
 			}
+			db.close();
 			return fromCities;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
@@ -71,6 +80,7 @@ public class RouteRepository {
 			while(result.next()){
 				toCities.add(result.getString(1));
 			}
+			db.close();
 			return toCities;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
