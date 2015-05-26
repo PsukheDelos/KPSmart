@@ -15,6 +15,16 @@ public class UserRepository {
 	
 	// String query = "CREATE TABLE users (ID INT PRIMARY KEY NOT NULL, username VARCHAR (255) NOT NULL, password VARCHAR(255) NOT NULL, permission INT NOT NULL";
 	
+	public static boolean thereIsAConnectionToTheDatabase(){
+		try {
+			if (db==null || db.isClosed()==true){
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
 	
 	public static User authenticateUser(String username, String passwordHash){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
@@ -22,6 +32,7 @@ public class UserRepository {
 			Statement statement = db.createStatement();
 			String query = "SELECT username,permission FROM users WHERE username='" + username + "' AND password='" + passwordHash + "'";
 			ResultSet result = statement.executeQuery(query);
+			db.close();
 			return new User(result.getString(1), UserPermissions.values()[result.getInt(2)]);
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
@@ -36,13 +47,10 @@ public class UserRepository {
 			Statement statement = db.createStatement();
 			String query = "INSERT INTO users (ID,username,password,permission) VALUES (NULL, '" + username + "', '" + passwordHash + "', " + permissionLevel.ordinal();
 			statement.executeQuery(query);
+			db.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static boolean thereIsAConnectionToTheDatabase(){
-		return db != null;
 	}
 	
 	private static boolean containsUser(String username){
@@ -51,6 +59,7 @@ public class UserRepository {
 			Statement statement = db.createStatement();
 			String query = "SELECT Count(*) FROM users WHERE username=" + username;
 			ResultSet result = statement.executeQuery(query);
+			db.close();
 			return result.first();
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
