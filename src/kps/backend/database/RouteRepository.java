@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 public class RouteRepository {
 
@@ -24,7 +24,7 @@ public class RouteRepository {
 		return true;
 	}
 
-	public static JTable getRoutesTable(){
+	public static TableModel getRoutesModel(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			DefaultTableModel model = new DefaultTableModel() {
@@ -37,7 +37,6 @@ public class RouteRepository {
 			       return false;
 			    }
 			};
-			JTable routes = new JTable(model);
 			model.addColumn("from");
 			model.addColumn("to");
 			model.addColumn("method");
@@ -49,10 +48,11 @@ public class RouteRepository {
 			    model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3), result.getString(4)});
 			}
 			db.close();
-			return routes;
+			return model;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
+	
 	
 	public static ArrayList<String> getFromCities(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
@@ -86,50 +86,18 @@ public class RouteRepository {
 		return null;
 	}
 	
-//	public static ArrayList<String> getPriorities(String fromCity, String toCity){
-//		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
-//		try {
-//			Statement statement = db.createStatement();
-//			String query = "SELECT distinct \"priority\" FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" order by \"to\" asc";
-//			ResultSet result = statement.executeQuery(query);
-//			ArrayList<String> priorities = new ArrayList<String>();
-//			while(result.next()){
-//				priorities.add(result.getString(1));
-//			}
-//			return priorities;
-//		} catch (SQLException e) {e.printStackTrace();}
-//		return null;
-//	}
-//	
-//	public static Double getPriceWeight(String fromCity, String toCity, String priority){
-//		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
-//		try {
-//			Statement statement = db.createStatement();
-//			String query = "SELECT distinct \"price_weight\" FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
-//			ResultSet result = statement.executeQuery(query);
-//			double priceWeight = 0;
-//			while(result.next()){
-//				priceWeight = result.getDouble(1);
-//			}
-//			return priceWeight;
-//		} catch (SQLException e) {e.printStackTrace();}
-//		return null;
-//	}
-//	
-//	public static Double getPriceVolume(String fromCity, String toCity, String priority){
-//		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
-//		try {
-//			Statement statement = db.createStatement();
-//			String query = "SELECT distinct \"price_volume\" FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
-//			ResultSet result = statement.executeQuery(query);
-//			double priceVolume = 0;
-//			while(result.next()){
-//				priceVolume = result.getDouble(1);
-//			}
-//			return priceVolume;
-//		} catch (SQLException e) {e.printStackTrace();}
-//		return null;
-//	}
+	public static Boolean removeRoute(String fromCity, String toCity, String category){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "DELETE FROM route where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"category\"=\""+category+"\"";
+			statement.execute(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
+
 	
 	
 	
