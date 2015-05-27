@@ -20,6 +20,14 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Properties;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
+
 import javax.swing.UIManager.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -79,12 +87,12 @@ public class ClientFrame extends JFrame{
 
 	private MailClient client;
 
-//	private ClientListener listener = new ClientListener(); //What is this for?
+	//	private ClientListener listener = new ClientListener(); //What is this for?
 
 	public static void main(String[] args){
 		//put for quicker launch
-//		Server server = new Server();
-//		server.start();
+		Server server = new Server();
+		server.start();
 		new ClientFrame();
 	}
 
@@ -100,6 +108,8 @@ public class ClientFrame extends JFrame{
 					System.exit(0);
 			}
 		});
+		
+		
 
 		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
 		UIManager.put("nimbusBlueGrey", Color.white);
@@ -117,15 +127,14 @@ public class ClientFrame extends JFrame{
 		}
 
 
-
 		client = new MailClient();
 		initialise();
 
 		pack();
 		setLocationRelativeTo(null);
-		setVisible(true);
+		setVisible(false);
 
-		// We should check if a user is logged in (Most likely not, but a check is gooood.
+//		// We should check if a user is logged in (Most likely not, but a check is gooood.
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
@@ -169,7 +178,6 @@ public class ClientFrame extends JFrame{
 		MapHandler mapHandler = mapPanel.getMapHandler();
 		// Get the default MapBean that the BasicMapPanel created.
 		MapBean mapBean = mapPanel.getMapBean();
-
 		// Set the map's center
 		mapBean.setCenter(wellingtonLocation);
 
@@ -197,8 +205,11 @@ public class ClientFrame extends JFrame{
 		// Add a ToolPanel for widgets on the north side of the map.
 		mapHandler.add(new ToolPanel());
 
-		mapBean.setBackgroundColor(new Color((float)0.255, (float)0.412, (float)0.882));
+		mapBean.setBackgroundColor(Color.decode("#b8dbfe"));
 
+		//		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
+		//		UIManager.put("nimbusBlueGrey", Color.white);
+		//		UIManager.put("control", Color.decode("#b8dbfe"));
 		/*
 		 * Create a ShapeLayer to show world political boundaries. Set the
 		 * properties of the layer. This assumes that the datafile
@@ -296,6 +307,16 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton addPrice = new JButton();
+		addPrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				new PriceFrame(null,"Add");
+				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+				//						jt.setModel(PriceRepository.getPricesModel());
+
+			}
+		});
 		addPrice.setText("+");
 		panel.add(addPrice,c);
 
@@ -305,6 +326,19 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 1;
 		JButton editPrice = new JButton();
+		editPrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = jt.getSelectedRow();
+				if(sr!=-1){
+					new PriceFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString(),jt.getModel().getValueAt(sr, 4).toString());
+					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+					//						jt.setModel(PriceRepository.getPricesModel());
+				}
+
+			}
+		});
 		editPrice.setText("Edit");
 		panel.add(editPrice,c);
 
@@ -375,20 +409,43 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 1;
-		JButton addPrice = new JButton();
-		addPrice.setText("+");
-		panel.add(addPrice,c);
+		JButton addRoute = new JButton();
+		addRoute.setText("+");
+		addRoute.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				new RouteFrame(null,"Add");
+				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+				//						jt.setModel(PriceRepository.getPricesModel());
 
-		//Button: Edit Price
+			}
+		});
+		panel.add(addRoute,c);
+
+		//Button: Edit Route
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 1;
-		JButton editPrice = new JButton();
-		editPrice.setText("Edit");
-		panel.add(editPrice,c);
+		JButton editRoute = new JButton();
+		editRoute.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = jt.getSelectedRow();
+				if(sr!=-1){
+					new RouteFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString() );
+					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+					//						jt.setModel(PriceRepository.getPricesModel());
+				}
 
-		//Button: Add Price
+			}
+		});
+		editRoute.setText("Edit");
+		panel.add(editRoute,c);
+
+		//Button: Remove Route
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 2;
 		c.gridy = 1;
@@ -537,7 +594,6 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -562,7 +618,6 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -725,14 +780,81 @@ public class ClientFrame extends JFrame{
 		c.gridy = 2;
 		c.gridwidth = 3;
 
+		final JFXPanel jFXPanel = new JFXPanel();
+		Group root = new Group();
+		Scene scene = new Scene(root);
+
+		ObservableList<PieChart.Data> pieChartData =
+				FXCollections.observableArrayList(
+						new PieChart.Data("Revenue", 134),
+						new PieChart.Data("Expense", 27));
+		final PieChart revchart = new PieChart(pieChartData);
+		revchart.setTitle("Domestic");
+		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");		
+		((Group) scene.getRoot()).getChildren().add(revchart);
+
+		jFXPanel.setScene(scene);
+		JPanel j = new JPanel();
+		j.add(jFXPanel);
+		
+		//International
+		final JFXPanel jFXPanel2 = new JFXPanel();
+		Group root2 = new Group();
+		Scene scene2 = new Scene(root2);
+
+		ObservableList<PieChart.Data> pieChartData2 =
+				FXCollections.observableArrayList(
+						new PieChart.Data("Revenue", 2),
+						new PieChart.Data("Expense", 300));
+		final PieChart revchart2 = new PieChart(pieChartData2);
+		revchart2.setTitle("International");
+		revchart2.setStyle("-fx-background-color: rgba(184,219,254,1);");
+		revchart2.setTitle("International");
+		
+		((Group) scene2.getRoot()).getChildren().add(revchart2);
+
+		jFXPanel2.setScene(scene2);
+		JPanel k = new JPanel();
+		k.add(jFXPanel2);
+		
+		
+		
 		JTabbedPane dashTab = new JTabbedPane();
-		dashTab.addTab("Monthly overview", null, null,"View the current financial status of KPSmart");
-		dashTab.addTab("Revenue & expenditure", null, null,"View the current financial status of KPSmart");
-		dashTab.addTab("Number of events", null, null,"View the current financial status of KPSmart");
-		dashTab.addTab("Export", null, null,"View the current financial status of KPSmart");
+		dashTab.addTab("Trends", null, new JPanel(),"View the current financial status of KPSmart");
+		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
+		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
+		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
 
 		panel.add(dashTab,c);
 
+	}
+
+	private static void initFxLater(JFXPanel panel) {
+		Group root = new Group();
+//		Scene scene = new Scene(root, 450, 200);
+		Scene scene = new Scene(root);
+
+		ObservableList<PieChart.Data> pieChartData =
+				FXCollections.observableArrayList(
+						new PieChart.Data("Domestic", 134),
+						new PieChart.Data("International", 27));
+		final PieChart revchart = new PieChart(pieChartData);
+		revchart.setTitle("Revenue");
+		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
+//		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
+//		UIManager.put("nimbusBlueGrey", Color.white);
+//		UIManager.put("control", Color.decode("#b8dbfe"));
+		//		revchart.setBackground(new Background());
+		pieChartData =
+				FXCollections.observableArrayList(
+						new PieChart.Data("Domestic", 2),
+						new PieChart.Data("International", 300));
+		final PieChart chart = new PieChart(pieChartData);
+		chart.setTitle("Expenses");
+		
+		((Group) scene.getRoot()).getChildren().add(revchart);
+
+		panel.setScene(scene);
 	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */

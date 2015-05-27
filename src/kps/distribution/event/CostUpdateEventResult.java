@@ -2,11 +2,11 @@ package kps.distribution.event;
 
 import kps.distribution.network.Route;
 
-public class CostuUpdateEventResult extends EventResult {
+public class CostUpdateEventResult extends EventResult {
 
 	public final Route route;
 
-	public CostuUpdateEventResult(Route route) {
+	public CostUpdateEventResult(Route route) {
 		this.route = route;
 	}
 

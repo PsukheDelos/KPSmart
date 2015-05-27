@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import kps.distribution.event.CostuUpdateEventResult;
+import kps.distribution.event.CostUpdateEventResult;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DiscontinueEventResult;
@@ -200,12 +200,12 @@ public class DistributionNetwork {
 		Route route = getRoute(company, origin, destination, type);
 		if (route != null){
 			route.update(event);
-			return new CostuUpdateEventResult(route);
+			return new CostUpdateEventResult(route);
 		}else{
 			route = new Route(origin, destination, company, event.weightCost, event.volumeCost,
 					event.volumeCost, event.maxWeight, event.maxVolume, event.frequency, type, event.day);
 			routes.add(route);
-			return new CostuUpdateEventResult(route);
+			return new CostUpdateEventResult(route);
 		}
 	}
 
