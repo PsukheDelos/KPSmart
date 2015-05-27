@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import kps.backend.database.LocationRepository;
+import kps.backend.database.RouteRepository;
 import kps.distribution.event.CostUpdateEventResult;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
@@ -29,6 +31,21 @@ public class DistributionNetwork {
 	private Set<Route> routes = new HashSet<Route>();
 	private Map<String, Company> companies = new HashMap<String, Company>();
 	private PathFinder pathFinder;
+
+	public DistributionNetwork(){
+		for (Location location : LocationRepository.getLocations()){
+			locations.put(location.name, location);
+		}
+		for (TransportCostUpdateEvent e : RouteRepository.getRoutes()){
+			if (!locations.containsKey(e.from)){
+				locations.put(e.from, new Location(e.from, 100, 100));
+			}
+			if (!locations.containsKey(e.to)){
+				locations.put(e.to, new Location(e.to, 100, 100));
+			}
+			processTransportCostUpdateEvent(e);
+		}
+	}
 
 	public void addLocation(Location location){
 		locations.put(location.getName(), location);
@@ -215,6 +232,12 @@ public class DistributionNetwork {
 	}
 
 	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {
+		if (!locations.containsKey(event.from)){
+			locations.put(event.from, new Location(event.from, 100, 100));
+		}
+		if (!locations.containsKey(event.to)){
+			locations.put(event.to, new Location(event.to, 100, 100));
+		}
 		Mail mail = new Mail(locations.get(event.from), locations.get(event.to),
 				event.weight, event.volume, Priority.fromString(event.priority), event.day);
 		try {

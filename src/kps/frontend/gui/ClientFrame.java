@@ -10,8 +10,10 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -595,16 +597,16 @@ public class ClientFrame extends JFrame{
 
 		JFormattedTextField	 weightText = new JFormattedTextField(NumberFormat.getNumberInstance());
 		weightText.setValue(0);
-		weightText.addFocusListener(new FocusListener(){
-
-			@Override
-			public void focusGained(FocusEvent e) {
-
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				entered_weight = Double.valueOf(weightText.getText());
+		weightText.addKeyListener(new KeyAdapter() {
+			
+			public void keyReleased(KeyEvent e){
+				if(weightText.getText().equals("")){
+					entered_weight = 0.00;
+				}else{
+					entered_weight = Double.valueOf(weightText.getText());
+				}
+				
+				
 
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
@@ -613,39 +615,48 @@ public class ClientFrame extends JFrame{
 
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
-
+			
+			}
+				
+		);
+		weightText.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e){
+				if(weightText.getText().equals("")) weightText.setText("0");
+			}
+			public void focusGained(FocusEvent e){
+				if(weightText.getText().equals("0"))weightText.setText("");
+			}
 		});
 		weightText.setBackground(Color.decode("#fffe9a"));
 		JFormattedTextField	 volumeText = new JFormattedTextField(NumberFormat.getNumberInstance());
 		volumeText.setValue(0);
 		volumeText.setBackground(Color.decode("#fffe9a"));
-		volumeText.addFocusListener(new FocusListener(){
-
-			@Override
-			public void focusGained(FocusEvent e) {
-
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				entered_volume = Double.valueOf(volumeText.getText());
+		//volumeText.setCaretPosition(position);
+		volumeText.addKeyListener(new KeyAdapter() {
+			
+			public void keyReleased(KeyEvent e){
+				if(volumeText.getText().equals("")){
+					entered_volume = 0.00;
+				}else{
+					entered_volume = Double.valueOf(volumeText.getText());
+				}
+				
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
-
-		});
-
-		priorityDropDown.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(priorityDropDown.getItemCount()!=0){
-					Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-					Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-					Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
-					totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
-				}
+			
+			}
+				
+		);
+		volumeText.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e){
+				if(volumeText.getText().equals(""))volumeText.setText("0");
+			}
+			
+			public void focusGained(FocusEvent e){
+				if(volumeText.getText().equals("0"))volumeText.setText("");
 			}
 		});
 
