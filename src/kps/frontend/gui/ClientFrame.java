@@ -599,11 +599,22 @@ public class ClientFrame extends JFrame{
 		weightText.setValue(0);
 		weightText.addKeyListener(new KeyAdapter() {
 			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
+			}
+			
 			public void keyReleased(KeyEvent e){
 				if(weightText.getText().equals("")){
 					entered_weight = 0.00;
 				}else{
-					entered_weight = Double.valueOf(weightText.getText());
+					try{
+						entered_weight = Double.valueOf(weightText.getText());
+					} catch (NullPointerException exception) {
+						entered_weight = 0.00;
+					} catch (NumberFormatException exception) {
+						entered_weight = 0.00;
+					}
 				}
 				
 				
@@ -634,11 +645,23 @@ public class ClientFrame extends JFrame{
 		//volumeText.setCaretPosition(position);
 		volumeText.addKeyListener(new KeyAdapter() {
 			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
+			}
+			
 			public void keyReleased(KeyEvent e){
 				if(volumeText.getText().equals("")){
 					entered_volume = 0.00;
 				}else{
-					entered_volume = Double.valueOf(volumeText.getText());
+					try{
+						entered_volume = Double.valueOf(volumeText.getText());
+					} catch (NullPointerException exception) {
+						entered_volume = 0.00;
+					} catch (NumberFormatException exception) {
+						entered_volume = 0.00;
+					}
+					
 				}
 				
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
