@@ -132,7 +132,7 @@ public class ClientFrame extends JFrame{
 		}
 
 
-		client = new MailClient();
+		client = new MailClient(this);
 		initialise();
 
 		pack();
@@ -699,7 +699,7 @@ public class ClientFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 //				client.
 				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
-				System.err.println("Cost: ");
+//				System.err.println("Cost: ");
 			}
 			
 		});

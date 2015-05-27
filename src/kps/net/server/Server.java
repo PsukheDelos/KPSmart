@@ -11,6 +11,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import kps.backend.MailSystem;
+import kps.distribution.event.MailDeliveryEvent;
 import kps.net.event.Event;
 
 public class Server extends Thread{
