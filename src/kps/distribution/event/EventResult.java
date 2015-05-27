@@ -1,5 +1,7 @@
 package kps.distribution.event;
 
-public class EventResult {
+import kps.net.event.Event;
+
+public class EventResult extends Event{
 
 }
