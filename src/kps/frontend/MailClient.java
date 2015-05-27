@@ -1,6 +1,7 @@
 package kps.frontend;
 
 import kps.backend.users.User;
+import kps.distribution.event.DeliveryEventResult;
 import kps.net.client.Client;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
@@ -38,7 +39,25 @@ public class MailClient {
 			System.out.println(this + "Response Recieved for " + evt.user.username);
 			setCurrentUser(evt.user);
 		}
+		else if(e instanceof DeliveryEventResult){
+//			LoginResponseEvent evt = (LoginResponseEvent)e;
+//
+//			System.out.println(this + "Response Recieved for " + evt.user.username);
+//			setCurrentUser(evt.user);
+		}
 		
+	}
+	
+	public void sendEvent(Event e) {
+		client.sendEvent(e);
+//		if(e instanceof LoginResponseEvent){
+//			LoginResponseEvent evt = (LoginResponseEvent)e;
+//
+//			System.out.println(this + "Response Recieved for " + evt.user.username);
+//			setCurrentUser(evt.user);
+//		}
+//		
+//		return e;
 	}
 	
 	public String toString(){
