@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import kps.distribution.event.TransportCostUpdateEvent;
+import kps.distribution.network.Route;
+
 public class RouteRepository {
 
 	private static Connection db = null;
@@ -24,6 +27,23 @@ public class RouteRepository {
 		return true;
 	}
 
+	public static ArrayList<TransportCostUpdateEvent> getRoutes(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			ArrayList<TransportCostUpdateEvent> routes = new ArrayList<TransportCostUpdateEvent>();
+			Statement statement = db.createStatement();
+			String query = "SELECT * FROM route";
+			ResultSet result = statement.executeQuery(query);
+			while(result.next()){
+			    routes.add(new TransportCostUpdateEvent("company", result.getString(2), result.getString(1), result.getString(3), 1,1,1000,1000,1,1,"Monday"));
+			}
+			db.close();
+			
+			return routes;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
 	public static TableModel getRoutesModel(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
@@ -48,6 +68,7 @@ public class RouteRepository {
 			    model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3), result.getString(4)});
 			}
 			db.close();
+			
 			return model;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;

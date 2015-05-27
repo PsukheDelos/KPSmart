@@ -44,7 +44,7 @@ public class MailSystem {
 			returnEvent = new LoginResponseEvent(user);
 		}else if(event instanceof DistributionNetworkEvent){
 			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
-			network.processEvent(networkEvent);
+			returnEvent = network.processEvent(networkEvent);
 		}
 		return returnEvent;
 	}
