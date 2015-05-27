@@ -26,7 +26,11 @@ import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 
 import javax.swing.UIManager.*;
 import javax.swing.border.EmptyBorder;
@@ -50,6 +54,7 @@ import javax.swing.UIManager;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.RouteRepository;
+import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 import kps.net.server.Server;
@@ -127,7 +132,7 @@ public class ClientFrame extends JFrame{
 		}
 
 
-		client = new MailClient();
+		client = new MailClient(this);
 		initialise();
 
 		pack();
@@ -485,7 +490,7 @@ public class ClientFrame extends JFrame{
 	 * @param tabbedPane
 	 */
 	private void createMailTab(JTabbedPane tabbedPane) {
-		JLabel label = new JLabel("Mail Delivery");
+		JLabel label = new JLabel("+");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/mail-icon.png"));
 		JPanel panel = new JPanel();
@@ -688,6 +693,16 @@ public class ClientFrame extends JFrame{
 		c.gridwidth = 2;
 		JButton submit = new JButton();
 		submit.setText("Submit");
+		submit.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+//				client.
+				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
+//				System.err.println("Cost: ");
+			}
+			
+		});
 		panel.add(submit,c);	
 	}
 
@@ -818,9 +833,63 @@ public class ClientFrame extends JFrame{
 		k.add(jFXPanel2);
 		
 		
+		//Trend
+		final JFXPanel jFXPanel3 = new JFXPanel();
+		Group root3 = new Group();
+		Scene scene3 = new Scene(root3);
+		final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+         xAxis.setLabel("Month");
+         yAxis.setLabel("Profit ($100)");
+	        //creating the chart
+	        final LineChart<String,Number> lineChart = 
+	        		new LineChart<String,Number>(xAxis,yAxis);
+	                
+	        lineChart.setTitle("KPS Monthly Profit, 2015");
+	        lineChart.setLegendVisible(false);
+	        //defining a series
+	        XYChart.Series series1 = new XYChart.Series();
+	        series1.setName("Profit");
+	        
+	        series1.getData().add(new XYChart.Data("Jan", 23));
+	        series1.getData().add(new XYChart.Data("Feb", 14));
+	        series1.getData().add(new XYChart.Data("Mar", 15));
+	        series1.getData().add(new XYChart.Data("Apr", 24));
+	        series1.getData().add(new XYChart.Data("May", 34));
+	        series1.getData().add(new XYChart.Data("Jun", 36));
+	        series1.getData().add(new XYChart.Data("Jul", 22));
+	        series1.getData().add(new XYChart.Data("Aug", 45));
+	        series1.getData().add(new XYChart.Data("Sep", 43));
+	        series1.getData().add(new XYChart.Data("Oct", 17));
+	        series1.getData().add(new XYChart.Data("Nov", 29));
+	        series1.getData().add(new XYChart.Data("Dec", 25));
+	        
+//	        XYChart.Series series2 = new XYChart.Series();
+//	        series2.setName("Expenses");
+//	        series2.getData().add(new XYChart.Data("Jan", 33));
+//	        series2.getData().add(new XYChart.Data("Feb", 34));
+//	        series2.getData().add(new XYChart.Data("Mar", 25));
+//	        series2.getData().add(new XYChart.Data("Apr", 44));
+//	        series2.getData().add(new XYChart.Data("May", 39));
+//	        series2.getData().add(new XYChart.Data("Jun", 16));
+//	        series2.getData().add(new XYChart.Data("Jul", 55));
+//	        series2.getData().add(new XYChart.Data("Aug", 54));
+//	        series2.getData().add(new XYChart.Data("Sep", 48));
+//	        series2.getData().add(new XYChart.Data("Oct", 27));
+//	        series2.getData().add(new XYChart.Data("Nov", 37));
+//	        series2.getData().add(new XYChart.Data("Dec", 29));
+	        
+	        lineChart.getData().addAll(series1);
+
+	        ((Group) scene3.getRoot()).getChildren().add(lineChart);
+		jFXPanel3.setScene(scene3);
+		JPanel i = new JPanel();
+		i.add(jFXPanel3);
+		
+		
 		
 		JTabbedPane dashTab = new JTabbedPane();
-		dashTab.addTab("Trends", null, new JPanel(),"View the current financial status of KPSmart");
+		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
 		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
 		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
 		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
