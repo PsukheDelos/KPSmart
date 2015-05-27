@@ -107,6 +107,7 @@ public class ClientLoginFrame extends JFrame{
 					user = mailClient.getCurrentUser();
 				}
 				setVisible(false);
+				parent.setVisible(true);
 				parent.setEnabled(true);
 				parent.setTitle(parent.getTitle()+ " User: " + mailClient.getCurrentUser().username);
 				parent.requestFocus();
