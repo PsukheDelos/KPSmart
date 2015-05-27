@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -22,7 +21,6 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Properties;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -586,7 +584,6 @@ public class ClientFrame extends JFrame{
 					for (String priority : PriceRepository.getPriorities(f,t)){
 						priorityDropDown.addItem(priority);
 					}
-					priorityDropDown.setSelectedItem(PriceRepository.getPriorities(f,t).get(0));
 				}
 			}
 		});
@@ -606,8 +603,6 @@ public class ClientFrame extends JFrame{
 					entered_weight = Double.valueOf(weightText.getText());
 				}
 				
-				
-
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 
@@ -710,6 +705,7 @@ public class ClientFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 //				client.
 				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
+//				
 //				System.err.println("Cost: ");
 			}
 			
@@ -720,6 +716,7 @@ public class ClientFrame extends JFrame{
 	/**
 	 * @param tabbedPane
 	 */
+	@SuppressWarnings("unchecked")
 	private void createDashboardTab(JTabbedPane tabbedPane) {
 		JLabel label = new JLabel("Dashboard");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
@@ -859,21 +856,20 @@ public class ClientFrame extends JFrame{
 	        lineChart.setTitle("KPS Monthly Profit, 2015");
 	        lineChart.setLegendVisible(false);
 	        //defining a series
-	        XYChart.Series series1 = new XYChart.Series();
+	        XYChart.Series<String,Number> series1 = new XYChart.Series<String,Number>();
 	        series1.setName("Profit");
 	        
-	        series1.getData().add(new XYChart.Data("Jan", 23));
-	        series1.getData().add(new XYChart.Data("Feb", 14));
-	        series1.getData().add(new XYChart.Data("Mar", 15));
-	        series1.getData().add(new XYChart.Data("Apr", 24));
-	        series1.getData().add(new XYChart.Data("May", 34));
-	        series1.getData().add(new XYChart.Data("Jun", 36));
-	        series1.getData().add(new XYChart.Data("Jul", 22));
-	        series1.getData().add(new XYChart.Data("Aug", 45));
-	        series1.getData().add(new XYChart.Data("Sep", 43));
-	        series1.getData().add(new XYChart.Data("Oct", 17));
-	        series1.getData().add(new XYChart.Data("Nov", 29));
-	        series1.getData().add(new XYChart.Data("Dec", 25));
+	        series1.getData().add(new XYChart.Data<String,Number>("Jan", 23));
+	        series1.getData().add(new XYChart.Data<String,Number>("Feb", 14));
+	        series1.getData().add(new XYChart.Data<String,Number>("Mar", 15));
+	        series1.getData().add(new XYChart.Data<String,Number>("Apr", 24));
+	        series1.getData().add(new XYChart.Data<String,Number>("May", 34));
+	        series1.getData().add(new XYChart.Data<String,Number>("Jul", 22));
+	        series1.getData().add(new XYChart.Data<String,Number>("Aug", 45));
+	        series1.getData().add(new XYChart.Data<String,Number>("Sep", 43));
+	        series1.getData().add(new XYChart.Data<String,Number>("Oct", 17));
+	        series1.getData().add(new XYChart.Data<String,Number>("Nov", 29));
+	        series1.getData().add(new XYChart.Data<String,Number>("Dec", 25));
 	        
 //	        XYChart.Series series2 = new XYChart.Series();
 //	        series2.setName("Expenses");
@@ -909,33 +905,33 @@ public class ClientFrame extends JFrame{
 
 	}
 
-	private static void initFxLater(JFXPanel panel) {
-		Group root = new Group();
-//		Scene scene = new Scene(root, 450, 200);
-		Scene scene = new Scene(root);
-
-		ObservableList<PieChart.Data> pieChartData =
-				FXCollections.observableArrayList(
-						new PieChart.Data("Domestic", 134),
-						new PieChart.Data("International", 27));
-		final PieChart revchart = new PieChart(pieChartData);
-		revchart.setTitle("Revenue");
-		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
-//		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
-//		UIManager.put("nimbusBlueGrey", Color.white);
-//		UIManager.put("control", Color.decode("#b8dbfe"));
-		//		revchart.setBackground(new Background());
-		pieChartData =
-				FXCollections.observableArrayList(
-						new PieChart.Data("Domestic", 2),
-						new PieChart.Data("International", 300));
-		final PieChart chart = new PieChart(pieChartData);
-		chart.setTitle("Expenses");
-		
-		((Group) scene.getRoot()).getChildren().add(revchart);
-
-		panel.setScene(scene);
-	}
+//	private static void initFxLater(JFXPanel panel) {
+//		Group root = new Group();
+////		Scene scene = new Scene(root, 450, 200);
+//		Scene scene = new Scene(root);
+//
+//		ObservableList<PieChart.Data> pieChartData =
+//				FXCollections.observableArrayList(
+//						new PieChart.Data("Domestic", 134),
+//						new PieChart.Data("International", 27));
+//		final PieChart revchart = new PieChart(pieChartData);
+//		revchart.setTitle("Revenue");
+//		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
+////		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
+////		UIManager.put("nimbusBlueGrey", Color.white);
+////		UIManager.put("control", Color.decode("#b8dbfe"));
+//		//		revchart.setBackground(new Background());
+//		pieChartData =
+//				FXCollections.observableArrayList(
+//						new PieChart.Data("Domestic", 2),
+//						new PieChart.Data("International", 300));
+//		final PieChart chart = new PieChart(pieChartData);
+//		chart.setTitle("Expenses");
+//		
+//		((Group) scene.getRoot()).getChildren().add(revchart);
+//
+//		panel.setScene(scene);
+//	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
