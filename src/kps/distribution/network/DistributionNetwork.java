@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import kps.backend.database.LocationRepository;
+import kps.backend.database.PriceRepository;
 import kps.backend.database.RouteRepository;
 import kps.distribution.event.CostUpdateEventResult;
 import kps.distribution.event.CustomerPriceUpdateEvent;
@@ -227,8 +228,8 @@ public class DistributionNetwork {
 	}
 
 	private EventResult processCustomerPriceUpdateEvent(CustomerPriceUpdateEvent event) {
-		//TODO
-		return new InvalidEventResult("Not implemented");
+		PriceRepository.updatePrice(event.from, event.to, event.priority, event.weightCost, event.volumeCost);
+		return new PriceUpdateEventResult();
 	}
 
 	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {
