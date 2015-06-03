@@ -144,6 +144,29 @@ public class PriceRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}
+	public static Boolean addPrice(String from, String to, String priority, Double weight, Double volume){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "INSERT INTO price (\"from\", \"to\", priority, price_weight, price_volume) VALUES (\""+from+"\",\""+to+"\",\""+priority+"\","+weight+","+volume+")";
+			statement.execute(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
+	
+	public static Boolean updatePrice(String from, String to, String priority, Double weight, Double volume){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "UPDATE price SET price_weight="+weight+",price_volume="+volume+" WHERE \"from\"=\""+from+"\" and \"to\" = \""+to+"\" and \"priority\"=\""+priority+"\"";
+			statement.execute(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
 
 
 
