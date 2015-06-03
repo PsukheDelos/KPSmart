@@ -18,8 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import kps.backend.database.PriceRepository;
 
 public class PriceFrame extends JFrame{
 
@@ -36,6 +39,7 @@ public class PriceFrame extends JFrame{
 	private JTextField weightText = new JTextField(20);
 	private JTextField volText = new JTextField(20);
 
+	Boolean edit = false;
 
 	public PriceFrame(ClientFrame parent, String type){
 		super("--<< " + type + " Price >>--");
@@ -50,13 +54,25 @@ public class PriceFrame extends JFrame{
 		super("--<< Edit Price >>--");
 		this.parent = parent;
 		this.type = "Edit";
-		
+		this.edit = true;
 		this.fromText.setText(fromText);
 		this.toText.setText(toText);
 		this.priorityText.setText(priorityText);
 		this.weightText.setText(weightText);
 		this.volText.setText(volText);
+
+		this.fromText.setEditable(false);
+		this.toText.setEditable(false);
+		this.priorityText.setEditable(false);
 		
+		this.fromText.setEnabled(false);
+		this.toText.setEnabled(false);
+		this.priorityText.setEnabled(false);
+		
+		this.fromText.setBackground(Color.LIGHT_GRAY);
+		this.toText.setBackground(Color.LIGHT_GRAY);
+		this.priorityText.setBackground(Color.LIGHT_GRAY);
+
 		JPanel panel = new JPanel();
 		initialise(panel);
 		add(panel);
@@ -159,6 +175,23 @@ public class PriceFrame extends JFrame{
 		c.gridy = 6;
 		c.gridwidth = 1;
 		JButton submit = new JButton();
+		submit.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(edit==true){
+					PriceRepository.updatePrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
+				}
+				else{
+					PriceRepository.addPrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
+				}
+				parent.updatePrice();
+				parent.updateFrom();
+				dispose();
+			}
+
+		});
 		submit.setText("Submit");
 		priceForm.add(submit,c);
 
