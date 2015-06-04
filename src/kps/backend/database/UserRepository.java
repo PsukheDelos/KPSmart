@@ -32,8 +32,9 @@ public class UserRepository {
 			Statement statement = db.createStatement();
 			String query = "SELECT username,permission FROM users WHERE username='" + username + "' AND password='" + passwordHash + "'";
 			ResultSet result = statement.executeQuery(query);
+			User u = new User(result.getString(1), UserPermissions.values()[result.getInt(2)]);
 			db.close();
-			return new User(result.getString(1), UserPermissions.values()[result.getInt(2)]);
+			return u;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
@@ -59,8 +60,9 @@ public class UserRepository {
 			Statement statement = db.createStatement();
 			String query = "SELECT Count(*) FROM users WHERE username=" + username;
 			ResultSet result = statement.executeQuery(query);
+			boolean r = result.first();
 			db.close();
-			return result.first();
+			return r; 
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}

@@ -95,7 +95,7 @@ public class ClientFrame extends JFrame{
 
 	private ClientFrame parent = this;
 
-	private MailClient client;
+	public MailClient client;
 
 	//	private ClientListener listener = new ClientListener(); //What is this for?
 
@@ -106,6 +106,10 @@ public class ClientFrame extends JFrame{
 		new ClientFrame();
 	}
 
+	public MailClient getMailClient(){
+		return client;
+	}
+	
 	public void updatePrice(){
 		priceTable.setModel(PriceRepository.getPricesModel());
 	}
@@ -279,7 +283,7 @@ public class ClientFrame extends JFrame{
 			line.setLinePaint(Color.red);
 			//			line.putAttribute(OMGraphicConstants.LABEL, new OMTextLabeler("Line Label"));
 
-			routeList.add(line);
+//			routeList.add(line);
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
@@ -293,7 +297,7 @@ public class ClientFrame extends JFrame{
 		JLabel label = new JLabel("Locations");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/map-icon.png"));
-		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can update and add new prices.");
+		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can view all the locations.");
 		tabbedPane.setTabComponentAt(4, label);
 		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 	}

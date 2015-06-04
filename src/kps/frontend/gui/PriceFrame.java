@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import kps.backend.database.PriceRepository;
+import kps.distribution.event.CustomerPriceUpdateEvent;
 
 public class PriceFrame extends JFrame{
 
@@ -181,7 +182,9 @@ public class PriceFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(edit==true){
-					PriceRepository.updatePrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
+					parent.client.sendEvent(new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText())));
+//					parent.getMailClient().sendEvent(new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText())));
+//					PriceRepository.updatePrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
 				}
 				else{
 					PriceRepository.addPrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
