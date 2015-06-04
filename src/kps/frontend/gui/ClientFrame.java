@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -22,7 +21,6 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Properties;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -91,6 +89,11 @@ public class ClientFrame extends JFrame{
 	private Double entered_weight = (double) 0;
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
+	
+	public JTable priceTable = new JTable(PriceRepository.getPricesModel());
+	private JComboBox<String> fromDropDown;
+
+	private ClientFrame parent = this;
 
 	private MailClient client;
 
@@ -103,6 +106,17 @@ public class ClientFrame extends JFrame{
 		new ClientFrame();
 	}
 
+	public void updatePrice(){
+		priceTable.setModel(PriceRepository.getPricesModel());
+	}
+	
+	public void updateFrom(){
+		fromDropDown.removeAllItems();
+		for (String toCity : PriceRepository.getFromCities()){
+			fromDropDown.addItem(toCity);
+		}
+	}
+	
 	public ClientFrame() {
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
@@ -152,6 +166,9 @@ public class ClientFrame extends JFrame{
 	}
 
 	private void initialise() {
+		System.out.println("--<<TEST>>---");
+		client.sendEvent(new MailDeliveryEvent("Monday", "Auckland", "Wellington", 1, 2, "International Air"));
+		
 		createTabbedPane();
 	}
 
@@ -294,7 +311,7 @@ public class ClientFrame extends JFrame{
 		tabbedPane.addTab("Prices", null, panel,"View and Edit the current prices of KPSmart");
 		tabbedPane.setTabComponentAt(3, label);
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-		JTable jt = new JTable(PriceRepository.getPricesModel());
+//		JTable priceTable = new JTable(PriceRepository.getPricesModel());
 
 		//Title: Prices
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -318,7 +335,7 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				new PriceFrame(null,"Add");
+				new PriceFrame(parent,"Add");
 				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
 				//						jt.setModel(PriceRepository.getPricesModel());
 
@@ -337,9 +354,9 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int sr = jt.getSelectedRow();
+				int sr = priceTable.getSelectedRow();
 				if(sr!=-1){
-					new PriceFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString(),jt.getModel().getValueAt(sr, 4).toString());
+					new PriceFrame(parent,priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString(),priceTable.getModel().getValueAt(sr, 3).toString(),priceTable.getModel().getValueAt(sr, 4).toString());
 					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
 					//						jt.setModel(PriceRepository.getPricesModel());
 				}
@@ -360,18 +377,19 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int sr = jt.getSelectedRow();
+				int sr = priceTable.getSelectedRow();
 				if(sr!=-1){
 					int dialogButton = JOptionPane.YES_NO_OPTION;
 					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
 					if(dialogResult == JOptionPane.YES_OPTION){
-						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-						jt.setModel(PriceRepository.getPricesModel());
+						PriceRepository.removePrice(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
+						priceTable.setModel(PriceRepository.getPricesModel());
+						updateFrom();
 					}
 				}
-
 			}
 		});
+		
 		panel.add(removePrice,c);
 
 		//Table: Price Table
@@ -379,9 +397,9 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
-		jt.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		jt.setFillsViewportHeight(true);
-		panel.add(new JScrollPane(jt),c);
+		priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		priceTable.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(priceTable),c);
 	}
 
 	/**
@@ -518,8 +536,7 @@ public class ClientFrame extends JFrame{
 		c.gridwidth = 1;
 		JLabel source = new JLabel("Source: ",SwingConstants.RIGHT);
 		panel.add(source,c);	
-
-		JComboBox<String> fromDropDown = new JComboBox<String>();
+		fromDropDown = new JComboBox<String>();
 		for (String fromCity : PriceRepository.getFromCities()){
 			fromDropDown.addItem(fromCity);
 		}
@@ -527,8 +544,6 @@ public class ClientFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 1;
 		panel.add(fromDropDown,c);
-
-
 
 		//To Cities Drop Down
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -586,7 +601,6 @@ public class ClientFrame extends JFrame{
 					for (String priority : PriceRepository.getPriorities(f,t)){
 						priorityDropDown.addItem(priority);
 					}
-					priorityDropDown.setSelectedItem(PriceRepository.getPriorities(f,t).get(0));
 				}
 			}
 		});
@@ -617,8 +631,6 @@ public class ClientFrame extends JFrame{
 					}
 				}
 				
-				
-
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 
@@ -642,7 +654,6 @@ public class ClientFrame extends JFrame{
 		JFormattedTextField	 volumeText = new JFormattedTextField(NumberFormat.getNumberInstance());
 		volumeText.setValue(0);
 		volumeText.setBackground(Color.decode("#fffe9a"));
-		//volumeText.setCaretPosition(position);
 		volumeText.addKeyListener(new KeyAdapter() {
 			
 			public void keyTyped(KeyEvent e){
@@ -708,6 +719,8 @@ public class ClientFrame extends JFrame{
 		c.gridy = 5;
 		panel.add(volumeText,c);
 
+		Font g = new Font(totalPrice.getFont().getFontName(), Font.BOLD, 18);
+		
 		//Display Price
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -715,11 +728,15 @@ public class ClientFrame extends JFrame{
 		JLabel priceLabel = new JLabel("Total Price: ",SwingConstants.RIGHT);
 		panel.add(priceLabel,c);	
 
+		priceLabel.setFont(g);
+		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 6;
 		panel.add(totalPrice,c);
 
+		totalPrice.setFont(g);
+		
 		//Submit Button
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -733,7 +750,7 @@ public class ClientFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 //				client.
 				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
-//				System.err.println("Cost: ");
+//				
 			}
 			
 		});
@@ -743,6 +760,7 @@ public class ClientFrame extends JFrame{
 	/**
 	 * @param tabbedPane
 	 */
+	@SuppressWarnings("unchecked")
 	private void createDashboardTab(JTabbedPane tabbedPane) {
 		JLabel label = new JLabel("Dashboard");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
@@ -882,21 +900,20 @@ public class ClientFrame extends JFrame{
 	        lineChart.setTitle("KPS Monthly Profit, 2015");
 	        lineChart.setLegendVisible(false);
 	        //defining a series
-	        XYChart.Series series1 = new XYChart.Series();
+	        XYChart.Series<String,Number> series1 = new XYChart.Series<String,Number>();
 	        series1.setName("Profit");
 	        
-	        series1.getData().add(new XYChart.Data("Jan", 23));
-	        series1.getData().add(new XYChart.Data("Feb", 14));
-	        series1.getData().add(new XYChart.Data("Mar", 15));
-	        series1.getData().add(new XYChart.Data("Apr", 24));
-	        series1.getData().add(new XYChart.Data("May", 34));
-	        series1.getData().add(new XYChart.Data("Jun", 36));
-	        series1.getData().add(new XYChart.Data("Jul", 22));
-	        series1.getData().add(new XYChart.Data("Aug", 45));
-	        series1.getData().add(new XYChart.Data("Sep", 43));
-	        series1.getData().add(new XYChart.Data("Oct", 17));
-	        series1.getData().add(new XYChart.Data("Nov", 29));
-	        series1.getData().add(new XYChart.Data("Dec", 25));
+	        series1.getData().add(new XYChart.Data<String,Number>("Jan", 23));
+	        series1.getData().add(new XYChart.Data<String,Number>("Feb", 14));
+	        series1.getData().add(new XYChart.Data<String,Number>("Mar", 15));
+	        series1.getData().add(new XYChart.Data<String,Number>("Apr", 24));
+	        series1.getData().add(new XYChart.Data<String,Number>("May", 34));
+	        series1.getData().add(new XYChart.Data<String,Number>("Jul", 22));
+	        series1.getData().add(new XYChart.Data<String,Number>("Aug", 45));
+	        series1.getData().add(new XYChart.Data<String,Number>("Sep", 43));
+	        series1.getData().add(new XYChart.Data<String,Number>("Oct", 17));
+	        series1.getData().add(new XYChart.Data<String,Number>("Nov", 29));
+	        series1.getData().add(new XYChart.Data<String,Number>("Dec", 25));
 	        
 //	        XYChart.Series series2 = new XYChart.Series();
 //	        series2.setName("Expenses");
@@ -932,33 +949,33 @@ public class ClientFrame extends JFrame{
 
 	}
 
-	private static void initFxLater(JFXPanel panel) {
-		Group root = new Group();
-//		Scene scene = new Scene(root, 450, 200);
-		Scene scene = new Scene(root);
-
-		ObservableList<PieChart.Data> pieChartData =
-				FXCollections.observableArrayList(
-						new PieChart.Data("Domestic", 134),
-						new PieChart.Data("International", 27));
-		final PieChart revchart = new PieChart(pieChartData);
-		revchart.setTitle("Revenue");
-		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
-//		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
-//		UIManager.put("nimbusBlueGrey", Color.white);
-//		UIManager.put("control", Color.decode("#b8dbfe"));
-		//		revchart.setBackground(new Background());
-		pieChartData =
-				FXCollections.observableArrayList(
-						new PieChart.Data("Domestic", 2),
-						new PieChart.Data("International", 300));
-		final PieChart chart = new PieChart(pieChartData);
-		chart.setTitle("Expenses");
-		
-		((Group) scene.getRoot()).getChildren().add(revchart);
-
-		panel.setScene(scene);
-	}
+//	private static void initFxLater(JFXPanel panel) {
+//		Group root = new Group();
+////		Scene scene = new Scene(root, 450, 200);
+//		Scene scene = new Scene(root);
+//
+//		ObservableList<PieChart.Data> pieChartData =
+//				FXCollections.observableArrayList(
+//						new PieChart.Data("Domestic", 134),
+//						new PieChart.Data("International", 27));
+//		final PieChart revchart = new PieChart(pieChartData);
+//		revchart.setTitle("Revenue");
+//		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
+////		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
+////		UIManager.put("nimbusBlueGrey", Color.white);
+////		UIManager.put("control", Color.decode("#b8dbfe"));
+//		//		revchart.setBackground(new Background());
+//		pieChartData =
+//				FXCollections.observableArrayList(
+//						new PieChart.Data("Domestic", 2),
+//						new PieChart.Data("International", 300));
+//		final PieChart chart = new PieChart(pieChartData);
+//		chart.setTitle("Expenses");
+//		
+//		((Group) scene.getRoot()).getChildren().add(revchart);
+//
+//		panel.setScene(scene);
+//	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
