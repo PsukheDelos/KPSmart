@@ -39,7 +39,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -94,8 +93,6 @@ public class ClientFrame extends JFrame{
 	private ClientFrame parent = this;
 
 	public MailClient client;
-
-	private ClientListener listener = new ClientListener(); //What is this for?
 
 	public MailClient getMailClient(){
 		return client;
@@ -155,7 +152,6 @@ public class ClientFrame extends JFrame{
 	}
 
 	private void initialise() {
-		client.sendEvent(new MailDeliveryEvent("Monday", "Auckland", "Wellington", 1, 2, "International Air"));
 		createTabbedPane();
 	}
 
@@ -729,9 +725,7 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				client.
 				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
-				//				
 			}
 
 		});

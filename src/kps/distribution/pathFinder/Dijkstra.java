@@ -21,6 +21,7 @@ public class Dijkstra implements PathFinder{
 	private PathCondition pathCondition;
 
 	public Dijkstra(PathCondition pathCondition){
+		System.out.println("Dijkstra");
 		this.pathCondition = pathCondition;
 		this.fringe = new PriorityQueue<DijkstraNode>(pathCondition);
 	}

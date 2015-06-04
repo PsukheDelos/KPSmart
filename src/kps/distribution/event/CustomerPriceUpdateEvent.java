@@ -3,6 +3,8 @@ package kps.distribution.event;
 import java.util.UUID;
 
 public class CustomerPriceUpdateEvent extends DistributionNetworkEvent {
+	private static final long serialVersionUID = 1L;
+
 	public final String to;
 	public final String from;
 	public final String priority;
