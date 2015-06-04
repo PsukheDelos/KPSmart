@@ -8,11 +8,12 @@ public enum TransportType {
 	AIR;
 
 	public static TransportType fromString(String s){
-		if (s.equalsIgnoreCase("LAND"))
+		s = s.trim().toUpperCase();
+		if (s.equals("LAND"))
 			return LAND;
-		if (s.equalsIgnoreCase("SEA"))
+		if (s.equals("SEA"))
 			return SEA;
-		if (s.equalsIgnoreCase("AIR"))
+		if (s.equals("AIR"))
 			return AIR;
 		else throw new InvalidParameterException(s + " is not a recognised transport type");
 	}
