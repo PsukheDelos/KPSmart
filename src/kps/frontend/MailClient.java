@@ -55,16 +55,17 @@ public class MailClient {
 			setCurrentUser(evt.user);
 		}
 		else if(e instanceof DeliveryEventResult){
+			System.out.println("Received Return for DeliveryEventResult");
 			if(awaitingResponse.containsKey(((DeliveryEventResult) e).id)){
-				
+				System.out.println("DeliveryEventResult Success!");
 			}
 			// Then you know the key is in there, and since it is stored with the corresponding Event, you know what you sent.
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
 			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
 		}else if(e instanceof PriceUpdateEventResult){
-			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
+//			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
 			if(awaitingResponse.containsKey(((PriceUpdateEventResult)e).id)){
-				System.out.println("Success!");
+				clientFrame.updatePrice();
 			}
 		}
 		

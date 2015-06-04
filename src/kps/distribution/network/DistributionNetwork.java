@@ -123,9 +123,13 @@ public class DistributionNetwork {
 	 * @throws PathNotFoundException If a valid path cannot be found
 	 */
 	public MailDelivery deliver(Mail mail) throws PathNotFoundException {
+		System.err.println("DisributionNetwork: deliver()");
+
 		switch (mail.priority){
 		case DOMESTIC_AIR:
+			System.out.println("deliver(): DOMESTIC_AIR");
 		case INTERNATIONAL_AIR:
+			System.out.println("deliver(): INTERNATIONAL_AIR");
 			// attempt to find an Air only delivery path
 			PathCondition airOnlyPath = new PathCondition(
 				PathType.AIR_ONLY,
@@ -145,13 +149,17 @@ public class DistributionNetwork {
 				return pathFinder.getPath(mail);
 			}
 		case DOMESTIC_STANDARD:
+			System.out.println("deliver(): DOMESTIC_STANDARD");
 		case INTERNATIONAL_STANDARD:
+			System.out.println("deliver(): INTERNATIONAL_STANDARD");
 			// for standard shipping, land, sea and air are all okay, just find the cheapest
 			PathCondition airLandSea = new PathCondition(
 				PathType.AIR_SEA_LAND,
 				Optimisation.LOWEST_COST
 			);
+			System.out.println("pathFinder = new Dijkstra(airLandSea);");
 			pathFinder = new Dijkstra(airLandSea);
+			System.out.println("return pathfinder.getpath()");
 			return pathFinder.getPath(mail);
 		default:
 			throw new InvalidParameterException("Unexpected priority");
@@ -251,15 +259,18 @@ public class DistributionNetwork {
 	}
 
 	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {
-		if (!locations.containsKey(event.from)){
-			locations.put(event.from, new Location(event.from, 100, 100));
-		}
-		if (!locations.containsKey(event.to)){
-			locations.put(event.to, new Location(event.to, 100, 100));
-		}
+//		if (!locations.containsKey(event.from)){
+//			locations.put(event.from, new Location(event.from, 100, 100));
+//		}
+//		if (!locations.containsKey(event.to)){
+//			locations.put(event.to, new Location(event.to, 100, 100));
+//		}
+		System.err.println("DistributionNetwork: processMailDeliveryEvent()");
+		System.out.println("Mail -> f: " + event.from + " t: " + event.to + " " + event.priority + " w: " + event.weight + " v: " + event.volume + " d: " + event.day);
 		Mail mail = new Mail(locations.get(event.from), locations.get(event.to),
 				event.weight, event.volume, Priority.fromString(event.priority), event.day);
 		try {
+			System.out.println("try DeliveryEventResult(deliver(mail))");
 			return new DeliveryEventResult(deliver(mail));
 		} catch (PathNotFoundException e) {
 			return new InvalidEventResult("Could not find a path from origin to destination");

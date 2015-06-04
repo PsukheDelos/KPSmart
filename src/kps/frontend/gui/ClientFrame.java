@@ -152,7 +152,6 @@ public class ClientFrame extends JFrame{
 	}
 
 	private void initialise() {
-		client.sendEvent(new MailDeliveryEvent("Monday", "Auckland", "Wellington", 1, 2, "International Air"));
 		createTabbedPane();
 	}
 
@@ -726,9 +725,7 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				client.
 				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
-				//				
 			}
 
 		});
