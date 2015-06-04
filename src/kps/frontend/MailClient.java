@@ -1,7 +1,12 @@
 package kps.frontend;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import kps.backend.users.User;
 import kps.distribution.event.DeliveryEventResult;
+import kps.distribution.event.MailDeliveryEvent;
 import kps.frontend.gui.ClientFrame;
 import kps.net.client.Client;
 import kps.net.event.Event;
@@ -14,9 +19,14 @@ public class MailClient {
 	private Client client;
 	private ClientFrame clientFrame;
 	
+	private Map<UUID, Event> awaitingResponse;
+	
 	public MailClient(ClientFrame clientFrame){
 		client = new Client("127.0.0.1", this);
 		this.clientFrame = clientFrame;
+		
+		awaitingResponse = new HashMap<UUID, Event>();
+		
 	}
 
 	public User getCurrentUser() {
@@ -43,25 +53,25 @@ public class MailClient {
 			setCurrentUser(evt.user);
 		}
 		else if(e instanceof DeliveryEventResult){
-			System.err.println("MAL CLEN: " + ((DeliveryEventResult)e).mailDelivery.cost);
-//			LoginResponseEvent evt = (LoginResponseEvent)e;
-//
-//			System.out.println(this + "Response Recieved for " + evt.user.username);
-//			setCurrentUser(evt.user);
+			if(awaitingResponse.containsKey(((DeliveryEventResult) e).id))
+			// Then you know the key is in there, and since it is stored with the corresponding Event, you know what you sent.
+			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
+			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
 		}
 		
 	}
 	
 	public void sendEvent(Event e) {
+		// Here we will add an UUID to any Event you want
+		// For now, I'll add it to the Mail Delivery Event
+		// Look in MailSystem for the response method.
+		if(e instanceof MailDeliveryEvent){
+			System.out.println("Adding Awaiting Delivery for id" + ((MailDeliveryEvent)e).id);
+			awaitingResponse.put(((MailDeliveryEvent) e).id, (MailDeliveryEvent)e);
+		}
+		
+		
 		client.sendEvent(e);
-//		if(e instanceof LoginResponseEvent){
-//			LoginResponseEvent evt = (LoginResponseEvent)e;
-//
-//			System.out.println(this + "Response Recieved for " + evt.user.username);
-//			setCurrentUser(evt.user);
-//		}
-//		
-//		return e;
 	}
 	
 	public String toString(){

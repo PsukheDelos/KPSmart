@@ -2,16 +2,14 @@ package kps.backend;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import kps.backend.database.UserRepository;
 import kps.backend.users.User;
-import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.MailDeliveryEvent;
-import kps.distribution.event.TransportCostUpdateEvent;
-import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.network.DistributionNetwork;
-import kps.distribution.network.Route;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
@@ -44,7 +42,15 @@ public class MailSystem {
 			returnEvent = new LoginResponseEvent(user);
 		}else if(event instanceof DistributionNetworkEvent){
 			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
+
 			returnEvent = network.processEvent(networkEvent);
+			// Then, if it's an event we need a specific return from, set its UUID.
+			if(event instanceof MailDeliveryEvent 
+					&& returnEvent instanceof DeliveryEventResult){
+				System.out.println("Adding UUID to return event for a MailDelivery");
+				UUID clientUUID = ((MailDeliveryEvent)event).id;
+				((DeliveryEventResult)returnEvent).id = clientUUID;
+			}
 		}
 		return returnEvent;
 	}
