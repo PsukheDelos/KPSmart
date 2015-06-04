@@ -5,6 +5,7 @@ import kps.distribution.network.DistributionNetwork;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -18,9 +19,15 @@ public class XMLFileHandler {
 	 */
 	public static void write(String file, DistributionNetwork network){
 		
-		//Creates the new file
+		//Creates the new file.
 		File f = new File(file + ".xml");
 		
+		//Checks to see if the file already exists.
+		if(f.exists() && !f.isDirectory()){
+			
+			//If it does exists ask user if they would like to overwrite the file or not.
+			if(JOptionPane.showConfirmDialog(null, "File already exists.\nDo you want to overwrite?", "File already exists", 0)==1) return;
+		}
 		
 		//Begins writing state to file
 		try{
@@ -40,9 +47,9 @@ public class XMLFileHandler {
 			e.printStackTrace();
 		}
 		
-		//If file is correctly created save to current directory
+		//If file is generated correctly save it to current directory.
 		try {
-			if(!f.createNewFile()) System.out.println("File already exists.");
+			f.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

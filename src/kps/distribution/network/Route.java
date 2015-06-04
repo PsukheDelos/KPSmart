@@ -1,7 +1,10 @@
 package kps.distribution.network;
 
+import javax.xml.bind.annotation.XmlType;
+
 import kps.distribution.event.TransportCostUpdateEvent;
 
+@XmlType(propOrder = {"company", "origin", "destination", "maxWeight", "maxVolume", "weightCost", "volumeCost", "duration", "frequency", "day", "type"})
 public class Route {
 	private Location origin;
 	private Location destination;

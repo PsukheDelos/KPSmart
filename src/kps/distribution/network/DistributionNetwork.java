@@ -178,6 +178,8 @@ public class DistributionNetwork {
 		this.locations = locations;
 	}
 
+	@XmlElementWrapper(name = "Routes")
+	@XmlElement(name = "Route")
 	public Set<Route> getRoutes(){
 		return this.routes;
 	}
