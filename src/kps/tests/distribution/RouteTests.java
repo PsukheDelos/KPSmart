@@ -1,4 +1,4 @@
-package kps.tests;
+package kps.tests.distribution;
 
 import static org.junit.Assert.*;
 

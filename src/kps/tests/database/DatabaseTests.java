@@ -1,4 +1,4 @@
-package kps.tests;
+package kps.tests.database;
 
 import static org.junit.Assert.*;
 
