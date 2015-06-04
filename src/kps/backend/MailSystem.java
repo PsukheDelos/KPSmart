@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import kps.backend.database.UserRepository;
 import kps.backend.users.User;
+import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.PriceUpdateEventResult;
 import kps.distribution.network.DistributionNetwork;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
@@ -48,8 +50,13 @@ public class MailSystem {
 			if(event instanceof MailDeliveryEvent 
 					&& returnEvent instanceof DeliveryEventResult){
 				System.out.println("Adding UUID to return event for a MailDelivery");
-				UUID clientUUID = ((MailDeliveryEvent)event).id;
-				((DeliveryEventResult)returnEvent).id = clientUUID;
+				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
+				((DeliveryEventResult)returnEvent).id = clientEventUUID;
+			}else if(event instanceof CustomerPriceUpdateEvent 
+					&& returnEvent instanceof PriceUpdateEventResult){
+				System.out.println("Adding UUID to return event for a CustomerPriceUpdate");
+				UUID clientEventUUID = ((CustomerPriceUpdateEvent)event).id;
+				((PriceUpdateEventResult)returnEvent).id = clientEventUUID;
 			}
 		}
 		return returnEvent;
