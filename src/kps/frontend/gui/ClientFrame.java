@@ -95,7 +95,7 @@ public class ClientFrame extends JFrame{
 
 	private ClientFrame parent = this;
 
-	private MailClient client;
+	public MailClient client;
 
 	//	private ClientListener listener = new ClientListener(); //What is this for?
 
@@ -106,6 +106,10 @@ public class ClientFrame extends JFrame{
 		new ClientFrame();
 	}
 
+	public MailClient getMailClient(){
+		return client;
+	}
+	
 	public void updatePrice(){
 		priceTable.setModel(PriceRepository.getPricesModel());
 	}
