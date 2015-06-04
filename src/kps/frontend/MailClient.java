@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import kps.backend.users.User;
+import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.PriceUpdateEventResult;
 import kps.frontend.gui.ClientFrame;
 import kps.net.client.Client;
 import kps.net.event.Event;
@@ -53,10 +55,16 @@ public class MailClient {
 			setCurrentUser(evt.user);
 		}
 		else if(e instanceof DeliveryEventResult){
-			if(awaitingResponse.containsKey(((DeliveryEventResult) e).id))
+			if(awaitingResponse.containsKey(((DeliveryEventResult) e).id)){
+				
+			}
 			// Then you know the key is in there, and since it is stored with the corresponding Event, you know what you sent.
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
 			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
+		}else if(e instanceof PriceUpdateEventResult){
+			if(awaitingResponse.containsKey(((PriceUpdateEventResult)e).id)){
+				System.out.println("Success!");
+			}
 		}
 		
 	}
@@ -68,6 +76,9 @@ public class MailClient {
 		if(e instanceof MailDeliveryEvent){
 			System.out.println("Adding Awaiting Delivery for id" + ((MailDeliveryEvent)e).id);
 			awaitingResponse.put(((MailDeliveryEvent) e).id, (MailDeliveryEvent)e);
+		}else if(e instanceof CustomerPriceUpdateEvent){
+			System.out.println("Adding Price Updater Event awaiting return" + ((CustomerPriceUpdateEvent)e).id);
+			awaitingResponse.put(((CustomerPriceUpdateEvent) e).id, (CustomerPriceUpdateEvent)e);
 		}
 		
 		

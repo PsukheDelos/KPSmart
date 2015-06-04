@@ -20,6 +20,7 @@ import kps.distribution.event.DiscontinueEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.EventResult;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.PriceUpdateEventResult;
 import kps.distribution.event.TransportCostUpdateEvent;
 import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.exception.InvalidRouteException;
