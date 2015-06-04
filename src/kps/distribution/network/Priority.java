@@ -15,9 +15,9 @@ public enum Priority {
 		if (lower.contains("international") && lower.contains("standard"))
 			return INTERNATIONAL_STANDARD;
 		if (lower.contains("domestic") && lower.contains("air"))
-			return INTERNATIONAL_AIR;
+			return DOMESTIC_AIR;
 		if (lower.contains("domestic") && lower.contains("standard"))
-			return INTERNATIONAL_AIR;
+			return DOMESTIC_STANDARD;
 
 		throw new InvalidPriorityException(s + " is not a valid Priority string.");
 	}
