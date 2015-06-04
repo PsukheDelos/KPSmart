@@ -5,7 +5,7 @@ import java.util.List;
 import kps.frontend.MailClient;
 import kps.net.event.Event;
 
-public class Client {
+public class Client extends Thread{
 	
 	private ClientToServerConnection connection;
 	private MailClient mailClient;
@@ -14,6 +14,14 @@ public class Client {
 		this.connection = new ClientToServerConnection(ip);
 		this.mailClient = mailClient;
 		connection.start();
+		
+		setDaemon(true);
+		start();
+	}
+	
+	public void run(){
+		while(true)
+			update();
 	}
 	
 	public void update(){
