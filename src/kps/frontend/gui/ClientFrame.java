@@ -57,8 +57,6 @@ import kps.backend.database.RouteRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
-import kps.net.server.Server;
-
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.MapHandler;
@@ -97,14 +95,7 @@ public class ClientFrame extends JFrame{
 
 	public MailClient client;
 
-	//	private ClientListener listener = new ClientListener(); //What is this for?
-
-	public static void main(String[] args){
-		//put for quicker launch
-		Server server = new Server();
-		server.start();
-		new ClientFrame();
-	}
+	private ClientListener listener = new ClientListener(); //What is this for?
 
 	public MailClient getMailClient(){
 		return client;
@@ -274,7 +265,7 @@ public class ClientFrame extends JFrame{
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
-//		omList.add(routeList);
+		//		omList.add(routeList);
 		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
@@ -837,6 +828,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 2;
 		c.gridwidth = 3;
 
+		//Chart: Domestic
 		final JFXPanel jFXPanel = new JFXPanel();
 		Group root = new Group();
 		Scene scene = new Scene(root);
@@ -854,7 +846,7 @@ public class ClientFrame extends JFrame{
 		JPanel j = new JPanel();
 		j.add(jFXPanel);
 
-		//International
+		//Chart: International
 		final JFXPanel jFXPanel2 = new JFXPanel();
 		Group root2 = new Group();
 		Scene scene2 = new Scene(root2);
@@ -875,7 +867,7 @@ public class ClientFrame extends JFrame{
 		k.add(jFXPanel2);
 
 
-		//Trend
+		//Chart: Trend
 		final JFXPanel jFXPanel3 = new JFXPanel();
 		Group root3 = new Group();
 		Scene scene3 = new Scene(root3);
@@ -883,7 +875,8 @@ public class ClientFrame extends JFrame{
 		final NumberAxis yAxis = new NumberAxis();
 		xAxis.setLabel("Month");
 		yAxis.setLabel("Profit ($100)");
-		//creating the chart
+
+		//Creating the chart
 		final LineChart<String,Number> lineChart = 
 				new LineChart<String,Number>(xAxis,yAxis);
 
@@ -939,34 +932,6 @@ public class ClientFrame extends JFrame{
 
 	}
 
-	//	private static void initFxLater(JFXPanel panel) {
-	//		Group root = new Group();
-	////		Scene scene = new Scene(root, 450, 200);
-	//		Scene scene = new Scene(root);
-	//
-	//		ObservableList<PieChart.Data> pieChartData =
-	//				FXCollections.observableArrayList(
-	//						new PieChart.Data("Domestic", 134),
-	//						new PieChart.Data("International", 27));
-	//		final PieChart revchart = new PieChart(pieChartData);
-	//		revchart.setTitle("Revenue");
-	//		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
-	////		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
-	////		UIManager.put("nimbusBlueGrey", Color.white);
-	////		UIManager.put("control", Color.decode("#b8dbfe"));
-	//		//		revchart.setBackground(new Background());
-	//		pieChartData =
-	//				FXCollections.observableArrayList(
-	//						new PieChart.Data("Domestic", 2),
-	//						new PieChart.Data("International", 300));
-	//		final PieChart chart = new PieChart(pieChartData);
-	//		chart.setTitle("Expenses");
-	//		
-	//		((Group) scene.getRoot()).getChildren().add(revchart);
-	//
-	//		panel.setScene(scene);
-	//	}
-
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
 		path.replace("/", File.separator);
@@ -978,17 +943,5 @@ public class ClientFrame extends JFrame{
 			return null;
 		}
 	}
-
-	/** Returns a TextPanel from the String 'text'. **/
-	protected JComponent makeTextPanel(String text) {
-		JPanel panel = new JPanel(false);
-		JLabel filler = new JLabel(text);
-		filler.setHorizontalAlignment(JLabel.CENTER);
-		panel.setLayout(new GridLayout(1, 1));
-		panel.add(filler);
-		return panel;
-	}
-
-
 
 }
