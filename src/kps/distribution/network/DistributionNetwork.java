@@ -53,7 +53,7 @@ public class DistributionNetwork {
 			processTransportCostUpdateEvent(e);
 		}
 	}
-@XmlElement(name = "location")
+
 	public void addLocation(Location location){
 		locations.put(location.getName(), location);
 	}
@@ -85,9 +85,9 @@ public class DistributionNetwork {
 	}
 
 	public void addRoute(Route route) throws InvalidRouteException{
-		if (!getLocations().contains(route.getOrigin()))
+		if (!getLocationsSet().contains(route.getOrigin()))
 			throw new InvalidRouteException("Origin location does not exist");
-		if (!getLocations().contains(route.getDestination()))
+		if (!getLocationsSet().contains(route.getDestination()))
 			throw new InvalidRouteException("Destination location does not exist");
 		if (routes.contains(route))
 			throw new InvalidRouteException("Route already exists");
@@ -158,20 +158,32 @@ public class DistributionNetwork {
 		}
 	}
 
-	public Set<Location> getLocations(){
+	public Set<Location> getLocationsSet(){
 		return new HashSet<Location>(this.locations.values());
 	}
 
-	public Map<String, Location> getLocationMap(){
+	public Map<String, Location> getLocations(){
 		return locations;
+	}
+	
+	public void setLocations(Map<String, Location> locations){
+		this.locations = locations;
 	}
 
 	public Set<Route> getRoutes(){
 		return this.routes;
 	}
+	
+	public void setRoutes(Set<Route> routes){
+		this.routes = routes;
+	}
 
 	public Map<String, Company> getCompanies(){
 		return this.companies;
+	}
+	
+	public void setCompanies(Map<String, Company> comapnies){
+		this.companies = comapnies;
 	}
 
 	public EventResult processEvent(DistributionNetworkEvent event) {
