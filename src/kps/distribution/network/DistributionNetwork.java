@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.annotation.*;
+
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.RouteRepository;
@@ -27,7 +29,10 @@ import kps.distribution.pathFinder.Optimisation;
 import kps.distribution.pathFinder.PathCondition;
 import kps.distribution.pathFinder.PathFinder;
 
+@XmlRootElement(name = "DistributionNetwork")
+@XmlType(propOrder = {"locations", "routes", "companies"})
 public class DistributionNetwork {
+	
 	private Map<String, Location> locations = new HashMap<String, Location>();
 	private Set<Route> routes = new HashSet<Route>();
 	private Map<String, Company> companies = new HashMap<String, Company>();
@@ -47,7 +52,7 @@ public class DistributionNetwork {
 			processTransportCostUpdateEvent(e);
 		}
 	}
-
+@XmlElement(name = "location")
 	public void addLocation(Location location){
 		locations.put(location.getName(), location);
 	}
