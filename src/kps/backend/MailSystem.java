@@ -54,11 +54,12 @@ public class MailSystem {
 				((DeliveryEventResult)returnEvent).id = clientEventUUID;
 			}else if(event instanceof CustomerPriceUpdateEvent 
 					&& returnEvent instanceof PriceUpdateEventResult){
-				System.out.println("Adding UUID to return event for a CustomerPriceUpdate");
 				UUID clientEventUUID = ((CustomerPriceUpdateEvent)event).id;
+				System.out.println("Adding UUID to return event for a CustomerPriceUpdate: " + clientEventUUID);
 				((PriceUpdateEventResult)returnEvent).id = clientEventUUID;
 			}
 		}
+		System.out.println("RETURNING EVENT" + returnEvent);
 		return returnEvent;
 	}
 	

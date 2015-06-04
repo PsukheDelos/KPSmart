@@ -62,6 +62,7 @@ public class MailClient {
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
 			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
 		}else if(e instanceof PriceUpdateEventResult){
+			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
 			if(awaitingResponse.containsKey(((PriceUpdateEventResult)e).id)){
 				System.out.println("Success!");
 			}
@@ -74,10 +75,10 @@ public class MailClient {
 		// For now, I'll add it to the Mail Delivery Event
 		// Look in MailSystem for the response method.
 		if(e instanceof MailDeliveryEvent){
-			System.out.println("Adding Awaiting Delivery for id" + ((MailDeliveryEvent)e).id);
+			System.out.println("Adding Awaiting Delivery for id: " + ((MailDeliveryEvent)e).id);
 			awaitingResponse.put(((MailDeliveryEvent) e).id, (MailDeliveryEvent)e);
 		}else if(e instanceof CustomerPriceUpdateEvent){
-			System.out.println("Adding Price Updater Event awaiting return" + ((CustomerPriceUpdateEvent)e).id);
+			System.out.println("Adding Price Updater Event awaiting return: " + ((CustomerPriceUpdateEvent)e).id);
 			awaitingResponse.put(((CustomerPriceUpdateEvent) e).id, (CustomerPriceUpdateEvent)e);
 		}
 		
