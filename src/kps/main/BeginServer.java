@@ -1,4 +1,5 @@
 package kps.main;
+
 import kps.net.server.Server;
 
 public class BeginServer {

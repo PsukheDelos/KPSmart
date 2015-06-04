@@ -182,7 +182,9 @@ public class PriceFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(edit==true){
-					parent.client.sendEvent(new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText())));
+					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
+					parent.client.sendEvent(c);
+//					parent.client.processEvent(c);
 //					parent.getMailClient().sendEvent(new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText())));
 //					PriceRepository.updatePrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
 				}

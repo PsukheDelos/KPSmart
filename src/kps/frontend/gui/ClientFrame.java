@@ -57,8 +57,6 @@ import kps.backend.database.RouteRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
-import kps.net.server.Server;
-
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.MapHandler;
@@ -89,7 +87,7 @@ public class ClientFrame extends JFrame{
 	private Double entered_weight = (double) 0;
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
-	
+
 	public JTable priceTable = new JTable(PriceRepository.getPricesModel());
 	private JComboBox<String> fromDropDown;
 
@@ -97,30 +95,23 @@ public class ClientFrame extends JFrame{
 
 	public MailClient client;
 
-	//	private ClientListener listener = new ClientListener(); //What is this for?
-
-	public static void main(String[] args){
-		//put for quicker launch
-		Server server = new Server();
-		server.start();
-		new ClientFrame();
-	}
+	private ClientListener listener = new ClientListener(); //What is this for?
 
 	public MailClient getMailClient(){
 		return client;
 	}
-	
+
 	public void updatePrice(){
 		priceTable.setModel(PriceRepository.getPricesModel());
 	}
-	
+
 	public void updateFrom(){
 		fromDropDown.removeAllItems();
 		for (String toCity : PriceRepository.getFromCities()){
 			fromDropDown.addItem(toCity);
 		}
 	}
-	
+
 	public ClientFrame() {
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
@@ -133,13 +124,11 @@ public class ClientFrame extends JFrame{
 					System.exit(0);
 			}
 		});
-		
-		
 
 		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
 		UIManager.put("nimbusBlueGrey", Color.white);
 		UIManager.put("control", Color.decode("#b8dbfe"));
-		//this.setBackground(Color.decode("#b8dbfe"));
+
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
@@ -148,9 +137,7 @@ public class ClientFrame extends JFrame{
 				}
 			}
 		} catch (Exception e) {
-			// If Nimbus is not available, you can set the GUI to another look and feel.
 		}
-
 
 		client = new MailClient(this);
 		initialise();
@@ -159,25 +146,20 @@ public class ClientFrame extends JFrame{
 		setLocationRelativeTo(null);
 		setVisible(false);
 
-//		// We should check if a user is logged in (Most likely not, but a check is gooood.
+		// We should check if a user is logged in
 		if(client.getCurrentUser() == null){
 			setEnabled(false);
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
 			frame.revalidate();
-			// This is kept below as a backup, just in case
-			//new ClientLoginPane(client, this);
 		}
 	}
 
 	private void initialise() {
-		System.out.println("--<<TEST>>---");
 		client.sendEvent(new MailDeliveryEvent("Monday", "Auckland", "Wellington", 1, 2, "International Air"));
-		
 		createTabbedPane();
 	}
 
 	protected void createTabbedPane(){
-
 		JTabbedPane tabbedPane = new JTabbedPane();
 
 		createDashboardTab(tabbedPane);
@@ -206,7 +188,7 @@ public class ClientFrame extends JFrame{
 		MapHandler mapHandler = mapPanel.getMapHandler();
 		// Get the default MapBean that the BasicMapPanel created.
 		MapBean mapBean = mapPanel.getMapBean();
-		// Set the map's center
+		// Set the map's center to Wellington
 		mapBean.setCenter(wellingtonLocation);
 
 		// Set the map's scale 1:120 million
@@ -235,9 +217,6 @@ public class ClientFrame extends JFrame{
 
 		mapBean.setBackgroundColor(Color.decode("#b8dbfe"));
 
-		//		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
-		//		UIManager.put("nimbusBlueGrey", Color.white);
-		//		UIManager.put("control", Color.decode("#b8dbfe"));
 		/*
 		 * Create a ShapeLayer to show world political boundaries. Set the
 		 * properties of the layer. This assumes that the datafile
@@ -267,6 +246,7 @@ public class ClientFrame extends JFrame{
 
 		OMGraphicList cityList = new OMGraphicList();
 		OMGraphicList routeList = new OMGraphicList();
+
 		for(Location city: LocationRepository.getLocations()){
 			OMPoint point = new OMPoint(city.lat, city.lon, 3);
 			point.setFillPaint(Color.yellow);
@@ -278,16 +258,14 @@ public class ClientFrame extends JFrame{
 			// Add an OMLine
 			OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
 
-			// line.addArrowHead(true);
 			line.setStroke(new BasicStroke(1f));
 			line.setLinePaint(Color.red);
-			//			line.putAttribute(OMGraphicConstants.LABEL, new OMTextLabeler("Line Label"));
 
-//			routeList.add(line);
+			routeList.add(line);
 			cityList.add(basicLocation);
 		}
 		omList.add(cityList);
-		omList.add(routeList);
+		//		omList.add(routeList);
 		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
@@ -295,7 +273,7 @@ public class ClientFrame extends JFrame{
 		// Create Map tab
 
 		JLabel label = new JLabel("Locations");
-		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
+		label.setHorizontalTextPosition(JLabel.TRAILING);
 		label.setIcon(createImageIcon("img/map-icon.png"));
 		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can view all the locations.");
 		tabbedPane.setTabComponentAt(4, label);
@@ -315,7 +293,6 @@ public class ClientFrame extends JFrame{
 		tabbedPane.addTab("Prices", null, panel,"View and Edit the current prices of KPSmart");
 		tabbedPane.setTabComponentAt(3, label);
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-//		JTable priceTable = new JTable(PriceRepository.getPricesModel());
 
 		//Title: Prices
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -393,7 +370,7 @@ public class ClientFrame extends JFrame{
 				}
 			}
 		});
-		
+
 		panel.add(removePrice,c);
 
 		//Table: Price Table
@@ -616,12 +593,12 @@ public class ClientFrame extends JFrame{
 		JFormattedTextField	 weightText = new JFormattedTextField(NumberFormat.getNumberInstance());
 		weightText.setValue(0);
 		weightText.addKeyListener(new KeyAdapter() {
-			
+
 			public void keyTyped(KeyEvent e){
 				char c = e.getKeyChar();
 				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
 			}
-			
+
 			public void keyReleased(KeyEvent e){
 				if(weightText.getText().equals("")){
 					entered_weight = 0.00;
@@ -634,7 +611,7 @@ public class ClientFrame extends JFrame{
 						entered_weight = 0.00;
 					}
 				}
-				
+
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 
@@ -642,10 +619,10 @@ public class ClientFrame extends JFrame{
 
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
-			
-			}
-				
-		);
+
+		}
+
+				);
 		weightText.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e){
 				if(weightText.getText().equals("")) weightText.setText("0");
@@ -659,12 +636,12 @@ public class ClientFrame extends JFrame{
 		volumeText.setValue(0);
 		volumeText.setBackground(Color.decode("#fffe9a"));
 		volumeText.addKeyListener(new KeyAdapter() {
-			
+
 			public void keyTyped(KeyEvent e){
 				char c = e.getKeyChar();
 				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
 			}
-			
+
 			public void keyReleased(KeyEvent e){
 				if(volumeText.getText().equals("")){
 					entered_volume = 0.00;
@@ -676,23 +653,23 @@ public class ClientFrame extends JFrame{
 					} catch (NumberFormatException exception) {
 						entered_volume = 0.00;
 					}
-					
+
 				}
-				
+
 				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
-			
-			}
-				
-		);
+
+		}
+
+				);
 		volumeText.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e){
 				if(volumeText.getText().equals(""))volumeText.setText("0");
 			}
-			
+
 			public void focusGained(FocusEvent e){
 				if(volumeText.getText().equals("0"))volumeText.setText("");
 			}
@@ -724,7 +701,7 @@ public class ClientFrame extends JFrame{
 		panel.add(volumeText,c);
 
 		Font g = new Font(totalPrice.getFont().getFontName(), Font.BOLD, 18);
-		
+
 		//Display Price
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -733,14 +710,14 @@ public class ClientFrame extends JFrame{
 		panel.add(priceLabel,c);	
 
 		priceLabel.setFont(g);
-		
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 6;
 		panel.add(totalPrice,c);
 
 		totalPrice.setFont(g);
-		
+
 		//Submit Button
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -752,11 +729,11 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				client.
+				//				client.
 				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
-//				
+				//				
 			}
-			
+
 		});
 		panel.add(submit,c);	
 	}
@@ -773,8 +750,8 @@ public class ClientFrame extends JFrame{
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		tabbedPane.addTab("Dashboard", null, panel,"View the current financial status of KPSmart");
-		tabbedPane.setTabComponentAt(0, label);
-		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
+		tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1, KeyEvent.VK_1);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -851,6 +828,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 2;
 		c.gridwidth = 3;
 
+		//Chart: Domestic
 		final JFXPanel jFXPanel = new JFXPanel();
 		Group root = new Group();
 		Scene scene = new Scene(root);
@@ -867,8 +845,8 @@ public class ClientFrame extends JFrame{
 		jFXPanel.setScene(scene);
 		JPanel j = new JPanel();
 		j.add(jFXPanel);
-		
-		//International
+
+		//Chart: International
 		final JFXPanel jFXPanel2 = new JFXPanel();
 		Group root2 = new Group();
 		Scene scene2 = new Scene(root2);
@@ -881,68 +859,69 @@ public class ClientFrame extends JFrame{
 		revchart2.setTitle("International");
 		revchart2.setStyle("-fx-background-color: rgba(184,219,254,1);");
 		revchart2.setTitle("International");
-		
+
 		((Group) scene2.getRoot()).getChildren().add(revchart2);
 
 		jFXPanel2.setScene(scene2);
 		JPanel k = new JPanel();
 		k.add(jFXPanel2);
-		
-		
-		//Trend
+
+
+		//Chart: Trend
 		final JFXPanel jFXPanel3 = new JFXPanel();
 		Group root3 = new Group();
 		Scene scene3 = new Scene(root3);
 		final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-         xAxis.setLabel("Month");
-         yAxis.setLabel("Profit ($100)");
-	        //creating the chart
-	        final LineChart<String,Number> lineChart = 
-	        		new LineChart<String,Number>(xAxis,yAxis);
-	                
-	        lineChart.setTitle("KPS Monthly Profit, 2015");
-	        lineChart.setLegendVisible(false);
-	        //defining a series
-	        XYChart.Series<String,Number> series1 = new XYChart.Series<String,Number>();
-	        series1.setName("Profit");
-	        
-	        series1.getData().add(new XYChart.Data<String,Number>("Jan", 23));
-	        series1.getData().add(new XYChart.Data<String,Number>("Feb", 14));
-	        series1.getData().add(new XYChart.Data<String,Number>("Mar", 15));
-	        series1.getData().add(new XYChart.Data<String,Number>("Apr", 24));
-	        series1.getData().add(new XYChart.Data<String,Number>("May", 34));
-	        series1.getData().add(new XYChart.Data<String,Number>("Jul", 22));
-	        series1.getData().add(new XYChart.Data<String,Number>("Aug", 45));
-	        series1.getData().add(new XYChart.Data<String,Number>("Sep", 43));
-	        series1.getData().add(new XYChart.Data<String,Number>("Oct", 17));
-	        series1.getData().add(new XYChart.Data<String,Number>("Nov", 29));
-	        series1.getData().add(new XYChart.Data<String,Number>("Dec", 25));
-	        
-//	        XYChart.Series series2 = new XYChart.Series();
-//	        series2.setName("Expenses");
-//	        series2.getData().add(new XYChart.Data("Jan", 33));
-//	        series2.getData().add(new XYChart.Data("Feb", 34));
-//	        series2.getData().add(new XYChart.Data("Mar", 25));
-//	        series2.getData().add(new XYChart.Data("Apr", 44));
-//	        series2.getData().add(new XYChart.Data("May", 39));
-//	        series2.getData().add(new XYChart.Data("Jun", 16));
-//	        series2.getData().add(new XYChart.Data("Jul", 55));
-//	        series2.getData().add(new XYChart.Data("Aug", 54));
-//	        series2.getData().add(new XYChart.Data("Sep", 48));
-//	        series2.getData().add(new XYChart.Data("Oct", 27));
-//	        series2.getData().add(new XYChart.Data("Nov", 37));
-//	        series2.getData().add(new XYChart.Data("Dec", 29));
-	        
-	        lineChart.getData().addAll(series1);
+		final NumberAxis yAxis = new NumberAxis();
+		xAxis.setLabel("Month");
+		yAxis.setLabel("Profit ($100)");
 
-	        ((Group) scene3.getRoot()).getChildren().add(lineChart);
+		//Creating the chart
+		final LineChart<String,Number> lineChart = 
+				new LineChart<String,Number>(xAxis,yAxis);
+
+		lineChart.setTitle("KPS Monthly Profit, 2015");
+		lineChart.setLegendVisible(false);
+		//defining a series
+		XYChart.Series<String,Number> series1 = new XYChart.Series<String,Number>();
+		series1.setName("Profit");
+
+		series1.getData().add(new XYChart.Data<String,Number>("Jan", 23));
+		series1.getData().add(new XYChart.Data<String,Number>("Feb", 14));
+		series1.getData().add(new XYChart.Data<String,Number>("Mar", 15));
+		series1.getData().add(new XYChart.Data<String,Number>("Apr", 24));
+		series1.getData().add(new XYChart.Data<String,Number>("May", 34));
+		series1.getData().add(new XYChart.Data<String,Number>("Jul", 22));
+		series1.getData().add(new XYChart.Data<String,Number>("Aug", 45));
+		series1.getData().add(new XYChart.Data<String,Number>("Sep", 43));
+		series1.getData().add(new XYChart.Data<String,Number>("Oct", 17));
+		series1.getData().add(new XYChart.Data<String,Number>("Nov", 29));
+		series1.getData().add(new XYChart.Data<String,Number>("Dec", 25));
+
+		//	        XYChart.Series series2 = new XYChart.Series();
+		//	        series2.setName("Expenses");
+		//	        series2.getData().add(new XYChart.Data("Jan", 33));
+		//	        series2.getData().add(new XYChart.Data("Feb", 34));
+		//	        series2.getData().add(new XYChart.Data("Mar", 25));
+		//	        series2.getData().add(new XYChart.Data("Apr", 44));
+		//	        series2.getData().add(new XYChart.Data("May", 39));
+		//	        series2.getData().add(new XYChart.Data("Jun", 16));
+		//	        series2.getData().add(new XYChart.Data("Jul", 55));
+		//	        series2.getData().add(new XYChart.Data("Aug", 54));
+		//	        series2.getData().add(new XYChart.Data("Sep", 48));
+		//	        series2.getData().add(new XYChart.Data("Oct", 27));
+		//	        series2.getData().add(new XYChart.Data("Nov", 37));
+		//	        series2.getData().add(new XYChart.Data("Dec", 29));
+
+		lineChart.getData().addAll(series1);
+
+		((Group) scene3.getRoot()).getChildren().add(lineChart);
 		jFXPanel3.setScene(scene3);
 		JPanel i = new JPanel();
 		i.add(jFXPanel3);
-		
-		
-		
+
+
+
 		JTabbedPane dashTab = new JTabbedPane();
 		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
 		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
@@ -952,34 +931,6 @@ public class ClientFrame extends JFrame{
 		panel.add(dashTab,c);
 
 	}
-
-//	private static void initFxLater(JFXPanel panel) {
-//		Group root = new Group();
-////		Scene scene = new Scene(root, 450, 200);
-//		Scene scene = new Scene(root);
-//
-//		ObservableList<PieChart.Data> pieChartData =
-//				FXCollections.observableArrayList(
-//						new PieChart.Data("Domestic", 134),
-//						new PieChart.Data("International", 27));
-//		final PieChart revchart = new PieChart(pieChartData);
-//		revchart.setTitle("Revenue");
-//		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");
-////		UIManager.put("nimbusBase", Color.decode("#FFCC00"));
-////		UIManager.put("nimbusBlueGrey", Color.white);
-////		UIManager.put("control", Color.decode("#b8dbfe"));
-//		//		revchart.setBackground(new Background());
-//		pieChartData =
-//				FXCollections.observableArrayList(
-//						new PieChart.Data("Domestic", 2),
-//						new PieChart.Data("International", 300));
-//		final PieChart chart = new PieChart(pieChartData);
-//		chart.setTitle("Expenses");
-//		
-//		((Group) scene.getRoot()).getChildren().add(revchart);
-//
-//		panel.setScene(scene);
-//	}
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
@@ -992,17 +943,5 @@ public class ClientFrame extends JFrame{
 			return null;
 		}
 	}
-
-	/** Returns a TextPanel from the String 'text'. **/
-	protected JComponent makeTextPanel(String text) {
-		JPanel panel = new JPanel(false);
-		JLabel filler = new JLabel(text);
-		filler.setHorizontalAlignment(JLabel.CENTER);
-		panel.setLayout(new GridLayout(1, 1));
-		panel.add(filler);
-		return panel;
-	}
-
-
 
 }
