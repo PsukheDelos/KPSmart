@@ -38,32 +38,92 @@ public class Route {
 		this.day = day;
 	}
 
-	public Company getCompany(){
-		return this.company;
-	}
-
 	public Location getOrigin(){
 		return this.origin;
 	}
-
+	
+	public void setOrigin(Location origin) {
+		this.origin = origin;
+	}
+	
 	public Location getDestination(){
 		return this.destination;
+	}
+	
+	public void setDestination(Location destination) {
+		this.destination = destination;
+	}
+	
+	public Company getCompany(){
+		return this.company;
+	}
+	
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+	
+	public double getWeightCost() {
+		return weightCost;
+	}
+
+	public void setWeightCost(double weightCost) {
+		this.weightCost = weightCost;
+	}
+
+	public double getVolumeCost() {
+		return volumeCost;
+	}
+
+	public void setVolumeCost(double volumeCost) {
+		this.volumeCost = volumeCost;
+	}
+
+	public double getMaxWeight() {
+		return maxWeight;
+	}
+
+	public void setMaxWeight(double maxWeight) {
+		this.maxWeight = maxWeight;
+	}
+
+	public double getMaxVolume() {
+		return maxVolume;
+	}
+
+	public void setMaxVolume(double maxVolume) {
+		this.maxVolume = maxVolume;
 	}
 
 	public double getDuration() {
 		return duration;
 	}
 
+	public void setDuration(double duration) {
+		this.duration = duration;
+	}
+	
 	public double getFrequency(){
 		return this.frequency;
 	}
-
+	
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+	}
+	
+	public String getDay(){
+		return this.day;
+	}
+	
+	public void setDay(String day) {
+		this.day = day;
+	}
+	
 	public TransportType getType(){
 		return this.type;
 	}
-
-	public String getDay(){
-		return this.day;
+	
+	public void setType(TransportType type) {
+		this.type = type;
 	}
 
 	public boolean canShip(Mail mail){
