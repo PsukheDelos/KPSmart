@@ -24,6 +24,6 @@ public class XMLFileHandler {
 	}
 	
 	public static void main(String[] args){
-		XMLFileHandler.write("troll");
+		XMLFileHandler.write("test");
 	}
 }
