@@ -36,11 +36,11 @@ public class PriceRepository {
 					return false;
 				}
 			};
-			model.addColumn("from");
-			model.addColumn("to");
+			model.addColumn("origin");
+			model.addColumn("destination");
 			model.addColumn("priority");
-			model.addColumn("price per gram");
-			model.addColumn("price per volume");
+			model.addColumn("weight cost");
+			model.addColumn("volume cost");
 			Statement statement = db.createStatement();
 			String query = "SELECT * FROM price";
 			ResultSet result = statement.executeQuery(query);
@@ -53,7 +53,7 @@ public class PriceRepository {
 		return null;
 	}
 
-	public static ArrayList<String> getFromCities(){
+	public static ArrayList<String> getOriginCities(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
@@ -69,7 +69,7 @@ public class PriceRepository {
 		return null;
 	}
 
-	public static ArrayList<String> getToCities(String fromCity){
+	public static ArrayList<String> getDestinationCities(String fromCity){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
@@ -85,11 +85,11 @@ public class PriceRepository {
 		return null;
 	}
 
-	public static ArrayList<String> getPriorities(String fromCity, String toCity){
+	public static ArrayList<String> getPriorities(String origin, String destination){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"priority\" FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" order by \"to\" asc";
+			String query = "SELECT distinct \"priority\" FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" order by \"to\" asc";
 			ResultSet result = statement.executeQuery(query);
 			ArrayList<String> priorities = new ArrayList<String>();
 			while(result.next()){
@@ -101,11 +101,11 @@ public class PriceRepository {
 		return null;
 	}
 
-	public static Double getPriceWeight(String fromCity, String toCity, String priority){
+	public static Double getWeightCost(String origin, String destination, String priority){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"price_weight\" FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
+			String query = "SELECT distinct \"price_weight\" FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
 			ResultSet result = statement.executeQuery(query);
 			double priceWeight = 0;
 			while(result.next()){
@@ -117,11 +117,11 @@ public class PriceRepository {
 		return null;
 	}
 
-	public static Double getPriceVolume(String fromCity, String toCity, String priority){
+	public static Double getVolumeCost(String origin, String destination, String priority){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"price_volume\" FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
+			String query = "SELECT distinct \"price_volume\" FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
 			ResultSet result = statement.executeQuery(query);
 			double priceVolume = 0;
 			while(result.next()){
@@ -133,22 +133,11 @@ public class PriceRepository {
 		return null;
 	}
 
-	public static Boolean removePrice(String fromCity, String toCity, String priority){
+	public static Boolean remove(String origin, String destination, String priority){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "DELETE FROM price where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"priority\"=\""+priority+"\"";
-			statement.execute(query);
-			db.close();
-			return true;			
-		} catch (SQLException e) {e.printStackTrace();}
-		return false;
-	}
-	public static Boolean addPrice(String from, String to, String priority, Double weight, Double volume){
-		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
-		try {
-			Statement statement = db.createStatement();
-			String query = "INSERT INTO price (\"from\", \"to\", priority, price_weight, price_volume) VALUES (\""+from+"\",\""+to+"\",\""+priority+"\","+weight+","+volume+")";
+			String query = "DELETE FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\"";
 			statement.execute(query);
 			db.close();
 			return true;			
@@ -156,11 +145,24 @@ public class PriceRepository {
 		return false;
 	}
 	
-	public static Boolean updatePrice(String from, String to, String priority, Double weight, Double volume){
+	public static Boolean add(String origin, String destination, String priority, Double weightcost, Double volumecost){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "UPDATE price SET price_weight="+weight+",price_volume="+volume+" WHERE \"from\"=\""+from+"\" and \"to\" = \""+to+"\" and \"priority\"=\""+priority+"\"";
+			String query = "INSERT INTO price (from\", \"to\", priority, weightCost, volumeCost) VALUES (\""+origin+"\",\""+destination+"\",\""+priority+"\","+weightcost+","+volumecost+")";
+			statement.execute(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
+	
+	public static Boolean update(String origin, String destination, String priority, Double weightcost, Double volumecost){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "UPDATE price SET [weightCost]="+weightcost+", [volumeCost]="+volumecost+" WHERE [from]=\""+origin+"\" and [to] = \""+destination+"\" and [priority]=\""+priority+"\"";
+			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			

@@ -26,9 +26,9 @@ public class LocationRepository {
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT * FROM cities WHERE \"city_name\"=\""+city+"\"";
+			String query = "SELECT * FROM locations WHERE \"name\"=\""+city+"\"";
 			ResultSet result = statement.executeQuery(query);
-			Location l = new Location(result.getString(1), result.getDouble(3), result.getDouble(4));
+			Location l = new Location(result.getString(1), result.getDouble(2), result.getDouble(3));
 			db.close();
 			return l;		
 		} catch (SQLException e) {e.printStackTrace();}
@@ -40,10 +40,10 @@ public class LocationRepository {
 		try {
 			ArrayList<Location> cities = new ArrayList<Location>();
 			Statement statement = db.createStatement();
-			String query = "SELECT * FROM cities";
+			String query = "SELECT * FROM locations";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-				cities.add(new Location(result.getString(1), result.getDouble(3), result.getDouble(4)));		
+				cities.add(new Location(result.getString(1), result.getDouble(2), result.getDouble(3)));		
 			}
 			db.close();
 			return cities;
