@@ -51,12 +51,15 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import kps.backend.UserPermissions;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.RouteRepository;
+import kps.backend.database.UserRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
+
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.MapHandler;
@@ -167,9 +170,68 @@ public class ClientFrame extends JFrame{
 		createRouteTab(tabbedPane);
 		createPriceTab(tabbedPane);
 		createMapTab(tabbedPane);
+		
+		createManagerTab(tabbedPane);
 
 		this.add(tabbedPane);
 	}
+	
+	private void createManagerTab(JTabbedPane tabbedPane){
+		JLabel label = new JLabel("Manager");
+		label.setHorizontalTextPosition(JLabel.TRAILING);
+		label.setIcon(createImageIcon("img/dash-icon.png"));
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		JTable table = new JTable(UserRepository.getUserModel());
+		
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+		
+		table.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		table.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(table), c);
+		
+		//Button: Edit Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 0;
+		
+		JButton button = new JButton("Add User");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new NewUserFrame(client);
+			}
+		});
+		panel.add(button, c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 0;
+		
+		
+		button = new JButton("Remove User");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		panel.add(button, c);
+		
+		tabbedPane.addTab("Manager", null, panel,"Here you can view all the locations.");
+		tabbedPane.setTabComponentAt(5, label);
+		tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
+	}
+	
 
 	/**
 	 * @param tabbedPane

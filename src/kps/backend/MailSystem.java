@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import kps.backend.database.UserRepository;
+import kps.backend.users.DuplicateUserException;
 import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
@@ -15,6 +16,8 @@ import kps.distribution.network.DistributionNetwork;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
+import kps.net.event.NewUserEvent;
+import kps.net.event.NewUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailSystem {
@@ -42,6 +45,10 @@ public class MailSystem {
 			System.out.println(this + "Authenicating User: " + auth.username);
 			User user = UserRepository.authenticateUser(auth.username, auth.password);
 			returnEvent = new LoginResponseEvent(user);
+		}else if(event instanceof NewUserEvent){
+			NewUserEvent nue = (NewUserEvent)event;
+			try { UserRepository.registerNewUser(nue.username, nue.password, nue.permissions); } catch (DuplicateUserException e) { e.printStackTrace();}
+			returnEvent = new NewUserResultEvent();
 		}else if(event instanceof DistributionNetworkEvent){
 			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
 
@@ -59,7 +66,6 @@ public class MailSystem {
 				((PriceUpdateEventResult)returnEvent).id = clientEventUUID;
 			}
 		}
-		System.out.println("RETURNING EVENT" + returnEvent);
 		return returnEvent;
 	}
 	
