@@ -19,9 +19,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 import javafx.collections.FXCollections;
@@ -35,37 +32,31 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 
-import javax.swing.UIManager.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
 
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-
+import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
-import kps.backend.database.CostRepository;
+import kps.backend.database.UserRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.swing.AutoCompleteSupport;
 
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
@@ -165,9 +156,68 @@ public class ClientFrame extends JFrame{
 		createRouteTab(tabbedPane);
 		createPriceTab(tabbedPane);
 		createMapTab(tabbedPane);
+		
+		createManagerTab(tabbedPane);
 
 		this.add(tabbedPane);
 	}
+	
+	private void createManagerTab(JTabbedPane tabbedPane){
+		JLabel label = new JLabel("Manager");
+		label.setHorizontalTextPosition(JLabel.TRAILING);
+		label.setIcon(createImageIcon("img/dash-icon.png"));
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		JTable table = new JTable(UserRepository.getUserModel());
+		
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+		
+		table.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		table.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(table), c);
+		
+		//Button: Edit Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 0;
+		
+		JButton button = new JButton("Add User");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new NewUserFrame(client);
+			}
+		});
+		panel.add(button, c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 0;
+		
+		
+		button = new JButton("Remove User");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		panel.add(button, c);
+		
+		tabbedPane.addTab("Manager", null, panel,"Here you can view all the locations.");
+		tabbedPane.setTabComponentAt(5, label);
+		tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
+	}
+	
 
 	private void createDashboardTab(JTabbedPane tabbedPane) {
 		
