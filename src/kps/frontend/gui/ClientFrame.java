@@ -184,9 +184,9 @@ public class ClientFrame extends JFrame{
 		
 		//Button: Edit Price
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
+		c.gridx = 1;
 		c.gridy = 1;
-		c.gridwidth = 0;
+		c.gridwidth = 1;
 		
 		JButton button = new JButton("Add User");
 		button.addActionListener(new ActionListener(){
@@ -198,9 +198,9 @@ public class ClientFrame extends JFrame{
 		panel.add(button, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
+		c.gridx = 2;
 		c.gridy = 1;
-		c.gridwidth = 0;
+		c.gridwidth = 1;
 		
 		
 		button = new JButton("Remove User");
@@ -212,6 +212,22 @@ public class ClientFrame extends JFrame{
 			}
 		});
 		panel.add(button, c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 3;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		
+		button = new JButton("Refresh");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				table.setModel(UserRepository.getUserModel());
+			}
+		});
+		
+		panel.add(button, c);
+		
 		
 		tabbedPane.addTab("Manager", null, panel,"Here you can view all the locations.");
 		tabbedPane.setTabComponentAt(5, label);
