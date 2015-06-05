@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.*;
 
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
-import kps.backend.database.RouteRepository;
+import kps.backend.database.CostRepository;
 import kps.distribution.event.CostUpdateEventResult;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
@@ -43,7 +43,7 @@ public class DistributionNetwork {
 		for (Location location : LocationRepository.getLocations()){
 			locations.put(location.name, location);
 		}
-		for (TransportCostUpdateEvent e : RouteRepository.getRoutes()){
+		for (TransportCostUpdateEvent e : CostRepository.getRoutes()){
 			if (!locations.containsKey(e.from)){
 				locations.put(e.from, new Location(e.from, 100, 100));
 			}
@@ -256,7 +256,7 @@ public class DistributionNetwork {
 	}
 
 	private EventResult processCustomerPriceUpdateEvent(CustomerPriceUpdateEvent event) {
-		PriceRepository.updatePrice(event.from, event.to, event.priority, event.weightCost, event.volumeCost);
+		PriceRepository.update(event.from, event.to, event.priority, event.weightCost, event.volumeCost);
 		return new PriceUpdateEventResult();
 	}
 
