@@ -54,7 +54,7 @@ public class UserRepository {
 			statement.executeUpdate(query);
 			db.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 	}
 	
@@ -81,6 +81,19 @@ public class UserRepository {
 			return model;
 		}catch(SQLException e){ e.printStackTrace(); }
 		return null;
+	}
+	
+	public static void removeUser(String username){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {		
+			Statement statement = db.createStatement();
+			String query = "DELETE FROM users WHERE username='" + username + "'";
+			statement.executeUpdate(query);
+			db.close();
+		} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		}
 	}
 	
 	private static boolean containsUser(String username){
