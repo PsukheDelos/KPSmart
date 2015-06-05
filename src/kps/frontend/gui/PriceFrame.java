@@ -180,7 +180,7 @@ public class PriceFrame extends JFrame{
 				else{
 					PriceRepository.add(origin.getText(), destination.getText(), priority.getText(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 				}
-				parent.updatePrice();
+				parent.updatePrices();
 				parent.updateOrigin();
 				dispose();
 			}

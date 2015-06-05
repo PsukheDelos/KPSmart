@@ -89,7 +89,8 @@ public class ClientFrame extends JFrame{
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
 
-	public JTable priceTable = new JTable(PriceRepository.getPricesModel());
+	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
+	private JTable userTable = new JTable(UserRepository.getUserModel());
 	private JComboBox<String> fromDropDown;
 
 	private ClientFrame parent = this;
@@ -156,85 +157,11 @@ public class ClientFrame extends JFrame{
 		createRouteTab(tabbedPane);
 		createPriceTab(tabbedPane);
 		createMapTab(tabbedPane);
-		
 		createManagerTab(tabbedPane);
 
 		this.add(tabbedPane);
 	}
 	
-	private void createManagerTab(JTabbedPane tabbedPane){
-		JLabel label = new JLabel("Manager");
-		label.setHorizontalTextPosition(JLabel.TRAILING);
-		label.setIcon(createImageIcon("img/dash-icon.png"));
-		
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		JTable table = new JTable(UserRepository.getUserModel());
-		
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 0;
-		
-		table.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		table.setFillsViewportHeight(true);
-		panel.add(new JScrollPane(table), c);
-		
-		//Button: Edit Price
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		
-		JButton button = new JButton("Add User");
-		button.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new NewUserFrame(client);
-			}
-		});
-		panel.add(button, c);
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 2;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		
-		
-		button = new JButton("Remove User");
-		button.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		panel.add(button, c);
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 3;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		
-		button = new JButton("Refresh");
-		button.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				table.setModel(UserRepository.getUserModel());
-			}
-		});
-		
-		panel.add(button, c);
-		
-		
-		tabbedPane.addTab("Manager", null, panel,"Here you can view all the locations.");
-		tabbedPane.setTabComponentAt(5, label);
-		tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
-	}
-	
-
 	private void createDashboardTab(JTabbedPane tabbedPane) {
 		
 		JLabel label = new JLabel("Dashboard");
@@ -826,7 +753,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 0;
 		c.gridwidth = 0;
 
-		JLabel title = new JLabel("Routes", SwingConstants.LEFT);
+		JLabel title = new JLabel("Routesasdfsadasdaaafdfaadfs", SwingConstants.LEFT);
 		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
 		title.setForeground(Color.decode("#fffe9a"));
 
@@ -1014,8 +941,79 @@ public class ClientFrame extends JFrame{
 		// Create Map tab
 	}
 	
-	public void updatePrice(){
+	private void createManagerTab(JTabbedPane tabbedPane){
+		JLabel label = new JLabel("Users");
+		label.setHorizontalTextPosition(JLabel.TRAILING);
+		label.setIcon(createImageIcon("img/users-icon.png"));
+		JPanel panel = new JPanel();
+		
+		tabbedPane.addTab("Users", null, panel,"Here you can edit users");
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
+		
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		//Title: Users
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+
+		JLabel title = new JLabel("Users", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
+
+		panel.add(title,c);
+		
+		//Table: Users
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 3;
+		
+		userTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		userTable.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(userTable), c);
+		
+		//Button: Add User
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		
+		JButton button = new JButton("+");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new NewUserFrame(client);
+			}
+		});
+		panel.add(button, c);
+
+		//Button: Remove User
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 2;
+		c.gridwidth = 1;
+		
+		button = new JButton("-");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO --
+			}
+		});
+		panel.add(button, c);
+
+	}
+
+	
+	public void updatePrices(){
 		priceTable.setModel(PriceRepository.getPricesModel());
+	}
+	
+	public void updateUsers(){
+		userTable.setModel(UserRepository.getUserModel());
 	}
 
 	public void updateOrigin(){
