@@ -10,9 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import kps.distribution.event.TransportCostUpdateEvent;
-import kps.distribution.network.Route;
 
-public class RouteRepository {
+public class CostRepository {
 
 	private static Connection db = null;
 
@@ -32,10 +31,13 @@ public class RouteRepository {
 		try {
 			ArrayList<TransportCostUpdateEvent> routes = new ArrayList<TransportCostUpdateEvent>();
 			Statement statement = db.createStatement();
-			String query = "SELECT * FROM route";
+			String query = "SELECT * FROM cost";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-			    routes.add(new TransportCostUpdateEvent("company", result.getString(2), result.getString(1), result.getString(3), 1,1,1000,1000,1,1,"Monday"));
+			    routes.add(new TransportCostUpdateEvent(result.getString(1), result.getString(3), result.getString(2), result.getString(4), 
+			    		Double.valueOf(result.getString(5)), Double.valueOf(result.getString(6)), 
+			    		Double.valueOf(result.getString(7)), Double.valueOf(result.getString(8)), 
+			    		Double.valueOf(result.getString(9)), Double.valueOf(result.getString(10)), result.getString(11)));
 			}
 			db.close();
 			
@@ -57,15 +59,26 @@ public class RouteRepository {
 			       return false;
 			    }
 			};
-			model.addColumn("from");
-			model.addColumn("to");
-			model.addColumn("method");
-			model.addColumn("category");
+			model.addColumn("company");
+			model.addColumn("origin");
+			model.addColumn("destination");
+			model.addColumn("type");
+			model.addColumn("weight cost");
+			model.addColumn("volume cost");
+			model.addColumn("max weight");
+			model.addColumn("max volume");
+			model.addColumn("duration");
+			model.addColumn("frequency");
+			model.addColumn("day");
+
 			Statement statement = db.createStatement();
-			String query = "SELECT * FROM route";
+			String query = "SELECT * FROM cost";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-			    model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3), result.getString(4)});
+			    model.addRow(new Object[] {result.getString(1), result.getString(3), result.getString(2), result.getString(4), 
+			    		Double.valueOf(result.getString(5)), Double.valueOf(result.getString(6)), 
+			    		Double.valueOf(result.getString(7)), Double.valueOf(result.getString(8)), 
+			    		Double.valueOf(result.getString(9)), Double.valueOf(result.getString(10)), result.getString(11)});
 			}
 			db.close();
 			
@@ -75,43 +88,43 @@ public class RouteRepository {
 	}
 	
 	
-	public static ArrayList<String> getFromCities(){
+	public static ArrayList<String> getOrigins(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"from\" FROM route order by \"from\" asc";
+			String query = "SELECT distinct \"from\" FROM cost order by \"from\" asc";
 			ResultSet result = statement.executeQuery(query);
-			ArrayList<String> fromCities = new ArrayList<String>();
+			ArrayList<String> origins = new ArrayList<String>();
 			while(result.next()){
-				fromCities.add(result.getString(1));
+				origins.add(result.getString(1));
 			}
 			db.close();
-			return fromCities;
+			return origins;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
 	
-	public static ArrayList<String> getToCities(String fromCity){
+	public static ArrayList<String> getDestinations(String origin){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"to\" FROM route where \"from\"=\""+fromCity+"\" order by \"to\" asc";
+			String query = "SELECT distinct \"to\" FROM cost where \"from\"=\""+origin+"\" order by \"to\" asc";
 			ResultSet result = statement.executeQuery(query);
-			ArrayList<String> toCities = new ArrayList<String>();
+			ArrayList<String> destinations = new ArrayList<String>();
 			while(result.next()){
-				toCities.add(result.getString(1));
+				destinations.add(result.getString(1));
 			}
 			db.close();
-			return toCities;
+			return destinations;
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
 	
-	public static Boolean removeRoute(String fromCity, String toCity, String category){
+	public static Boolean remove(String company, String origin, String destination, String type){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "DELETE FROM route where \"from\"=\""+fromCity+"\" and \"to\"=\""+toCity+"\" and \"category\"=\""+category+"\"";
+			String query = "DELETE FROM cost where \"company\"=\""+company+"\" and \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"type\"=\""+type+"\"";
 			statement.execute(query);
 			db.close();
 			return true;			

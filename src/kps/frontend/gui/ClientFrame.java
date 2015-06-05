@@ -19,6 +19,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javafx.collections.FXCollections;
@@ -36,26 +39,34 @@ import javax.swing.UIManager.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
-import kps.backend.database.RouteRepository;
+import kps.backend.database.CostRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.swing.AutoCompleteSupport;
+
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
 import com.bbn.openmap.MapHandler;
@@ -98,18 +109,8 @@ public class ClientFrame extends JFrame{
 		return client;
 	}
 
-	public void updatePrice(){
-		priceTable.setModel(PriceRepository.getPricesModel());
-	}
-
-	public void updateFrom(){
-		fromDropDown.removeAllItems();
-		for (String toCity : PriceRepository.getFromCities()){
-			fromDropDown.addItem(toCity);
-		}
-	}
-
 	public ClientFrame() {
+		
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -137,11 +138,6 @@ public class ClientFrame extends JFrame{
 		}
 
 		client = new MailClient(this);
-		initialise();
-
-		pack();
-		setLocationRelativeTo(null);
-		setVisible(false);
 
 		// We should check if a user is logged in
 		if(client.getCurrentUser() == null){
@@ -149,6 +145,12 @@ public class ClientFrame extends JFrame{
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
 			frame.revalidate();
 		}
+		
+		initialise();
+
+		pack();
+		setLocationRelativeTo(null);
+		setVisible(false);
 	}
 
 	private void initialise() {
@@ -167,576 +169,8 @@ public class ClientFrame extends JFrame{
 		this.add(tabbedPane);
 	}
 
-	/**
-	 * @param tabbedPane
-	 */
-	private void createMapTab(JTabbedPane tabbedPane) {
-		/*
-		 * The BasicMapPanel automatically creates many default components,
-		 * including the MapBean and the MapHandler. You can extend the
-		 * BasicMapPanel class if you like to add different functionality or
-		 * different types of objects.
-		 */
-		MapPanel mapPanel = new OverlayMapPanel();
-		LatLonPoint wellingtonLocation = new LatLonPoint.Double(-41.21039581,175.1449432);
-
-		// Get the default MapHandler the BasicMapPanel created.
-		MapHandler mapHandler = mapPanel.getMapHandler();
-		// Get the default MapBean that the BasicMapPanel created.
-		MapBean mapBean = mapPanel.getMapBean();
-		// Set the map's center to Wellington
-		mapBean.setCenter(wellingtonLocation);
-
-		// Set the map's scale 1:120 million
-		mapBean.setScale(120000000f);
-
-		/*
-		 * Create and add a LayerHandler to the MapHandler. The LayerHandler
-		 * manages Layers, whether they are part of the map or not.
-		 * layer.setVisible(true) will add it to the map. The LayerHandler
-		 * has methods to do this, too. The LayerHandler will find the
-		 * MapBean in the MapHandler.
-		 */
-		mapHandler.add(new LayerHandler());
-		// Add navigation tools over the map
-		mapHandler.add(new EmbeddedNavPanel());
-		// Add scale display widget over the map
-		mapHandler.add(new EmbeddedScaleDisplayPanel());
-		// Add MouseDelegator, which handles mouse modes (managing mouse
-		// events)
-		mapHandler.add(new MouseDelegator());
-		// Add OMMouseMode, which handles how the map reacts to mouse
-		// movements
-		mapHandler.add(new OMMouseMode());
-		// Add a ToolPanel for widgets on the north side of the map.
-		mapHandler.add(new ToolPanel());
-
-		mapBean.setBackgroundColor(Color.decode("#b8dbfe"));
-
-		/*
-		 * Create a ShapeLayer to show world political boundaries. Set the
-		 * properties of the layer. This assumes that the datafile
-		 * "cntry02.shp" is in a path specified in the CLASSPATH variable.
-		 * These files are distributed with OpenMap and reside in the
-		 * top level "share" sub-directory.
-		 */
-		ShapeLayer shapeLayer = new BufferedShapeLayer();
-
-		// Since this Properties object is being used just for
-		// this layer, the properties do not have to be scoped
-		// with marker name.
-		Properties shapeLayerProps = new Properties();
-		shapeLayerProps.put("prettyName", "Political Solid");
-		shapeLayerProps.put("lineColor", "000000");
-		shapeLayerProps.put("fillColor", "4ECD21");
-		shapeLayerProps.put("shapeFile", "data/shape/cntry02/cntry02.shp");
-		shapeLayerProps.put("lineWidth", 0);
-		shapeLayer.setProperties(shapeLayerProps);
-		shapeLayer.setVisible(true);
-
-		// Last on top.
-		mapHandler.add(shapeLayer);
-		BasicLayer basicLayer = new BasicLayer();
-
-		OMGraphicList omList = new OMGraphicList();
-
-		OMGraphicList cityList = new OMGraphicList();
-		OMGraphicList routeList = new OMGraphicList();
-
-		for(Location city: LocationRepository.getLocations()){
-			OMPoint point = new OMPoint(city.lat, city.lon, 3);
-			point.setFillPaint(Color.yellow);
-			point.setStroke(new BasicStroke(0));
-			point.setOval(true);
-			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
-			basicLocation.setShowName(false);
-
-			// Add an OMLine
-			OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
-
-			line.setStroke(new BasicStroke(1f));
-			line.setLinePaint(Color.red);
-
-			routeList.add(line);
-			cityList.add(basicLocation);
-		}
-		omList.add(cityList);
-		//		omList.add(routeList);
-		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
-		basicLayer.setList(omList);
-		mapHandler.add(basicLayer);
-
-		// Create Map tab
-
-		JLabel label = new JLabel("Locations");
-		label.setHorizontalTextPosition(JLabel.TRAILING);
-		label.setIcon(createImageIcon("img/map-icon.png"));
-		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can view all the locations.");
-		tabbedPane.setTabComponentAt(4, label);
-		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
-	}
-
-	/**
-	 * @param tabbedPane
-	 */
-	private void createPriceTab(JTabbedPane tabbedPane) {
-		JLabel label = new JLabel("Prices");
-		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
-		label.setIcon(createImageIcon("img/price-icon.png"));
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		tabbedPane.addTab("Prices", null, panel,"View and Edit the current prices of KPSmart");
-		tabbedPane.setTabComponentAt(3, label);
-		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-
-		//Title: Prices
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 0;
-
-		JLabel priceTitle = new JLabel("Prices", SwingConstants.LEFT);
-		priceTitle.setFont(new Font(priceTitle.getFont().getFontName(), Font.PLAIN, 30));
-		priceTitle.setForeground(Color.decode("#fffe9a"));
-
-		panel.add(priceTitle,c);
-
-		//Button: Add Price
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JButton addPrice = new JButton();
-		addPrice.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				new PriceFrame(parent,"Add");
-				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-				//						jt.setModel(PriceRepository.getPricesModel());
-
-			}
-		});
-		addPrice.setText("+");
-		panel.add(addPrice,c);
-
-		//Button: Edit Price
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JButton editPrice = new JButton();
-		editPrice.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				int sr = priceTable.getSelectedRow();
-				if(sr!=-1){
-					new PriceFrame(parent,priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString(),priceTable.getModel().getValueAt(sr, 3).toString(),priceTable.getModel().getValueAt(sr, 4).toString());
-					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-					//						jt.setModel(PriceRepository.getPricesModel());
-				}
-
-			}
-		});
-		editPrice.setText("Edit");
-		panel.add(editPrice,c);
-
-		//Button: Remove Price
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 2;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JButton removePrice = new JButton();
-		removePrice.setText("-");
-		removePrice.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				int sr = priceTable.getSelectedRow();
-				if(sr!=-1){
-					int dialogButton = JOptionPane.YES_NO_OPTION;
-					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
-					if(dialogResult == JOptionPane.YES_OPTION){
-						PriceRepository.removePrice(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
-						priceTable.setModel(PriceRepository.getPricesModel());
-						updateFrom();
-					}
-				}
-			}
-		});
-
-		panel.add(removePrice,c);
-
-		//Table: Price Table
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 4;
-		priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		priceTable.setFillsViewportHeight(true);
-		panel.add(new JScrollPane(priceTable),c);
-	}
-
-	/**
-	 * @param tabbedPane
-	 */
-	private void createRouteTab(JTabbedPane tabbedPane) {
-		JLabel label = new JLabel("Routes");
-		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
-		label.setIcon(createImageIcon("img/route-icon.png"));
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		tabbedPane.addTab("Routes", null, panel,"View and Edit the current Routes of KPSmart");
-		tabbedPane.setTabComponentAt(2, label);
-		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-		JTable jt = new JTable();
-
-		//Title: Routes
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 0;
-
-		JLabel title = new JLabel("Routes", SwingConstants.LEFT);
-		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
-		title.setForeground(Color.decode("#fffe9a"));
-
-		panel.add(title,c);
-
-		//Button: Add Route
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JButton addRoute = new JButton();
-		addRoute.setText("+");
-		addRoute.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				new RouteFrame(null,"Add");
-				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-				//						jt.setModel(PriceRepository.getPricesModel());
-
-			}
-		});
-		panel.add(addRoute,c);
-
-		//Button: Edit Route
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JButton editRoute = new JButton();
-		editRoute.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				int sr = jt.getSelectedRow();
-				if(sr!=-1){
-					new RouteFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString() );
-					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-					//						jt.setModel(PriceRepository.getPricesModel());
-				}
-
-			}
-		});
-		editRoute.setText("Edit");
-		panel.add(editRoute,c);
-
-		//Button: Remove Route
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 2;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JButton removeRoute = new JButton();
-		removeRoute.setText("-");
-		removeRoute.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				int sr = jt.getSelectedRow();
-				if(sr!=-1){
-					int dialogButton = JOptionPane.YES_NO_OPTION;
-					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
-					if(dialogResult == JOptionPane.YES_OPTION){
-						RouteRepository.removeRoute(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 3).toString());
-						jt.setModel(RouteRepository.getRoutesModel());
-					}
-				}
-
-			}
-		});
-		panel.add(removeRoute,c);
-
-		//Table: Price Table
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 4;
-		jt.setModel(RouteRepository.getRoutesModel());
-		jt.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		jt.setFillsViewportHeight(true);
-		panel.add(new JScrollPane(jt),c);
-	}
-
-	/**
-	 * @param tabbedPane
-	 */
-	private void createMailTab(JTabbedPane tabbedPane) {
-		JLabel label = new JLabel("+");
-		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
-		label.setIcon(createImageIcon("img/mail-icon.png"));
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		tabbedPane.addTab("Mail Delivery", null, panel,"New Mail Delivery");
-		tabbedPane.setTabComponentAt(1, label);
-		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 2;
-		JLabel title = new JLabel("New Mail Event", SwingConstants.LEFT);
-		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
-		title.setForeground(Color.decode("#fffe9a"));
-		panel.add(title,c);	
-		//
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		JLabel source = new JLabel("Source: ",SwingConstants.RIGHT);
-		panel.add(source,c);	
-		fromDropDown = new JComboBox<String>();
-		for (String fromCity : PriceRepository.getFromCities()){
-			fromDropDown.addItem(fromCity);
-		}
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 1;
-		panel.add(fromDropDown,c);
-
-		//To Cities Drop Down
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 2;
-		JLabel dest = new JLabel("Destination: ",SwingConstants.RIGHT);
-		panel.add(dest,c);	
-
-		JComboBox<String> toDropDown = new JComboBox<String>();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 2;
-		panel.add(toDropDown,c);
-
-		fromDropDown.addActionListener(new ActionListener() {//add actionlistner to listen for change
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String s = (String) fromDropDown.getSelectedItem();//get the selected item
-				toDropDown.removeAllItems();
-				for (String toCity : PriceRepository.getToCities(s)){
-					toDropDown.addItem(toCity);
-				}
-			}
-		});
-
-		fromDropDown.setSelectedItem(PriceRepository.getFromCities().get(0));
-
-		//Priority Drop Down
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 3;
-		JLabel priority = new JLabel("Priority: ",SwingConstants.RIGHT);
-		panel.add(priority,c);	
-
-		JComboBox<String> priorityDropDown = new JComboBox<String>();
-		String f = (String) fromDropDown.getSelectedItem();
-		String t = (String) toDropDown.getSelectedItem();
-		priorityDropDown.removeAllItems();
-		for (String p : PriceRepository.getPriorities(f,t)){
-			priorityDropDown.addItem(p);
-		}
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 3;
-		panel.add(priorityDropDown,c);
-
-		toDropDown.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(fromDropDown.getItemCount()!=0){
-					String f = (String) fromDropDown.getSelectedItem();
-					String t = (String) toDropDown.getSelectedItem();
-					priorityDropDown.removeAllItems();
-					for (String priority : PriceRepository.getPriorities(f,t)){
-						priorityDropDown.addItem(priority);
-					}
-				}
-			}
-		});
-
-		priorityDropDown.setSelectedItem(PriceRepository.getPriorities(f,t).get(0));
-
-		JLabel	 totalPrice = new JLabel("$0.00",SwingConstants.LEFT);
-
-		JFormattedTextField	 weightText = new JFormattedTextField(NumberFormat.getNumberInstance());
-		weightText.setValue(0);
-		weightText.addKeyListener(new KeyAdapter() {
-
-			public void keyTyped(KeyEvent e){
-				char c = e.getKeyChar();
-				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
-			}
-
-			public void keyReleased(KeyEvent e){
-				if(weightText.getText().equals("")){
-					entered_weight = 0.00;
-				}else{
-					try{
-						entered_weight = Double.valueOf(weightText.getText());
-					} catch (NullPointerException exception) {
-						entered_weight = 0.00;
-					} catch (NumberFormatException exception) {
-						entered_weight = 0.00;
-					}
-				}
-
-				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-
-				total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
-
-				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
-			}
-
-		}
-
-				);
-		weightText.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e){
-				if(weightText.getText().equals("")) weightText.setText("0");
-			}
-			public void focusGained(FocusEvent e){
-				if(weightText.getText().equals("0"))weightText.setText("");
-			}
-		});
-		weightText.setBackground(Color.decode("#fffe9a"));
-		JFormattedTextField	 volumeText = new JFormattedTextField(NumberFormat.getNumberInstance());
-		volumeText.setValue(0);
-		volumeText.setBackground(Color.decode("#fffe9a"));
-		volumeText.addKeyListener(new KeyAdapter() {
-
-			public void keyTyped(KeyEvent e){
-				char c = e.getKeyChar();
-				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
-			}
-
-			public void keyReleased(KeyEvent e){
-				if(volumeText.getText().equals("")){
-					entered_volume = 0.00;
-				}else{
-					try{
-						entered_volume = Double.valueOf(volumeText.getText());
-					} catch (NullPointerException exception) {
-						entered_volume = 0.00;
-					} catch (NumberFormatException exception) {
-						entered_volume = 0.00;
-					}
-
-				}
-
-				Double price_weight2 = PriceRepository.getPriceWeight(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				Double price_volume2 = PriceRepository.getPriceVolume(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-				Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
-				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
-			}
-
-		}
-
-				);
-		volumeText.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e){
-				if(volumeText.getText().equals(""))volumeText.setText("0");
-			}
-
-			public void focusGained(FocusEvent e){
-				if(volumeText.getText().equals("0"))volumeText.setText("");
-			}
-		});
-
-		//Enter Weight
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 4;
-		JLabel weight = new JLabel("Weight: ",SwingConstants.RIGHT);
-		panel.add(weight,c);	
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 4;
-
-		panel.add(weightText,c);
-
-		//Enter Volume
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 5;
-		JLabel volume = new JLabel("Volume: ",SwingConstants.RIGHT);
-		panel.add(volume,c);	
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 5;
-		panel.add(volumeText,c);
-
-		Font g = new Font(totalPrice.getFont().getFontName(), Font.BOLD, 18);
-
-		//Display Price
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 6;
-		JLabel priceLabel = new JLabel("Total Price: ",SwingConstants.RIGHT);
-		panel.add(priceLabel,c);	
-
-		priceLabel.setFont(g);
-
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.gridy = 6;
-		panel.add(totalPrice,c);
-
-		totalPrice.setFont(g);
-
-		//Submit Button
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 7;
-		c.gridwidth = 2;
-		JButton submit = new JButton();
-		submit.setText("Submit");
-		submit.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
-			}
-
-		});
-		panel.add(submit,c);	
-	}
-
-	/**
-	 * @param tabbedPane
-	 */
-	@SuppressWarnings("unchecked")
 	private void createDashboardTab(JTabbedPane tabbedPane) {
+		
 		JLabel label = new JLabel("Dashboard");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/dash-icon.png"));
@@ -745,7 +179,6 @@ public class ClientFrame extends JFrame{
 		GridBagConstraints c = new GridBagConstraints();
 		tabbedPane.addTab("Dashboard", null, panel,"View the current financial status of KPSmart");
 		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
-		tabbedPane.setMnemonicAt(tabbedPane.getTabCount()-1, KeyEvent.VK_1);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -926,6 +359,606 @@ public class ClientFrame extends JFrame{
 
 	}
 
+	private void createMailTab(JTabbedPane tabbedPane) {
+		JLabel label = new JLabel("+");
+		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
+		label.setIcon(createImageIcon("img/mail-icon.png"));
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		tabbedPane.addTab("Mail Delivery", null, panel,"New Mail Delivery");
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		JLabel title = new JLabel("New Mail Event", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
+		panel.add(title,c);	
+		//
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JLabel source = new JLabel("Source: ",SwingConstants.RIGHT);
+		panel.add(source,c);	
+		fromDropDown = new JComboBox<String>();
+		for (String fromCity : PriceRepository.getOriginCities()){
+			fromDropDown.addItem(fromCity);
+		}
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		panel.add(fromDropDown,c);
+
+		//To Cities Drop Down
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		JLabel dest = new JLabel("Destination: ",SwingConstants.RIGHT);
+		panel.add(dest,c);	
+
+		JComboBox<String> toDropDown = new JComboBox<String>();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 2;
+		panel.add(toDropDown,c);
+
+		fromDropDown.addActionListener(new ActionListener() {//add actionlistner to listen for change
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String s = (String) fromDropDown.getSelectedItem();//get the selected item
+				toDropDown.removeAllItems();
+				for (String toCity : PriceRepository.getDestinationCities(s)){
+					toDropDown.addItem(toCity);
+				}
+			}
+		});
+
+		fromDropDown.setSelectedItem(PriceRepository.getOriginCities().get(0));
+
+		//Priority Drop Down
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 3;
+		JLabel priority = new JLabel("Priority: ",SwingConstants.RIGHT);
+		panel.add(priority,c);	
+
+		JComboBox<String> priorityDropDown = new JComboBox<String>();
+		String f = (String) fromDropDown.getSelectedItem();
+		String t = (String) toDropDown.getSelectedItem();
+		priorityDropDown.removeAllItems();
+		for (String p : PriceRepository.getPriorities(f,t)){
+			priorityDropDown.addItem(p);
+		}
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 3;
+		panel.add(priorityDropDown,c);
+
+		toDropDown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(fromDropDown.getItemCount()!=0){
+					String f = (String) fromDropDown.getSelectedItem();
+					String t = (String) toDropDown.getSelectedItem();
+					priorityDropDown.removeAllItems();
+					for (String priority : PriceRepository.getPriorities(f,t)){
+						priorityDropDown.addItem(priority);
+					}
+				}
+			}
+		});
+
+		priorityDropDown.setSelectedItem(PriceRepository.getPriorities(f,t).get(0));
+
+		JLabel	 totalPrice = new JLabel("$0.00",SwingConstants.LEFT);
+
+		JFormattedTextField	 weightText = new JFormattedTextField(NumberFormat.getNumberInstance());
+		weightText.setValue(0);
+		weightText.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+				if(weightText.getText().equals("")){
+					entered_weight = 0.00;
+				}else{
+					try{
+						entered_weight = Double.valueOf(weightText.getText());
+					} catch (NullPointerException exception) {
+						entered_weight = 0.00;
+					} catch (NumberFormatException exception) {
+						entered_weight = 0.00;
+					}
+				}
+
+				Double price_weight2 = PriceRepository.getWeightCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
+				Double price_volume2 = PriceRepository.getVolumeCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
+
+				total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
+
+				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
+			}
+
+		}
+
+				);
+		weightText.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e){
+				if(weightText.getText().equals("")) weightText.setText("0");
+			}
+			public void focusGained(FocusEvent e){
+				if(weightText.getText().equals("0"))weightText.setText("");
+			}
+		});
+		weightText.setBackground(Color.decode("#fffe9a"));
+		JFormattedTextField	 volumeText = new JFormattedTextField(NumberFormat.getNumberInstance());
+		volumeText.setValue(0);
+		volumeText.setBackground(Color.decode("#fffe9a"));
+		volumeText.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightText.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+				if(volumeText.getText().equals("")){
+					entered_volume = 0.00;
+				}else{
+					try{
+						entered_volume = Double.valueOf(volumeText.getText());
+					} catch (NullPointerException exception) {
+						entered_volume = 0.00;
+					} catch (NumberFormatException exception) {
+						entered_volume = 0.00;
+					}
+
+				}
+
+				Double price_weight2 = PriceRepository.getWeightCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
+				Double price_volume2 = PriceRepository.getVolumeCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
+				Double total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
+				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
+			}
+
+		}
+
+				);
+		volumeText.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e){
+				if(volumeText.getText().equals(""))volumeText.setText("0");
+			}
+
+			public void focusGained(FocusEvent e){
+				if(volumeText.getText().equals("0"))volumeText.setText("");
+			}
+		});
+
+		//Enter Weight
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 4;
+		JLabel weight = new JLabel("Weight: ",SwingConstants.RIGHT);
+		panel.add(weight,c);	
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 4;
+
+		panel.add(weightText,c);
+
+		//Enter Volume
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 5;
+		JLabel volume = new JLabel("Volume: ",SwingConstants.RIGHT);
+		panel.add(volume,c);	
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 5;
+		panel.add(volumeText,c);
+
+		Font g = new Font(totalPrice.getFont().getFontName(), Font.BOLD, 18);
+
+		//Display Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 6;
+		JLabel priceLabel = new JLabel("Total Price: ",SwingConstants.RIGHT);
+		panel.add(priceLabel,c);	
+
+		priceLabel.setFont(g);
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 6;
+		panel.add(totalPrice,c);
+
+		totalPrice.setFont(g);
+
+		//Submit Button
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 7;
+		c.gridwidth = 2;
+		JButton submit = new JButton();
+		submit.setText("Submit");
+		submit.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
+			}
+
+		});
+		panel.add(submit,c);	
+		
+		//Enter Weight
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.gridx = 0;
+				c.gridy = 8;
+				c.gridwidth = 1;
+
+//				panel.add(new JLabel("Test: ",SwingConstants.RIGHT),c);	
+//
+//				c.fill = GridBagConstraints.HORIZONTAL;
+//				c.gridx = 1;
+//				c.gridy = 8;
+//
+//
+//				JTextField comboBox = new JTextField();
+//				JList list = new JList();
+//				DefaultListModel model = new DefaultListModel();
+//				list.setModel(model);
+//				model.addElement("Hey");
+//				model.addElement("Yo");
+////				elements
+////				elements.
+//				AutoCompleteDecorator.decorate(list, comboBox);
+////				AutoCompleteDecorator.decorate(elements, comboBox);
+////				AutoCompleteSupport.install(comboBox, GlazedLists.eventListOf(elements));
+//				
+//				panel.add(comboBox,c);
+				
+	}
+	
+	/**
+	 * @param tabbedPane
+	 */
+	
+
+	/**
+	 * @param tabbedPane
+	 */
+	private void createPriceTab(JTabbedPane tabbedPane) {
+		JLabel label = new JLabel("Prices");
+		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
+		label.setIcon(createImageIcon("img/price-icon.png"));
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		tabbedPane.addTab("Prices", null, panel,"View and Edit the current prices of KPSmart");
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
+
+		//Title: Prices
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+
+		JLabel priceTitle = new JLabel("Prices", SwingConstants.LEFT);
+		priceTitle.setFont(new Font(priceTitle.getFont().getFontName(), Font.PLAIN, 30));
+		priceTitle.setForeground(Color.decode("#fffe9a"));
+
+		panel.add(priceTitle,c);
+
+		//Button: Add Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton addPrice = new JButton();
+		addPrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				new PriceFrame(parent,"Add");
+				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+				//						jt.setModel(PriceRepository.getPricesModel());
+
+			}
+		});
+		addPrice.setText("+");
+		panel.add(addPrice,c);
+
+		//Button: Edit Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton editPrice = new JButton();
+		editPrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = priceTable.getSelectedRow();
+				if(sr!=-1){
+					new PriceFrame(parent,priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString(),priceTable.getModel().getValueAt(sr, 3).toString(),priceTable.getModel().getValueAt(sr, 4).toString());
+					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+					//						jt.setModel(PriceRepository.getPricesModel());
+				}
+
+			}
+		});
+		editPrice.setText("Edit");
+		panel.add(editPrice,c);
+
+		//Button: Remove Price
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 2;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton removePrice = new JButton();
+		removePrice.setText("-");
+		removePrice.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = priceTable.getSelectedRow();
+				if(sr!=-1){
+					int dialogButton = JOptionPane.YES_NO_OPTION;
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
+					if(dialogResult == JOptionPane.YES_OPTION){
+						PriceRepository.remove(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
+						priceTable.setModel(PriceRepository.getPricesModel());
+						updateOrigin();
+					}
+				}
+			}
+		});
+
+		panel.add(removePrice,c);
+
+		//Table: Price Table
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 4;
+		priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		priceTable.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(priceTable),c);
+	}
+
+	/**
+	 * @param tabbedPane
+	 */
+	private void createRouteTab(JTabbedPane tabbedPane) {
+		JLabel label = new JLabel("Routes");
+		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
+		label.setIcon(createImageIcon("img/route-icon.png"));
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		tabbedPane.addTab("Routes", null, panel,"View and Edit the current Routes of KPSmart");
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
+
+		JTable jt = new JTable();
+
+		//Title: Routes
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
+
+		JLabel title = new JLabel("Routes", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
+
+		panel.add(title,c);
+
+		//Button: Add Route
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton addRoute = new JButton();
+		addRoute.setText("+");
+		addRoute.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				new CostFrame(null);
+				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+				//						jt.setModel(PriceRepository.getPricesModel());
+
+			}
+		});
+		panel.add(addRoute,c);
+
+		//Button: Edit Route
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton editRoute = new JButton();
+		editRoute.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = jt.getSelectedRow();
+				if(sr!=-1){
+//					new CostFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString() );
+					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
+					//						jt.setModel(PriceRepository.getPricesModel());
+				}
+
+			}
+		});
+		editRoute.setText("Edit");
+		panel.add(editRoute,c);
+
+		//Button: Remove Route
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 2;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		JButton removeRoute = new JButton();
+		removeRoute.setText("-");
+		removeRoute.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				int sr = jt.getSelectedRow();
+				if(sr!=-1){
+					int dialogButton = JOptionPane.YES_NO_OPTION;
+					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
+					if(dialogResult == JOptionPane.YES_OPTION){
+//						CostRepository.remove(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 3).toString());
+						jt.setModel(CostRepository.getRoutesModel());
+					}
+				}
+
+			}
+		});
+		panel.add(removeRoute,c);
+
+		//Table: Price Table
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 4;
+		jt.setModel(CostRepository.getRoutesModel());
+		jt.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		jt.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(jt),c);
+	}
+	
+	private void createMapTab(JTabbedPane tabbedPane) {
+		/*
+		 * The BasicMapPanel automatically creates many default components,
+		 * including the MapBean and the MapHandler. You can extend the
+		 * BasicMapPanel class if you like to add different functionality or
+		 * different types of objects.
+		 */
+		MapPanel mapPanel = new OverlayMapPanel();
+		JLabel label = new JLabel("Locations");
+		label.setHorizontalTextPosition(JLabel.TRAILING);
+		label.setIcon(createImageIcon("img/map-icon.png"));
+		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can view all the locations.");
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
+		
+		LatLonPoint wellingtonLocation = new LatLonPoint.Double(-41.21039581,175.1449432);
+
+		// Get the default MapHandler the BasicMapPanel created.
+		MapHandler mapHandler = mapPanel.getMapHandler();
+		// Get the default MapBean that the BasicMapPanel created.
+		MapBean mapBean = mapPanel.getMapBean();
+		// Set the map's center to Wellington
+		mapBean.setCenter(wellingtonLocation);
+
+		// Set the map's scale 1:120 million
+		mapBean.setScale(120000000f);
+
+		/*
+		 * Create and add a LayerHandler to the MapHandler. The LayerHandler
+		 * manages Layers, whether they are part of the map or not.
+		 * layer.setVisible(true) will add it to the map. The LayerHandler
+		 * has methods to do this, too. The LayerHandler will find the
+		 * MapBean in the MapHandler.
+		 */
+		mapHandler.add(new LayerHandler());
+		// Add navigation tools over the map
+		mapHandler.add(new EmbeddedNavPanel());
+		// Add scale display widget over the map
+		mapHandler.add(new EmbeddedScaleDisplayPanel());
+		// Add MouseDelegator, which handles mouse modes (managing mouse
+		// events)
+		mapHandler.add(new MouseDelegator());
+		// Add OMMouseMode, which handles how the map reacts to mouse
+		// movements
+		mapHandler.add(new OMMouseMode());
+		// Add a ToolPanel for widgets on the north side of the map.
+		mapHandler.add(new ToolPanel());
+
+		mapBean.setBackgroundColor(Color.decode("#b8dbfe"));
+
+		/*
+		 * Create a ShapeLayer to show world political boundaries. Set the
+		 * properties of the layer. This assumes that the datafile
+		 * "cntry02.shp" is in a path specified in the CLASSPATH variable.
+		 * These files are distributed with OpenMap and reside in the
+		 * top level "share" sub-directory.
+		 */
+		ShapeLayer shapeLayer = new BufferedShapeLayer();
+
+		// Since this Properties object is being used just for
+		// this layer, the properties do not have to be scoped
+		// with marker name.
+		Properties shapeLayerProps = new Properties();
+		shapeLayerProps.put("prettyName", "Political Solid");
+		shapeLayerProps.put("lineColor", "000000");
+		shapeLayerProps.put("fillColor", "4ECD21");
+		shapeLayerProps.put("shapeFile", "data/shape/cntry02/cntry02.shp");
+		shapeLayerProps.put("lineWidth", 0);
+		shapeLayer.setProperties(shapeLayerProps);
+		shapeLayer.setVisible(true);
+
+		// Last on top.
+		mapHandler.add(shapeLayer);
+		BasicLayer basicLayer = new BasicLayer();
+
+		OMGraphicList omList = new OMGraphicList();
+
+		OMGraphicList cityList = new OMGraphicList();
+		OMGraphicList routeList = new OMGraphicList();
+
+		for(Location city: LocationRepository.getLocations()){
+			OMPoint point = new OMPoint(city.lat, city.lon, 3);
+			point.setFillPaint(Color.yellow);
+			point.setStroke(new BasicStroke(0));
+			point.setOval(true);
+			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
+			basicLocation.setShowName(false);
+
+			// Add an OMLine
+			OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
+
+			line.setStroke(new BasicStroke(1f));
+			line.setLinePaint(Color.red);
+
+			routeList.add(line);
+			cityList.add(basicLocation);
+		}
+		omList.add(cityList);
+		//		omList.add(routeList);
+		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
+		basicLayer.setList(omList);
+		mapHandler.add(basicLayer);
+
+		// Create Map tab
+	}
+	
+	public void updatePrice(){
+		priceTable.setModel(PriceRepository.getPricesModel());
+	}
+
+	public void updateOrigin(){
+		fromDropDown.removeAllItems();
+		for (String toCity : PriceRepository.getOriginCities()){
+			fromDropDown.addItem(toCity);
+		}
+	}
+	
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
 		path.replace("/", File.separator);

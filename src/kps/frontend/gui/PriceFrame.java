@@ -31,11 +31,11 @@ public class PriceFrame extends JFrame{
 
 	private ClientFrame parent;
 	private String type;
-	private JTextField fromText = new JTextField(20);
-	private JTextField toText = new JTextField(20);
-	private JTextField priorityText = new JTextField(20);
-	private JTextField weightText = new JTextField(20);
-	private JTextField volText = new JTextField(20);
+	private JTextField origin = new JTextField(20);
+	private JTextField destination = new JTextField(20);
+	private JTextField priority = new JTextField(20);
+	private JTextField weightcost = new JTextField(20);
+	private JTextField volumecost = new JTextField(20);
 
 	Boolean edit = false;
 
@@ -53,23 +53,23 @@ public class PriceFrame extends JFrame{
 		this.parent = parent;
 		this.type = "Edit";
 		this.edit = true;
-		this.fromText.setText(fromText);
-		this.toText.setText(toText);
-		this.priorityText.setText(priorityText);
-		this.weightText.setText(weightText);
-		this.volText.setText(volText);
+		this.origin.setText(fromText);
+		this.destination.setText(toText);
+		this.priority.setText(priorityText);
+		this.weightcost.setText(weightText);
+		this.volumecost.setText(volText);
 
-		this.fromText.setEditable(false);
-		this.toText.setEditable(false);
-		this.priorityText.setEditable(false);
+		this.origin.setEditable(false);
+		this.destination.setEditable(false);
+		this.priority.setEditable(false);
 		
-		this.fromText.setEnabled(false);
-		this.toText.setEnabled(false);
-		this.priorityText.setEnabled(false);
+		this.origin.setEnabled(false);
+		this.destination.setEnabled(false);
+		this.priority.setEnabled(false);
 		
-		this.fromText.setBackground(Color.LIGHT_GRAY);
-		this.toText.setBackground(Color.LIGHT_GRAY);
-		this.priorityText.setBackground(Color.LIGHT_GRAY);
+		this.origin.setBackground(Color.LIGHT_GRAY);
+		this.destination.setBackground(Color.LIGHT_GRAY);
+		this.priority.setBackground(Color.LIGHT_GRAY);
 
 		JPanel panel = new JPanel();
 		initialise(panel);
@@ -102,70 +102,62 @@ public class PriceFrame extends JFrame{
 
 		priceForm.add(priceTitle,c);
 
-		//Enter From
+		//Enter Origin
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 1;
-		c.gridwidth = 1;
-		JLabel from = new JLabel("From: ",SwingConstants.RIGHT);
-		priceForm.add(from,c);	
+		priceForm.add(new JLabel("Origin: ",SwingConstants.RIGHT),c);	
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 1;
-		priceForm.add(fromText,c);
+		priceForm.add(origin,c);
 
-		//Enter To
+		//Enter Destination
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 2;
-		c.gridwidth = 1;
-		JLabel to = new JLabel("To: ",SwingConstants.RIGHT);
-		priceForm.add(to,c);	
+		priceForm.add(new JLabel("Destination: ",SwingConstants.RIGHT),c);	
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 2;
-		priceForm.add(toText,c);
+		priceForm.add(destination,c);
 
 		//Enter priority
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 1;
-		JLabel priority = new JLabel("Priority: ",SwingConstants.RIGHT);
-		priceForm.add(priority,c);	
+		priceForm.add(new JLabel("Priority: ",SwingConstants.RIGHT),c);	
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 3;
-		priceForm.add(priorityText,c);
+		priceForm.add(priority,c);
 
 		//Enter Weight Price
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 4;
-		c.gridwidth = 1;
-		JLabel weightPrice = new JLabel("Weight Price: ",SwingConstants.RIGHT);
-		priceForm.add(weightPrice,c);	
+		priceForm.add(new JLabel("Weight Price: ",SwingConstants.RIGHT),c);	
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 4;
-		priceForm.add(weightText,c);
+		priceForm.add(weightcost,c);
 
 		//Enter Volume Price
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 5;
-		c.gridwidth = 1;
-		JLabel volPrice = new JLabel("Volume Price: ",SwingConstants.RIGHT);
-		priceForm.add(volPrice,c);	
+		priceForm.add(new JLabel("Volume Price: ",SwingConstants.RIGHT),c);	
+
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 5;
-		priceForm.add(volText,c);
+		priceForm.add(volumecost,c);
 
 		//Submit Button
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -179,17 +171,17 @@ public class PriceFrame extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(edit==true){
-					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
+					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 					parent.client.sendEvent(c);
 //					parent.client.processEvent(c);
 //					parent.getMailClient().sendEvent(new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText())));
 //					PriceRepository.updatePrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
 				}
 				else{
-					PriceRepository.addPrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
+					PriceRepository.add(origin.getText(), destination.getText(), priority.getText(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 				}
 				parent.updatePrice();
-				parent.updateFrom();
+				parent.updateOrigin();
 				dispose();
 			}
 
