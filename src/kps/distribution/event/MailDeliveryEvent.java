@@ -3,6 +3,7 @@ package kps.distribution.event;
 import java.util.UUID;
 
 public class MailDeliveryEvent extends DistributionNetworkEvent{
+	private static final long serialVersionUID = 1L;
 	public final String day;
 	public final String to;
 	public final String from;
