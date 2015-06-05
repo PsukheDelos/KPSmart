@@ -59,6 +59,7 @@ public class MailClient {
 		}
 		else if(e instanceof NewUserResultEvent){
 			JOptionPane.showMessageDialog(clientFrame, "User Added Successfully");
+			clientFrame.updateUsers();
 		}
 		else if(e instanceof DeliveryEventResult){
 			System.out.println("Received Return for DeliveryEventResult");
@@ -71,7 +72,7 @@ public class MailClient {
 		}else if(e instanceof PriceUpdateEventResult){
 //			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
 			if(awaitingResponse.containsKey(((PriceUpdateEventResult)e).id)){
-				clientFrame.updatePrice();
+				clientFrame.updatePrices();
 			}
 		}
 		

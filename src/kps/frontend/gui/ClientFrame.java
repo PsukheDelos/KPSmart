@@ -89,7 +89,8 @@ public class ClientFrame extends JFrame{
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
 
-	public JTable priceTable = new JTable(PriceRepository.getPricesModel());
+	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
+	private JTable userTable = new JTable(UserRepository.getUserModel());
 	private JComboBox<String> fromDropDown;
 
 	private ClientFrame parent = this;
@@ -170,17 +171,15 @@ public class ClientFrame extends JFrame{
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		JTable table = new JTable(UserRepository.getUserModel());
-		
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 0;
 		
-		table.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		table.setFillsViewportHeight(true);
-		panel.add(new JScrollPane(table), c);
+		userTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		userTable.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(userTable), c);
 		
 		//Button: Edit Price
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -222,7 +221,7 @@ public class ClientFrame extends JFrame{
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				table.setModel(UserRepository.getUserModel());
+				userTable.setModel(UserRepository.getUserModel());
 			}
 		});
 		
@@ -1014,8 +1013,12 @@ public class ClientFrame extends JFrame{
 		// Create Map tab
 	}
 	
-	public void updatePrice(){
+	public void updatePrices(){
 		priceTable.setModel(PriceRepository.getPricesModel());
+	}
+	
+	public void updateUsers(){
+		userTable.setModel(UserRepository.getUserModel());
 	}
 
 	public void updateOrigin(){
