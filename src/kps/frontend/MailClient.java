@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.swing.JOptionPane;
+
 import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
@@ -13,6 +15,7 @@ import kps.frontend.gui.ClientFrame;
 import kps.net.client.Client;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
+import kps.net.event.NewUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailClient {
@@ -53,6 +56,9 @@ public class MailClient {
 
 			System.out.println(this + "Response Recieved for " + evt.user.username);
 			setCurrentUser(evt.user);
+		}
+		else if(e instanceof NewUserResultEvent){
+			JOptionPane.showMessageDialog(clientFrame, "User Added Successfully");
 		}
 		else if(e instanceof DeliveryEventResult){
 			System.out.println("Received Return for DeliveryEventResult");

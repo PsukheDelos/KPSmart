@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 import kps.backend.UserPermissions;
 import kps.backend.users.DuplicateUserException;
 import kps.backend.users.User;
@@ -42,27 +45,52 @@ public class UserRepository {
 	public static void registerNewUser(String username, String passwordHash, UserPermissions permissionLevel) throws DuplicateUserException{
 		// Assumes that new users WONT have spaces in the username, and the password is already hashed
 		if (!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		
 		if (containsUser(username)) throw new DuplicateUserException("Attempting to add duplicate user " + username);
 		
 		try {
 			Statement statement = db.createStatement();
-			String query = "INSERT INTO users (ID,username,password,permission) VALUES (NULL, '" + username + "', '" + passwordHash + "', " + permissionLevel.ordinal();
-			statement.executeQuery(query);
+			String query = "INSERT INTO users (ID,username,password,permission) VALUES (NULL,'" + username + "','" + passwordHash + "'," + permissionLevel.ordinal() + ")";
+			statement.executeUpdate(query);
 			db.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private static boolean containsUser(String username){
+	public static TableModel getUserModel(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		
+		try{
+			DefaultTableModel model = new DefaultTableModel(){
+				public boolean isCellEditable(int row, int column){
+					return false;
+				}
+			};
+			model.addColumn("id");
+			model.addColumn("username");
+			model.addColumn("permission");
+			
+			Statement statement = db.createStatement();
+			String query = "SELECT * FROM users";
+			ResultSet result = statement.executeQuery(query);
+			while(result.next())
+				model.addRow(new Object[] { result.getInt(1), result.getString(2), result.getInt(4) });
+			
+			db.close();
+			return model;
+		}catch(SQLException e){ e.printStackTrace(); }
+		return null;
+	}
+	
+	private static boolean containsUser(String username){
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT Count(*) FROM users WHERE username=" + username;
+			String query = "SELECT Count(*) FROM users WHERE username='" + username + "'";
 			ResultSet result = statement.executeQuery(query);
-			boolean r = result.first();
-			db.close();
-			return r; 
+			int res = result.getInt(1);
+			System.out.println(res);
+			return res > 0;
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}

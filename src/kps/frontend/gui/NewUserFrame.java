@@ -5,64 +5,47 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Random;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import kps.backend.UserPermissions;
-import kps.backend.database.UserRepository;
-import kps.backend.users.DuplicateUserException;
-import kps.backend.users.User;
 import kps.frontend.MailClient;
+import kps.net.event.NewUserEvent;
 
-public class ClientLoginFrame extends JFrame{
+public class NewUserFrame extends JFrame{
 	
-	private MailClient mailClient;
+	
 	protected JLabel userLabel;
 	protected JTextField userText;
 	protected JLabel passwordLabel;
 	protected JPasswordField passwordText;
 	protected JButton loginButton;
 	
+	private MailClient mailClient;
 	
-	private ClientFrame parent;
-	
-	private static Random rand = new Random(5225);
-
-	public ClientLoginFrame(MailClient mailClient, ClientFrame parent){
-		super("Login");
+	public NewUserFrame(MailClient mailClient){
 		this.mailClient = mailClient;
-		this.parent = parent;
-		JPanel panel = new JPanel();
-		initialise(panel);
-		add(panel);
+		initialise();
 	}
-
-	private void initialise(JPanel panel){
-		setMinimumSize(new Dimension(300, 150));
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
+	
+	private void initialise(){
+		setMaximumSize(new Dimension(300, 200));
 		
-		addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent e) {
-		        showExitDialog();
-		    }
-		});
 		
 		JPanel loginForm = new JPanel();
-		loginForm.setLayout(new GridLayout(3, 1, 10, 10));
+		loginForm.setLayout(new GridLayout(4, 1, 10, 10));
 		
 		JPanel usernamePanel = new JPanel();
 		usernamePanel.setLayout(new GridLayout(1, 2));
@@ -86,35 +69,29 @@ public class ClientLoginFrame extends JFrame{
 		//passwordText.setBounds(100, 40, 160, 25);
 		passwordPanel.add(passwordText);
 		
+		JComboBox<UserPermissions> box = new JComboBox<UserPermissions>(new UserPermissions[]{UserPermissions.MANAGER, UserPermissions.CLERK });
+		
+		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 2, 20, 10));
-
-		loginButton = new JButton("Login");
-		//loginButton.setBounds(10, 80, 80, 25);
-		loginButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
+		
+		JButton button = new JButton("Add");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
 				// Plain Text Username
 				String username = userText.getText();
 				String password = null;
+				UserPermissions permissions = (UserPermissions)box.getSelectedItem(); 
+				
 				// Nab the Password, and hash it immediately
 				try {
 					password = passwordHash(passwordText.getPassword());
 				} catch (NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException ex) {
 					ex.printStackTrace();
 				}	
-					mailClient.authenticateUser(username, password);
-					User user = mailClient.getCurrentUser();
-					while(user == null){
-						//TODO: Better Lock plz
-						mailClient.update();
-						user = mailClient.getCurrentUser();
-					}
-				setVisible(false);
-				parent.setVisible(true);
-				parent.setEnabled(true);
-				parent.setTitle(parent.getTitle()+ " User: " + mailClient.getCurrentUser().username);
-				parent.requestFocus();
-				// We don't need this anymore, so we should dispose it.
+				
+				mailClient.sendEvent(new NewUserEvent(username, password, permissions));
 				dispose();
 				
 			}
@@ -124,20 +101,27 @@ public class ClientLoginFrame extends JFrame{
 			       digest.reset();
 			       return new BigInteger(1, digest.digest(new String(cs).getBytes("UTF-8"))).toString(16);				
 			}
+			
+			
 		});
-		buttonPanel.add(loginButton);
 		
-		JButton cancelButton = new JButton("Cancel");
-		//cancelButton.setBounds(180, 80, 80, 25);
-		cancelButton.addActionListener(new ActionListener() {
+		buttonPanel.add(button);
+		
+		button = new JButton("Cancel");
+		button.addActionListener(new ActionListener(){
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				showExitDialog();
+				// TODO Auto-generated method stub
+				dispose();
 			}
 		});
-		buttonPanel.add(cancelButton);
-				
+		
+		buttonPanel.add(button);
+		
+		
 		loginForm.add(usernamePanel);
 		loginForm.add(passwordPanel);
+		loginForm.add(box);
 		loginForm.add(buttonPanel);
 		// Padding for Styling.
 		
@@ -146,33 +130,14 @@ public class ClientLoginFrame extends JFrame{
 		add(new JPanel(), BorderLayout.NORTH);
 		add(new JPanel(), BorderLayout.SOUTH);
 		
-		
 		add(loginForm);		
 		pack();
 		setLocationRelativeTo(null);
-		// Rendering wasn't really happening, so adding this in to fix
-		validate();
-		repaint();
-		setVisible(true);
 		
-	
-	}
+		setVisible(true);
 
-	protected void showExitDialog() {
-		 int answer = JOptionPane.showConfirmDialog(null, "You want to quit?", "Quit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-         if (answer == JOptionPane.YES_OPTION)
-             System.exit(0);
+		
+		
 	}
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 }
