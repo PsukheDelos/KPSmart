@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="lib/seaglasslookandfeel-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="lib" path="lib/weblaf-complete-1.28.jar"/>
+	<classpathentry kind="lib" path="lib/glazedlists_java15-1.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/swingx-0.9.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
