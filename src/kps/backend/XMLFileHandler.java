@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,6 +21,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class XMLFileHandler {
 
@@ -69,65 +81,44 @@ public class XMLFileHandler {
 			
 			//Read the update
 			while(scan.hasNextLine()){
-				update += scan.nextLine() + "\n";
+				update += "    " + scan.nextLine() + "\n";
 			}
 			
-			//Append it to log file
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.xml",true)));
+			scan.close();
 			
-			out.print(update);
+			//Read the log file
+			scan = new Scanner(new File("log.xml"));
+			
+			String data = "";
+			String line = "";
+			
+			//Save all prior logs
+			while(true){
+				//System.out.println(line);
+				line = scan.nextLine();
+				if(line.equals("</events>")) break;
+				data += line + "\n";
+			}
+			
+			//Add new log in
+			data += update;
+			
+			//Close off log file
+			data += "</events>";
+			
+			//Append it to log file
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("log.xml",false)));
+			out.print(data);
 			out.close();
+			scan.close();
 			
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		
-		//If file is generated correctly save it to current directory.
-		/*try {
-			f.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+
 	}
-	
-	//Not used
-	/*public static DistributionNetwork read(String file){
-		
-		//Blank variable to be filled by xml data
-		DistributionNetwork DN = null;
-		
-		//Attempt to read from the xml
-		try{
-			
-			//Creates the context/template to generate unmarshaller from.
-			JAXBContext context = JAXBContext.newInstance(DistributionNetwork.class);
-			
-			//Creates a unmarshaller to be used to read from xml.
-			Unmarshaller un = context.createUnmarshaller();
-			
-			//Read the xml and create a new Distribution Network
-			DN = (DistributionNetwork) un.unmarshal(new File(file));
-			
-		}catch(JAXBException e){
-			e.printStackTrace();
-		}
-		
-		//Return the generated Distribution Network
-		return DN;
-	}*/
-	
-	/*
-	//Table: Price Table
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.gridx = 0;
-			c.gridy = 2;
-			c.gridwidth = 4;
-			priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
-			priceTable.setFillsViewportHeight(true);
-			panel.add(new JScrollPane(priceTable),c);
-	*/
 	
 	public static TableModel loadLog(){
 		
@@ -149,11 +140,40 @@ public class XMLFileHandler {
 		
 		//Read in the data
 		
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		
+		try{
+			builder = builderFactory.newDocumentBuilder();
+			Document document = builder.parse(new FileInputStream("log.xml"));
+			
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			
+			String expression = "//price";
+			
+			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
+			
+			for(int i = 0; i<nodeList.getLength();i++){
+				System.out.println(nodeList.item(i).getFirstChild().getNodeValue());
+			}
+			
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+		
+		
 		//Return the updated table
 		return model;
 	}
 	
 	public static void main(String[] args){
 		XMLFileHandler.write(new CustomerPriceUpdateEvent("Wellington","Auckland","Air",3.00,5.00));
+		//XMLFileHandler.loadLog();
 	}
 }
