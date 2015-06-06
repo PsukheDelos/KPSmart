@@ -50,6 +50,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import kps.backend.XMLFileHandler;
 import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
@@ -94,6 +95,7 @@ public class ClientFrame extends JFrame{
 
 	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
 	private JTable userTable = new JTable(UserRepository.getUserModel());
+	private JTable eventTable = new JTable(XMLFileHandler.loadLog());
 	private JComboBox<String> fromDropDown;
 
 	private ClientFrame parent = this;
@@ -343,13 +345,21 @@ public class ClientFrame extends JFrame{
 		JPanel i = new JPanel();
 		i.add(jFXPanel3);
 
-
+		//Mail
+		
+		
+		eventTable.setFillsViewportHeight(true);
+		
+		JPanel m = new JPanel();
+		m.add(new JScrollPane(eventTable));
+		
 
 		JTabbedPane dashTab = new JTabbedPane();
 		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
 		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
 		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
 		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
+		dashTab.addTab("Events", null, m, "View a list of the latest mail events.");
 
 		panel.add(dashTab,c);
 
@@ -758,7 +768,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 0;
 		c.gridwidth = 0;
 
-		JLabel title = new JLabel("Routesasdfsadasdaaafdfaadfs", SwingConstants.LEFT);
+		JLabel title = new JLabel("Routes", SwingConstants.LEFT);
 		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
 		title.setForeground(Color.decode("#fffe9a"));
 

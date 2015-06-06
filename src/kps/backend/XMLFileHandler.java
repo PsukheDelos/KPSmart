@@ -2,6 +2,8 @@ package kps.backend;
 
 import kps.distribution.event.*;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +13,9 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -112,6 +117,41 @@ public class XMLFileHandler {
 		//Return the generated Distribution Network
 		return DN;
 	}*/
+	
+	/*
+	//Table: Price Table
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 2;
+			c.gridwidth = 4;
+			priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+			priceTable.setFillsViewportHeight(true);
+			panel.add(new JScrollPane(priceTable),c);
+	*/
+	
+	public static TableModel loadLog(){
+		
+		//Create empty table
+		DefaultTableModel model = new DefaultTableModel(){
+			 @Override
+			 public boolean isCellEditable(int row, int column){
+				 return false;
+			 }
+		};
+		
+		//Add in the different columns
+		model.addColumn("Action");
+		model.addColumn("To");
+		model.addColumn("From");
+		model.addColumn("Priority");
+		model.addColumn("Weight Cost");
+		model.addColumn("Volume Cost");
+		
+		//Read in the data
+		
+		//Return the updated table
+		return model;
+	}
 	
 	public static void main(String[] args){
 		XMLFileHandler.write(new CustomerPriceUpdateEvent("Wellington","Auckland","Air",3.00,5.00));
