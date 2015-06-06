@@ -78,7 +78,7 @@ public class CostRepository {
 			String query = "SELECT * FROM cost";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-			    model.addRow(new Object[] {result.getString(1), result.getString(3), result.getString(2), result.getString(4), 
+			    model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3), result.getString(4), 
 			    		Double.valueOf(result.getString(5)), Double.valueOf(result.getString(6)), 
 			    		Double.valueOf(result.getString(7)), Double.valueOf(result.getString(8)), 
 			    		Double.valueOf(result.getString(9)), Double.valueOf(result.getString(10)), result.getString(11)});
@@ -161,7 +161,7 @@ public class CostRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "UPDATE cost SET [weightcost]="+weightCost+", [volumecost]="+volumeCost+", [maxWeight]="+maxWeight+", [maxVolume]="+maxVolume+", [duration]="+duration+", [frequency]="+frequency+", [day]=\""+day+
-					"\" WHERE [company]=\""+company+"\" and [from]=\""+from+"\" and [to]=\""+to+"\" and [type]=\""+type + "\"";
+					"\" WHERE [company]=\""+company+"\" AND [from]=\""+from+"\" AND [to]=\""+to+"\" AND [type]=\""+type + "\"";
 			System.out.println(query);
 			statement.execute(query);
 			db.close();
