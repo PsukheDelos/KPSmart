@@ -12,6 +12,7 @@ import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.CustomerPriceEventResult;
 import kps.frontend.gui.ClientFrame;
+import kps.interfaces.IMailClient;
 import kps.net.client.Client;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
@@ -19,7 +20,7 @@ import kps.net.event.NewUserResultEvent;
 import kps.net.event.RemoveUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
-public class MailClient {
+public class MailClient implements IMailClient{
 	
 	private User currentUser;
 	private Client client;

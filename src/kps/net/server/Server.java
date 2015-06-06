@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import kps.backend.MailSystem;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.interfaces.IMailSystem;
 import kps.net.event.Event;
 
 public class Server extends Thread{
@@ -19,7 +20,7 @@ public class Server extends Thread{
 	public static final int PORT_NUMBER = 45632;
 	
 	private ServerSocket serverSocket;
-	private MailSystem mailSystem;
+	private IMailSystem mailSystem;
 	
 	private boolean isRunning = true;
 	
@@ -28,10 +29,10 @@ public class Server extends Thread{
 	
 	private BlockingQueue<Update> updates = new LinkedBlockingQueue<Update>();
 	
-	public Server(){
+	public Server(IMailSystem mailSystem){
 		
 		// The Server holds the MailSystem as it's acting as the adapter the Client will see.
-		mailSystem = new MailSystem();
+		this.mailSystem = mailSystem;
 		try {
 			serverSocket = new ServerSocket();
 			serverSocket.bind(new InetSocketAddress(PORT_NUMBER));
