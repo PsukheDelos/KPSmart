@@ -102,9 +102,14 @@ public class ClientFrame extends JFrame{
 	
 	private JTabbedPane tabbedPane;
 
-	private JTable routeTable = new JTable(CostRepository.getRoutesModel());
-	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
-	private JTable userTable = new JTable(UserRepository.getUserModel());
+
+	private JTable routeTable = new JTable();
+	private JTable priceTable = new JTable();
+	private JTable userTable = new JTable();
+//	
+//	private JTable routeTable = new JTable(CostRepository.getRoutesModel());
+//	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
+//	private JTable userTable = new JTable(UserRepository.getUserModel());
 	private JTable eventTable = new JTable();
 	private JComboBox<String> fromDropDown;
 
@@ -768,6 +773,7 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
+		client.sendEvent(new UpdateTablePriceEvent(priceTable));
 		priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		priceTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(priceTable),c);
@@ -866,7 +872,8 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
-		routeTable.setModel(CostRepository.getRoutesModel());
+//		routeTable.setModel(CostRepository.getRoutesModel());
+		client.sendEvent(new UpdateTableRouteEvent(routeTable));
 		routeTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		routeTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(routeTable),c);
@@ -1021,6 +1028,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 3;
 
+		client.sendEvent(new UpdateTableUserEvent(userTable));
 		userTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		userTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(userTable), c);
