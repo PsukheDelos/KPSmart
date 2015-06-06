@@ -105,7 +105,7 @@ public class PriceRepository {
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"price_weight\" FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
+			String query = "SELECT distinct [weightcost] FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
 			ResultSet result = statement.executeQuery(query);
 			double priceWeight = 0;
 			while(result.next()){
@@ -121,7 +121,7 @@ public class PriceRepository {
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "SELECT distinct \"price_volume\" FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
+			String query = "SELECT distinct [volumecost] FROM price where \"from\"=\""+origin+"\" and \"to\"=\""+destination+"\" and \"priority\"=\""+priority+"\" order by \"to\" asc";
 			ResultSet result = statement.executeQuery(query);
 			double priceVolume = 0;
 			while(result.next()){
