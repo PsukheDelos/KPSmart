@@ -8,13 +8,11 @@ import javax.swing.JOptionPane;
 
 import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceEvent;
-import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.MailDeliveryEvent;
-import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostEventResult;
-import kps.distribution.event.TransportCostUpdateEvent;
 import kps.frontend.gui.ClientFrame;
 import kps.interfaces.IMailClient;
 import kps.net.client.Client;
@@ -23,6 +21,7 @@ import kps.net.event.LoginResponseEvent;
 import kps.net.event.NewUserResultEvent;
 import kps.net.event.RemoveUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
+import kps.net.event.XMLReplyEvent;
 
 public class MailClient implements IMailClient{
 
@@ -73,6 +72,9 @@ public class MailClient implements IMailClient{
 		else if(e instanceof RemoveUserResultEvent){
 			JOptionPane.showMessageDialog(clientFrame, "User Removed Successfully");
 			clientFrame.updateUsers();
+		}
+		else if(e instanceof XMLReplyEvent){
+			clientFrame.updateXML(((XMLReplyEvent)e).tableModel);
 		}
 		else if(e instanceof DeliveryEventResult){
 			System.out.println("Received Return for DeliveryEventResult");
