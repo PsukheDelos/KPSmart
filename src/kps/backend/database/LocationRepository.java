@@ -5,7 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Vector;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -51,7 +54,7 @@ public class LocationRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
-	
+
 	public static Location getCity(String city){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
@@ -80,7 +83,24 @@ public class LocationRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
-	
+
+	public static ComboBoxModel<String> getLocationNames(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Vector<String> locations=new Vector<String>();
+			Statement statement = db.createStatement();
+			String query = "SELECT * FROM locations ORDER BY name";
+			ResultSet result = statement.executeQuery(query);
+			while(result.next()){
+				locations.add(result.getString(1));		
+			}
+			DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>(locations);
+			db.close();
+			return model;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+
 	public static Boolean remove(String location){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
@@ -92,7 +112,7 @@ public class LocationRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}
-	
+
 	public static Boolean add(String location, Double lon, Double lat){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
@@ -104,7 +124,7 @@ public class LocationRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}
-	
+
 	public static Boolean update(String location, Double lon, Double lat){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
@@ -118,5 +138,5 @@ public class LocationRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}
-	
+
 }
