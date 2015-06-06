@@ -53,7 +53,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 
-import kps.backend.XMLFileHandler;
 import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
@@ -61,6 +60,9 @@ import kps.backend.database.UserRepository;
 import kps.distribution.event.CustomerPriceRemoveEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.TransportCostRemoveEvent;
+import kps.distribution.event.UpdateTablePriceEvent;
+import kps.distribution.event.UpdateTableRouteEvent;
+import kps.distribution.event.UpdateTableUserEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 import kps.net.event.RemoveUserEvent;
@@ -164,12 +166,12 @@ public class ClientFrame extends JFrame{
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
 
-		//createDashboardTab(tabbedPane);
+		createDashboardTab(tabbedPane);
 		createMailTab(getTabbedPane());
 		createRouteTab(getTabbedPane());
 		createPriceTab(getTabbedPane());
 		createMapTab(getTabbedPane());
-		//createManagerTab(tabbedPane);
+		createManagerTab(tabbedPane);
 
 		this.add(getTabbedPane());
 	}
@@ -842,7 +844,7 @@ public class ClientFrame extends JFrame{
 					int dialogButton = JOptionPane.YES_NO_OPTION;
 					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
 					if(dialogResult == JOptionPane.YES_OPTION){
-						client.sendEvent(new TransportCostRemoveEvent(routeTable.getModel().getValueAt(sr, 0).toString(), routeTable.getModel().getValueAt(sr, 2).toString(), routeTable.getModel().getValueAt(sr, 1).toString(),routeTable.getModel().getValueAt(sr, 3).toString()));
+						client.sendEvent(new TransportCostRemoveEvent(routeTable.getModel().getValueAt(sr, 0).toString(), routeTable.getModel().getValueAt(sr, 1).toString(), routeTable.getModel().getValueAt(sr, 2).toString(),routeTable.getModel().getValueAt(sr, 3).toString()));
 						updateRoutes();
 					}
 				}
@@ -1058,16 +1060,20 @@ public class ClientFrame extends JFrame{
 
 	}
 
+	
 	public void updateRoutes() {
-		routeTable.setModel(CostRepository.getRoutesModel());		
+		client.sendEvent(new UpdateTableRouteEvent(routeTable));
+//		routeTable.setModel(CostRepository.getRoutesModel());		
 	}
 
 	public void updatePrices(){
-		priceTable.setModel(PriceRepository.getPricesModel());
+		client.sendEvent(new UpdateTablePriceEvent(priceTable));
+//		priceTable.setModel(PriceRepository.getPricesModel());
 	}
 
 	public void updateUsers(){
-		userTable.setModel(UserRepository.getUserModel());
+		client.sendEvent(new UpdateTableUserEvent(userTable));
+//		userTable.setModel(UserRepository.getUserModel());
 	}
 	
 	public void updateXML(TableModel tableModel){

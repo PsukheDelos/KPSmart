@@ -97,6 +97,7 @@ public class MailClient implements IMailClient{
 			clientFrame.updatePrices();
 			//			}
 		}else if(e instanceof TransportCostEventResult){
+			System.out.println("mailclient: processevent: transportcosteventresult");
 			clientFrame.updateRoutes();
 		}
 

@@ -27,6 +27,11 @@ import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostRemoveEvent;
 import kps.distribution.event.TransportCostUpdateEvent;
+import kps.distribution.event.UpdateTableEvent;
+import kps.distribution.event.UpdateTableEventResult;
+import kps.distribution.event.UpdateTablePriceEvent;
+import kps.distribution.event.UpdateTableRouteEvent;
+import kps.distribution.event.UpdateTableUserEvent;
 import kps.distribution.exception.InvalidRouteException;
 import kps.distribution.exception.PathNotFoundException;
 import kps.distribution.pathFinder.Dijkstra;
@@ -220,6 +225,12 @@ public class DistributionNetwork {
 			TransportCostEvent tce = (TransportCostEvent)event;
 			return processTransportCostEvent(tce);
 		}
+		
+		else if (event instanceof UpdateTableEvent){
+			System.out.println("DistributionNetwork: processEvent: UpdateTableEvent");
+			UpdateTableEvent ute = (UpdateTableEvent)event;
+			return processUpdateTableEvent(ute);
+		}
 
 		//		else if (event instanceof TransportDiscontinuedEvent){
 		//			TransportDiscontinuedEvent tde = (TransportDiscontinuedEvent)event;
@@ -250,6 +261,20 @@ public class DistributionNetwork {
 	//		routes.remove(routesToRemove);
 	//		return new DiscontinueEventResult("Route removed successfully");
 	//	}
+
+	private EventResult processUpdateTableEvent(UpdateTableEvent event) {
+		if(event instanceof UpdateTablePriceEvent){
+			System.err.println("processUpdateTableEvent: updatetablepriceevent");
+		}
+		else if(event instanceof UpdateTableRouteEvent){
+			System.err.println("processUpdateTableEvent: updatetablerouteevent");
+		}
+		else if(event instanceof UpdateTableUserEvent){
+			System.err.println("processUpdateTableEvent: updatetableusereevent");
+		}
+			
+		return new UpdateTableEventResult();
+	}
 
 	private EventResult processTransportCostEvent(TransportCostEvent event) {
 		System.out.println("DistributionNetwork: processTransportCostEvent: " + event.getClass());
@@ -290,7 +315,6 @@ public class DistributionNetwork {
 
 		}
 		return new TransportCostEventResult();
-
 	}
 
 	private EventResult processCustomerPriceEvent(CustomerPriceEvent event) {
