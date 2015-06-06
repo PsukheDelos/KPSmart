@@ -7,10 +7,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.math.BigDecimal;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import kps.backend.database.LocationRepository;
+import kps.backend.database.MailRepository;
 import kps.backend.database.PriceRepository;
 import kps.distribution.event.CustomerPriceAddEvent;
 import kps.distribution.event.CustomerPriceUpdateEvent;
@@ -33,9 +39,12 @@ public class PriceFrame extends JFrame{
 
 	private ClientFrame parent;
 	private String type;
-	private JTextField origin = new JTextField(20);
-	private JTextField destination = new JTextField(20);
-	private JTextField priority = new JTextField(20);
+	
+	String[] priorities = {"Domestic Standard", "Domestic Air", "International Standard", "International Air"};
+	
+	private JComboBox origin = new JComboBox(LocationRepository.getLocationNames());
+	private JComboBox destination = new JComboBox(LocationRepository.getLocationNames());
+	private JComboBox priority = new JComboBox(priorities);
 	private JTextField weightcost = new JTextField(20);
 	private JTextField volumecost = new JTextField(20);
 
@@ -55,9 +64,9 @@ public class PriceFrame extends JFrame{
 		this.parent = parent;
 		this.type = "Edit";
 		this.edit = true;
-		this.origin.setText(fromText);
-		this.destination.setText(toText);
-		this.priority.setText(priorityText);
+		this.origin.setSelectedItem(fromText);
+		this.destination.setSelectedItem(toText);
+		this.priority.setSelectedItem(priorityText);
 		this.weightcost.setText(weightText);
 		this.volumecost.setText(volText);
 
@@ -144,6 +153,21 @@ public class PriceFrame extends JFrame{
 		c.gridy = 4;
 		priceForm.add(new JLabel("Weight Price: ",SwingConstants.RIGHT),c);	
 
+		weightcost.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightcost.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+
+			}
+
+		}
+
+				);
+		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 4;
@@ -155,6 +179,17 @@ public class PriceFrame extends JFrame{
 		c.gridy = 5;
 		priceForm.add(new JLabel("Volume Price: ",SwingConstants.RIGHT),c);	
 
+		volumecost.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || volumecost.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
@@ -172,11 +207,11 @@ public class PriceFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(edit==true){
-					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
+					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(origin.getSelectedItem().toString(), destination.getSelectedItem().toString(), priority.getSelectedItem().toString(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 					parent.client.sendEvent(c);
 				}
 				else{
-					CustomerPriceAddEvent c = new CustomerPriceAddEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
+					CustomerPriceAddEvent c = new CustomerPriceAddEvent(origin.getSelectedItem().toString(), destination.getSelectedItem().toString(), priority.getSelectedItem().toString(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 					parent.client.sendEvent(c);
 				}
 				dispose();

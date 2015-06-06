@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -19,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import kps.backend.database.LocationRepository;
 import kps.distribution.event.CustomerPriceAddEvent;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.TransportCostAddEvent;
@@ -32,10 +35,11 @@ public class CostFrame extends JFrame{
 	protected JButton loginButton;
 	private Boolean edit = false;
 	String[] types = { "Land", "Sea", "Air" };
+	String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 	private ClientFrame parent;
 	private JTextField company = new JTextField(20);
-	private JTextField origin = new JTextField(20);
-	private JTextField destination = new JTextField(20);
+	private JComboBox origin = new JComboBox(LocationRepository.getLocationNames());
+	private JComboBox destination = new JComboBox(LocationRepository.getLocationNames());
 	private JComboBox<String> type = new JComboBox<String>(types);
 	private JTextField weightcost = new JTextField(20);
 	private JTextField volumecost = new JTextField(20);
@@ -43,7 +47,7 @@ public class CostFrame extends JFrame{
 	private JTextField maxvolume = new JTextField(20);
 	private JTextField duration = new JTextField(20);
 	private JTextField frequency = new JTextField(20);
-	private JTextField day = new JTextField(20);
+	private JComboBox day = new JComboBox(days);
 
 	public CostFrame(ClientFrame parent){
 		super("--<< Edit Cost >>--");
@@ -61,17 +65,16 @@ public class CostFrame extends JFrame{
 		this.edit = true;
 
 		this.company.setText(company);
-		this.origin.setText(origin);
-		this.destination.setText(destination);
+		this.origin.setSelectedItem(origin);
+		this.destination.setSelectedItem(destination);
 		this.type.setSelectedItem(type);
-		//		this.type.setText(type);
 		this.weightcost.setText(weightcost);
 		this.volumecost.setText(volumecost);
 		this.maxweight.setText(maxweight);
 		this.maxvolume.setText(maxvolume);
 		this.duration.setText(duration);
 		this.frequency.setText(frequency);
-		this.day.setText(day);
+		this.day.setSelectedItem(day);
 
 		this.company.setEditable(false);
 		this.origin.setEditable(false);
@@ -178,6 +181,18 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 5;
 		costForm.add(weightcost,c);
+		
+		weightcost.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || weightcost.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
 
 		//Volume Cost
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -190,6 +205,18 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 6;
 		costForm.add(volumecost,c);
+		
+		volumecost.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || volumecost.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
 
 		//Max Weight
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -202,6 +229,18 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 7;
 		costForm.add(maxweight,c);
+		
+		maxweight.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || maxweight.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
 
 		//Max Volume
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -215,6 +254,18 @@ public class CostFrame extends JFrame{
 		c.gridy = 8;
 		costForm.add(maxvolume,c);
 
+		maxvolume.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || maxvolume.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
+		
 		//Duration
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -226,6 +277,18 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 9;
 		costForm.add(duration,c);
+		
+		duration.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || duration.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
 
 		//Frequency
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -239,6 +302,18 @@ public class CostFrame extends JFrame{
 		c.gridy = 10;
 		costForm.add(frequency,c);
 
+		frequency.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || frequency.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
+		
 		//Day
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -250,6 +325,8 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 11;
 		costForm.add(day,c);
+		
+		
 
 		//Submit Button
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -264,17 +341,17 @@ public class CostFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(edit==true){
-					TransportCostUpdateEvent t = new TransportCostUpdateEvent(company.getText(), origin.getText(), destination.getText(),
+					TransportCostUpdateEvent t = new TransportCostUpdateEvent(company.getText(), origin.getSelectedItem().toString(), destination.getSelectedItem().toString(),
 							(String)type.getSelectedItem(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()),
 							Double.valueOf(maxweight.getText()), Double.valueOf(maxvolume.getText()), Double.valueOf(duration.getText()),
-							Double.valueOf(frequency.getText()), day.getText());
+							Double.valueOf(frequency.getText()), day.getSelectedItem().toString());
 					parent.client.sendEvent(t);
 				}
 				else{
-					TransportCostAddEvent t = new TransportCostAddEvent(company.getText(), origin.getText(), destination.getText(),
+					TransportCostAddEvent t = new TransportCostAddEvent(company.getText(), origin.getSelectedItem().toString(), destination.getSelectedItem().toString(),
 							(String)type.getSelectedItem(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()),
 							Double.valueOf(maxweight.getText()), Double.valueOf(maxvolume.getText()), Double.valueOf(duration.getText()),
-							Double.valueOf(frequency.getText()), day.getText());
+							Double.valueOf(frequency.getText()), day.getSelectedItem().toString());
 					parent.client.sendEvent(t);
 				}
 				dispose();

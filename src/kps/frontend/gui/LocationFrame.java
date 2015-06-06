@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -111,6 +113,18 @@ public class LocationFrame extends JFrame{
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		panel.add(lon,c);
+		
+		lon.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') || c=='-') && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || lon.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
 
 		//Enter Latitude
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -123,6 +137,18 @@ public class LocationFrame extends JFrame{
 		c.gridx = 1;
 		panel.add(lat,c);
 
+		lat.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') || c=='-') && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_PERIOD || lat.getText().contains(".") ) ) e.consume();
+			}
+
+			public void keyReleased(KeyEvent e){
+			}
+
+		});
+		
 		//Submit Button
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
