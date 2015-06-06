@@ -1,7 +1,6 @@
 package kps.distribution.event;
 
 public class CustomerPriceUpdateEvent extends CustomerPriceEvent {
-
 	private static final long serialVersionUID = 1L;
 	
 	public CustomerPriceUpdateEvent(String from, String to, String priority,

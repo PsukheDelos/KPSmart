@@ -1,6 +1,8 @@
 package kps.distribution.event;
 
 public class TransportDiscontinuedEvent extends DistributionNetworkEvent {
+	private static final long serialVersionUID = 1L;
+	
 	public final String company;
 	public final String to;
 	public final String from;
