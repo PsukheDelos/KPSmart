@@ -13,6 +13,7 @@ import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.PriceUpdateEventResult;
 import kps.distribution.network.DistributionNetwork;
+import kps.interfaces.IMailSystem;
 import kps.net.event.DummyEvent;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
@@ -22,7 +23,7 @@ import kps.net.event.RemoveUserEvent;
 import kps.net.event.RemoveUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
-public class MailSystem {
+public class MailSystem implements IMailSystem{
 	
 	private List<User> loggedInUsers = new ArrayList<User>();
 	private DistributionNetwork network = new DistributionNetwork();

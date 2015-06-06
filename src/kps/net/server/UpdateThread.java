@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import kps.backend.MailSystem;
+import kps.interfaces.IMailSystem;
 import kps.net.event.Event;
 
 public class UpdateThread extends Thread{
@@ -12,7 +13,7 @@ public class UpdateThread extends Thread{
 	
 	Server server;
 	
-	public UpdateThread(Server server, MailSystem mailSystem){
+	public UpdateThread(Server server, IMailSystem mailSystem){
 		this.server = server;
 		start();
 	}
