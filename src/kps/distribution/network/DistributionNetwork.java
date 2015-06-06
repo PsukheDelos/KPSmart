@@ -14,13 +14,16 @@ import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.CostRepository;
 import kps.distribution.event.CostUpdateEventResult;
+import kps.distribution.event.CustomerPriceAddEvent;
+import kps.distribution.event.CustomerPriceEvent;
+import kps.distribution.event.CustomerPriceRemoveEvent;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DiscontinueEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.EventResult;
 import kps.distribution.event.MailDeliveryEvent;
-import kps.distribution.event.PriceUpdateEventResult;
+import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.TransportCostUpdateEvent;
 import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.exception.InvalidRouteException;
@@ -197,22 +200,28 @@ public class DistributionNetwork {
 	}
 
 	public EventResult processEvent(DistributionNetworkEvent event) {
+		
 		if (event instanceof MailDeliveryEvent){
 			MailDeliveryEvent mde = (MailDeliveryEvent)event;
 			return processMailDeliveryEvent(mde);
 		}
-		else if (event instanceof CustomerPriceUpdateEvent){
-			CustomerPriceUpdateEvent cpue = (CustomerPriceUpdateEvent)event;
-			return processCustomerPriceUpdateEvent(cpue);
+		
+		else if (event instanceof CustomerPriceEvent){
+			System.out.println("DistributionNetwork: processEvent: CustomerPriceEvent");
+			CustomerPriceEvent cpue = (CustomerPriceEvent)event;
+			return processCustomerPriceEvent(cpue);
 		}
+		
 		else if (event instanceof TransportCostUpdateEvent){
 			TransportCostUpdateEvent tcue = (TransportCostUpdateEvent)event;
 			return processTransportCostUpdateEvent(tcue);
 		}
+		
 		else if (event instanceof TransportDiscontinuedEvent){
 			TransportDiscontinuedEvent tde = (TransportDiscontinuedEvent)event;
 			return processTransportDiscontinuedEvent(tde);
 		}
+		
 		else{
 			return new InvalidEventResult("Event type '" + event.getClass().getName() + "' not supported");
 		}
@@ -255,9 +264,23 @@ public class DistributionNetwork {
 		}
 	}
 
-	private EventResult processCustomerPriceUpdateEvent(CustomerPriceUpdateEvent event) {
-		PriceRepository.update(event.from, event.to, event.priority, event.weightCost, event.volumeCost);
-		return new PriceUpdateEventResult();
+	private EventResult processCustomerPriceEvent(CustomerPriceEvent event) {
+		System.out.println("DistributionNetwork: processCustomerPriceEvent: " + event.id);
+		
+		if(event instanceof CustomerPriceAddEvent){
+			System.out.println("\tCustomerPriceAddEvent");
+			PriceRepository.add(event.from, event.to, event.priority, event.weightCost, event.volumeCost);
+		}
+		else if(event instanceof CustomerPriceUpdateEvent){
+			System.out.println("\tCustomerPriceUpdateEvent");
+			PriceRepository.update(event.from, event.to, event.priority, event.weightCost, event.volumeCost);
+		}
+		else if(event instanceof CustomerPriceRemoveEvent){
+			System.out.println("\tCustomerPriceRemoveEvent");
+			PriceRepository.remove(event.from, event.to, event.priority);
+		}
+		
+		return new CustomerPriceEventResult();
 	}
 
 	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {

@@ -10,7 +10,7 @@ import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.MailDeliveryEvent;
-import kps.distribution.event.PriceUpdateEventResult;
+import kps.distribution.event.CustomerPriceEventResult;
 import kps.frontend.gui.ClientFrame;
 import kps.net.client.Client;
 import kps.net.event.Event;
@@ -77,11 +77,12 @@ public class MailClient {
 			// Then you know the key is in there, and since it is stored with the corresponding Event, you know what you sent.
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
 			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
-		}else if(e instanceof PriceUpdateEventResult){
+		}else if(e instanceof CustomerPriceEventResult){
 //			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
-			if(awaitingResponse.containsKey(((PriceUpdateEventResult)e).id)){
+//			if(awaitingResponse.containsKey(((CustomerPriceEventResult)e).id)){
+				clientFrame.updateOrigin();
 				clientFrame.updatePrices();
-			}
+//			}
 		}
 		
 	}
