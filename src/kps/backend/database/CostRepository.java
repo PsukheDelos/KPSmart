@@ -146,7 +146,6 @@ public class CostRepository {
 			Statement statement = db.createStatement();
 			String query = "INSERT INTO cost ([company], [from], [to], [type], [weightCost], [volumeCost], [maxWeight], [maxVolume], [duration], [frequency], [day]) "
 					+ "VALUES (\""+company+"\",\""+from+"\",\""+to+"\",\""+type+"\"," + weightCost + "," + volumeCost + "," + maxWeight + "," + maxVolume + "," + duration + "," + frequency + "," + "\"" + day + "\")";
-			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			
@@ -163,7 +162,6 @@ public class CostRepository {
 			Statement statement = db.createStatement();
 			String query = "UPDATE cost SET [weightcost]="+weightCost+", [volumecost]="+volumeCost+", [maxWeight]="+maxWeight+", [maxVolume]="+maxVolume+", [duration]="+duration+", [frequency]="+frequency+", [day]=\""+day+
 					"\" WHERE [company]=\""+company+"\" AND [from]=\""+from+"\" AND [to]=\""+to+"\" AND [type]=\""+type + "\"";
-			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			

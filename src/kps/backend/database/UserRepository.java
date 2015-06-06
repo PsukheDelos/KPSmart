@@ -103,7 +103,6 @@ public class UserRepository {
 			String query = "SELECT Count(*) FROM users WHERE username='" + username + "'";
 			ResultSet result = statement.executeQuery(query);
 			int res = result.getInt(1);
-			System.out.println(res);
 			return res > 0;
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;

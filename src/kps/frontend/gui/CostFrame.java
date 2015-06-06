@@ -272,7 +272,6 @@ public class CostFrame extends JFrame{
 					parent.client.sendEvent(t);
 				}
 				else{
-					System.out.println("CostFrame Submit");
 					TransportCostAddEvent t = new TransportCostAddEvent(company.getText(), origin.getText(), destination.getText(),
 							(String)type.getSelectedItem(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()),
 							Double.valueOf(maxweight.getText()), Double.valueOf(maxvolume.getText()), Double.valueOf(duration.getText()),
