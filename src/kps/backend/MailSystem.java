@@ -18,6 +18,8 @@ import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
 import kps.net.event.NewUserEvent;
 import kps.net.event.NewUserResultEvent;
+import kps.net.event.RemoveUserEvent;
+import kps.net.event.RemoveUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailSystem {
@@ -46,9 +48,16 @@ public class MailSystem {
 			User user = UserRepository.authenticateUser(auth.username, auth.password);
 			returnEvent = new LoginResponseEvent(user);
 		}else if(event instanceof NewUserEvent){
+			
+			boolean successful = true;
+			
 			NewUserEvent nue = (NewUserEvent)event;
-			try { UserRepository.registerNewUser(nue.username, nue.password, nue.permissions); } catch (DuplicateUserException e) { e.printStackTrace();}
-			returnEvent = new NewUserResultEvent();
+			try { UserRepository.registerNewUser(nue.username, nue.password, nue.permissions); } catch (DuplicateUserException e) { successful = false;}
+			returnEvent = new NewUserResultEvent(successful);
+		}else if(event instanceof RemoveUserEvent){
+			RemoveUserEvent rue = (RemoveUserEvent) event;
+			UserRepository.removeUser(rue.username);
+			returnEvent = new RemoveUserResultEvent();
 		}else if(event instanceof DistributionNetworkEvent){
 			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
 
