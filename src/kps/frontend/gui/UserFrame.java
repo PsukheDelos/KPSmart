@@ -23,9 +23,9 @@ import kps.backend.UserPermissions;
 import kps.frontend.MailClient;
 import kps.net.event.NewUserEvent;
 
-public class NewUserFrame extends JFrame{
-	
-	
+public class UserFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
+
 	protected JLabel userLabel;
 	protected JTextField userText;
 	protected JLabel passwordLabel;
@@ -34,7 +34,7 @@ public class NewUserFrame extends JFrame{
 	
 	private MailClient mailClient;
 	
-	public NewUserFrame(MailClient mailClient){
+	public UserFrame(MailClient mailClient){
 		this.mailClient = mailClient;
 		initialise();
 	}

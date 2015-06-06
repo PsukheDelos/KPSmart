@@ -11,6 +11,7 @@ import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceEvent;
 import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.DeliveryEventResult;
+import kps.distribution.event.LocationEventResult;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostEventResult;
@@ -93,6 +94,9 @@ public class MailClient implements IMailClient{
 			clientFrame.updatePrices();
 		}else if(e instanceof TransportCostEventResult){
 			clientFrame.updateRoutes();
+		}
+		else if(e instanceof  LocationEventResult){
+			clientFrame.updateLocations();
 		}
 
 	}

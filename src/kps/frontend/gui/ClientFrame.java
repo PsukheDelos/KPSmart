@@ -59,8 +59,10 @@ import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.UserRepository;
 import kps.distribution.event.CustomerPriceRemoveEvent;
+import kps.distribution.event.LocationRemoveEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.TransportCostRemoveEvent;
+import kps.distribution.event.UpdateTableLocationsEvent;
 import kps.distribution.event.UpdateTablePriceEvent;
 import kps.distribution.event.UpdateTableRouteEvent;
 import kps.distribution.event.UpdateTableUserEvent;
@@ -105,6 +107,7 @@ public class ClientFrame extends JFrame{
 	private JTable routeTable = new JTable();
 	private JTable priceTable = new JTable();
 	private JTable userTable = new JTable();
+	private JTable locationTable = new JTable();
 	private JTable eventTable = new JTable();
 
 	private JComboBox<String> fromDropDown;
@@ -170,12 +173,13 @@ public class ClientFrame extends JFrame{
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
 		
-		createDashboardTab(tabbedPane);
+		createDashboardTab(getTabbedPane());
 		createMailTab(getTabbedPane());
 		createRouteTab(getTabbedPane());
 		createPriceTab(getTabbedPane());
 		createMapTab(getTabbedPane());
-		createManagerTab(tabbedPane);
+		createLocationsTab(getTabbedPane());
+		createUserTab(getTabbedPane());
 
 		this.add(getTabbedPane());
 	}
@@ -863,10 +867,10 @@ public class ClientFrame extends JFrame{
 		 * different types of objects.
 		 */
 		MapPanel mapPanel = new OverlayMapPanel();
-		JLabel label = new JLabel("Locations");
+		JLabel label = new JLabel("Map");
 		label.setHorizontalTextPosition(JLabel.TRAILING);
 		label.setIcon(createImageIcon("img/map-icon.png"));
-		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can view all the locations.");
+		tabbedPane.addTab("Map", null, (Component) mapPanel,"Here you can view all the locations.");
 		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
 
 		LatLonPoint wellingtonLocation = new LatLonPoint.Double(-41.21039581,175.1449432);
@@ -974,7 +978,7 @@ public class ClientFrame extends JFrame{
 		// Create Map tab
 	}
 
-	public void createManagerTab(JTabbedPane tabbedPane){
+	public void createUserTab(JTabbedPane tabbedPane){
 		JLabel label = new JLabel("Users");
 		label.setHorizontalTextPosition(JLabel.TRAILING);
 		label.setIcon(createImageIcon("img/users-icon.png"));
@@ -1019,7 +1023,7 @@ public class ClientFrame extends JFrame{
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new NewUserFrame(client);
+				new UserFrame(client);
 			}
 		});
 		panel.add(button, c);
@@ -1041,31 +1045,98 @@ public class ClientFrame extends JFrame{
 				if(reply == JOptionPane.YES_OPTION){
 					client.sendEvent(new RemoveUserEvent(username));
 				}
+			}
+		});
+		panel.add(button, c);
+	}
 
+	public void createLocationsTab(JTabbedPane tabbedPane){
+		JLabel label = new JLabel("Locations");
+		label.setHorizontalTextPosition(JLabel.TRAILING);
+		label.setIcon(createImageIcon("img/location-icon.png"));
+		JPanel panel = new JPanel();
 
+		tabbedPane.addTab("Locations", null, panel,"Here you can edit locations");
+		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
 
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 
+		//Title: Locations
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridwidth = 0;
 
+		JLabel title = new JLabel("Locations", SwingConstants.LEFT);
+		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
+		title.setForeground(Color.decode("#fffe9a"));
+
+		panel.add(title,c);
+
+		//Table: Locations
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 3;
+
+		client.sendEvent(new UpdateTableLocationsEvent(locationTable));
+		userTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		userTable.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(locationTable), c);
+
+		//Button: Add Location
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 1;
+
+		JButton button = new JButton("+");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new LocationFrame(parent);
+			}
+		});
+		panel.add(button, c);
+
+		//Button: Remove Location
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.gridy = 2;
+		c.gridwidth = 1;
+
+		button = new JButton("-");
+		button.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int rowIndex = locationTable.getSelectedRow();
+				String location = (String)locationTable.getModel().getValueAt(rowIndex, 0);
+
+				int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + location + " from the database?", "WARNING", JOptionPane.YES_NO_OPTION);
+				if(reply == JOptionPane.YES_OPTION){
+					client.sendEvent(new LocationRemoveEvent(location));
+				}
 			}
 		});
 		panel.add(button, c);
 
 	}
-
 	
 	public void updateRoutes() {
 		client.sendEvent(new UpdateTableRouteEvent(routeTable));
-//		routeTable.setModel(CostRepository.getRoutesModel());		
 	}
 
 	public void updatePrices(){
 		client.sendEvent(new UpdateTablePriceEvent(priceTable));
-//		priceTable.setModel(PriceRepository.getPricesModel());
+	}
+	
+	public void updateLocations(){
+		client.sendEvent(new UpdateTableLocationsEvent(locationTable));
 	}
 
 	public void updateUsers(){
 		client.sendEvent(new UpdateTableUserEvent(userTable));
-//		userTable.setModel(UserRepository.getUserModel());
 	}
 	
 	public void updateXML(TableModel tableModel){

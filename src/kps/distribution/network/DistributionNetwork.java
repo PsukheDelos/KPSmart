@@ -14,6 +14,11 @@ import kps.backend.database.LocationRepository;
 import kps.backend.database.MailRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.CostRepository;
+import kps.distribution.event.LocationAddEvent;
+import kps.distribution.event.LocationEvent;
+import kps.distribution.event.LocationEventResult;
+import kps.distribution.event.LocationRemoveEvent;
+import kps.distribution.event.LocationUpdateEvent;
 import kps.distribution.event.MailDeliveryEventResult;
 import kps.distribution.event.TransportCostAddEvent;
 import kps.distribution.event.TransportCostEventResult;
@@ -223,6 +228,11 @@ public class DistributionNetwork {
 			UpdateTableEvent ute = (UpdateTableEvent)event;
 			return processUpdateTableEvent(ute);
 		}
+		
+		else if (event instanceof LocationEvent){
+			LocationEvent ute = (LocationEvent)event;
+			return processLocationEvent(ute);
+		}
 
 		else{
 			return new InvalidEventResult("Event type '" + event.getClass().getName() + "' not supported");
@@ -285,6 +295,21 @@ public class DistributionNetwork {
 		return new CustomerPriceEventResult();
 	}
 
+	private EventResult processLocationEvent(LocationEvent event) {
+
+		if(event instanceof LocationAddEvent){
+			LocationRepository.add(event.location, event.longtitude, event.latitude);
+		}
+		else if(event instanceof LocationUpdateEvent){
+			LocationRepository.update(event.location, event.longtitude, event.latitude);
+		}
+		else if(event instanceof LocationRemoveEvent){
+			LocationRepository.remove(event.location);
+		}
+
+		return new LocationEventResult();
+	}
+	
 	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {
 		//TODO: Should we do this still?
 		//		if (!locations.containsKey(event.from)){
