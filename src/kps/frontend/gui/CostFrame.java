@@ -5,9 +5,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,18 +19,24 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import kps.distribution.event.CustomerPriceAddEvent;
+import kps.distribution.event.CustomerPriceUpdateEvent;
+import kps.distribution.event.TransportCostAddEvent;
+import kps.distribution.event.TransportCostUpdateEvent;
+
 public class CostFrame extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	protected JLabel userLabel;
 	protected JTextField userText;
 	protected JButton loginButton;
-
+	private Boolean edit = false;
+	String[] types = { "Land", "Sea", "Air" };
 	private ClientFrame parent;
 	private JTextField company = new JTextField(20);
 	private JTextField origin = new JTextField(20);
 	private JTextField destination = new JTextField(20);
-	private JTextField type = new JTextField(20);
+	private JComboBox<String> type = new JComboBox<String>(types);
 	private JTextField weightcost = new JTextField(20);
 	private JTextField volumecost = new JTextField(20);
 	private JTextField maxweight = new JTextField(20);
@@ -42,17 +52,19 @@ public class CostFrame extends JFrame{
 		initialise(panel);
 		add(panel);
 	}
- 
+
 	public CostFrame(ClientFrame parent, String company, String origin, String destination, String type,
 			String weightcost, String volumecost, String maxweight, String maxvolume,
 			String duration, String frequency, String day){
 		super("--<< Edit Cost >>--");
 		this.parent = parent;
+		this.edit = true;
 
 		this.company.setText(company);
 		this.origin.setText(origin);
 		this.destination.setText(destination);
-		this.type.setText(type);
+		this.type.setSelectedItem(type);
+		//		this.type.setText(type);
 		this.weightcost.setText(weightcost);
 		this.volumecost.setText(volumecost);
 		this.maxweight.setText(maxweight);
@@ -60,6 +72,21 @@ public class CostFrame extends JFrame{
 		this.duration.setText(duration);
 		this.frequency.setText(frequency);
 		this.day.setText(day);
+
+		this.company.setEditable(false);
+		this.origin.setEditable(false);
+		this.destination.setEditable(false);
+		this.type.setEditable(false);
+		
+		this.company.setEnabled(false);
+		this.origin.setEnabled(false);
+		this.destination.setEnabled(false);
+		this.type.setEnabled(false);
+
+		this.company.setBackground(Color.LIGHT_GRAY);
+		this.origin.setBackground(Color.LIGHT_GRAY);
+		this.destination.setBackground(Color.LIGHT_GRAY);
+		this.type.setBackground(Color.LIGHT_GRAY);
 		
 		JPanel panel = new JPanel();
 		initialise(panel);
@@ -67,7 +94,7 @@ public class CostFrame extends JFrame{
 	}
 
 	private void initialise(JPanel panel){
-//		setMinimumSize(new Dimension(320, 210));
+		//		setMinimumSize(new Dimension(320, 210));
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		addWindowListener(new WindowAdapter() {
@@ -103,7 +130,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 1;
 		costForm.add(company,c);
-		
+
 		//Origin
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -151,7 +178,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 5;
 		costForm.add(weightcost,c);
-		
+
 		//Volume Cost
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -163,7 +190,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 6;
 		costForm.add(volumecost,c);
-		
+
 		//Max Weight
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -175,7 +202,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 7;
 		costForm.add(maxweight,c);
-		
+
 		//Max Volume
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -187,7 +214,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 8;
 		costForm.add(maxvolume,c);
-		
+
 		//Duration
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -199,7 +226,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 9;
 		costForm.add(duration,c);
-		
+
 		//Frequency
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -211,7 +238,7 @@ public class CostFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 10;
 		costForm.add(frequency,c);
-		
+
 		//Day
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -232,7 +259,30 @@ public class CostFrame extends JFrame{
 		JButton submit = new JButton();
 		submit.setText("Submit");
 		costForm.add(submit,c);
+		submit.addActionListener(new ActionListener(){
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(edit==true){
+					System.err.println("Submit Route Edit");
+					TransportCostUpdateEvent t = new TransportCostUpdateEvent(company.getText(), origin.getText(), destination.getText(),
+							(String)type.getSelectedItem(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()),
+							Double.valueOf(maxweight.getText()), Double.valueOf(maxvolume.getText()), Double.valueOf(duration.getText()),
+							Double.valueOf(frequency.getText()), day.getText());
+					parent.client.sendEvent(t);
+				}
+				else{
+					System.out.println("CostFrame Submit");
+					TransportCostAddEvent t = new TransportCostAddEvent(company.getText(), origin.getText(), destination.getText(),
+							(String)type.getSelectedItem(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()),
+							Double.valueOf(maxweight.getText()), Double.valueOf(maxvolume.getText()), Double.valueOf(duration.getText()),
+							Double.valueOf(frequency.getText()), day.getText());
+					parent.client.sendEvent(t);
+				}
+				dispose();
+			}
+
+		});
 		add(costForm);		
 		pack();
 		setLocationRelativeTo(null);

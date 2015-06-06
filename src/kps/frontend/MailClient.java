@@ -7,10 +7,14 @@ import java.util.UUID;
 import javax.swing.JOptionPane;
 
 import kps.backend.users.User;
+import kps.distribution.event.CustomerPriceEvent;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.CustomerPriceEventResult;
+import kps.distribution.event.TransportCostEvent;
+import kps.distribution.event.TransportCostEventResult;
+import kps.distribution.event.TransportCostUpdateEvent;
 import kps.frontend.gui.ClientFrame;
 import kps.interfaces.IMailClient;
 import kps.net.client.Client;
@@ -21,19 +25,19 @@ import kps.net.event.RemoveUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailClient implements IMailClient{
-	
+
 	private User currentUser;
 	private Client client;
 	private ClientFrame clientFrame;
-	
+
 	private Map<UUID, Event> awaitingResponse;
-	
+
 	public MailClient(ClientFrame clientFrame){
 		client = new Client("127.0.0.1", this);
 		this.clientFrame = clientFrame;
-		
+
 		awaitingResponse = new HashMap<UUID, Event>();
-		
+
 	}
 
 	public User getCurrentUser() {
@@ -47,7 +51,7 @@ public class MailClient implements IMailClient{
 	public void authenticateUser(String username, String password) {
 		client.sendEvent(new UserAuthenticationEvent(username, password));
 	}
-	
+
 	public void update(){
 		client.update();
 	}
@@ -79,15 +83,17 @@ public class MailClient implements IMailClient{
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
 			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
 		}else if(e instanceof CustomerPriceEventResult){
-//			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
-//			if(awaitingResponse.containsKey(((CustomerPriceEventResult)e).id)){
-				clientFrame.updateOrigin();
-				clientFrame.updatePrices();
-//			}
+			//			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
+			//			if(awaitingResponse.containsKey(((CustomerPriceEventResult)e).id)){
+			clientFrame.updateOrigin();
+			clientFrame.updatePrices();
+			//			}
+		}else if(e instanceof TransportCostEventResult){
+			clientFrame.updateRoutes();
 		}
-		
+
 	}
-	
+
 	public void sendEvent(Event e) {
 		// Here we will add an UUID to any Event you want
 		// For now, I'll add it to the Mail Delivery Event
@@ -95,15 +101,19 @@ public class MailClient implements IMailClient{
 		if(e instanceof MailDeliveryEvent){
 			System.out.println("Adding Awaiting Delivery for id: " + ((MailDeliveryEvent)e).id);
 			awaitingResponse.put(((MailDeliveryEvent) e).id, (MailDeliveryEvent)e);
-		}else if(e instanceof CustomerPriceUpdateEvent){
-			System.out.println("Adding Price Updater Event awaiting return: " + ((CustomerPriceUpdateEvent)e).id);
-			awaitingResponse.put(((CustomerPriceUpdateEvent) e).id, (CustomerPriceUpdateEvent)e);
+		}else if(e instanceof CustomerPriceEvent){
+			System.out.println("Adding Price Update Event awaiting return: " + ((CustomerPriceEvent)e).id);
+			awaitingResponse.put(((CustomerPriceEvent) e).id, (CustomerPriceEvent)e);
 		}
-		
-		
+		else if(e instanceof TransportCostEvent){
+			System.out.println("Adding Transport Update Event awaiting return: " + ((TransportCostEvent)e).id);
+			awaitingResponse.put(((TransportCostEvent) e).id, (TransportCostEvent)e);
+		}
+		System.out.println("MailClient: sendEvent: ");
+
 		client.sendEvent(e);
 	}
-	
+
 	public String toString(){
 		return "[MAIL CLIENT] ";
 	}

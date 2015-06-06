@@ -80,13 +80,13 @@ public class MailSystem implements IMailSystem{
 				System.out.println("Adding UUID to return event for a CustomerPriceUpdate: " + clientEventUUID);
 				((CustomerPriceEventResult)returnEvent).id = clientEventUUID;
 
-			}else if(event instanceof TransportCostEvent 
+			}
+			else if(event instanceof TransportCostEvent 
 					&& returnEvent instanceof TransportCostEventResult){
 				System.out.println("MailSystem: processEvent: TransportCostEvent");
 				UUID clientEventUUID = ((TransportCostEvent)event).id;
-				System.out.println("Adding UUID to return event for a TransportCostEvent: " + clientEventUUID);
 				((TransportCostEventResult)returnEvent).id = clientEventUUID;
-
+				System.out.println("Adding UUID to return event for a TransportCostEvent: " + clientEventUUID);
 			}
 		}
 		return returnEvent;
