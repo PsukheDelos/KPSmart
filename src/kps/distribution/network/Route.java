@@ -2,6 +2,7 @@ package kps.distribution.network;
 
 import javax.xml.bind.annotation.XmlType;
 
+import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostUpdateEvent;
 
 @XmlType(propOrder = {"company", "origin", "destination", "maxWeight", "maxVolume", "weightCost", "volumeCost", "duration", "frequency", "day", "type"})
@@ -180,7 +181,7 @@ public class Route {
 		return true;
 	}
 
-	public void update(TransportCostUpdateEvent event) {
+	public void update(TransportCostEvent event) {
 		this.weightCost = event.weightCost;
 		this.volumeCost = event.volumeCost;
 		this.maxWeight = event.maxWeight;

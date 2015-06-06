@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import kps.distribution.event.TransportCostUpdateEvent;
+import kps.distribution.event.TransportCostEvent;
 
 public class CostRepository {
 
@@ -26,15 +26,15 @@ public class CostRepository {
 		return true;
 	}
 
-	public static ArrayList<TransportCostUpdateEvent> getRoutes(){
+	public static ArrayList<TransportCostEvent> getRoutes(){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
-			ArrayList<TransportCostUpdateEvent> routes = new ArrayList<TransportCostUpdateEvent>();
+			ArrayList<TransportCostEvent> routes = new ArrayList<TransportCostEvent>();
 			Statement statement = db.createStatement();
 			String query = "SELECT * FROM cost";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-			    routes.add(new TransportCostUpdateEvent(result.getString(1), result.getString(3), result.getString(2), result.getString(4), 
+			    routes.add(new TransportCostEvent(result.getString(1), result.getString(3), result.getString(2), result.getString(4), 
 			    		Double.valueOf(result.getString(5)), Double.valueOf(result.getString(6)), 
 			    		Double.valueOf(result.getString(7)), Double.valueOf(result.getString(8)), 
 			    		Double.valueOf(result.getString(9)), Double.valueOf(result.getString(10)), result.getString(11)));

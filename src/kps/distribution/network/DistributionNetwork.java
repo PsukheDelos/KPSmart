@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.*;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.CostRepository;
-import kps.distribution.event.CostUpdateEventResult;
+import kps.distribution.event.TransportCostEventResult;
 import kps.distribution.event.CustomerPriceAddEvent;
 import kps.distribution.event.CustomerPriceEvent;
 import kps.distribution.event.CustomerPriceRemoveEvent;
@@ -24,6 +24,7 @@ import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.EventResult;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.CustomerPriceEventResult;
+import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostUpdateEvent;
 import kps.distribution.event.TransportDiscontinuedEvent;
 import kps.distribution.exception.InvalidRouteException;
@@ -46,14 +47,14 @@ public class DistributionNetwork {
 		for (Location location : LocationRepository.getLocations()){
 			locations.put(location.name, location);
 		}
-		for (TransportCostUpdateEvent e : CostRepository.getRoutes()){
+		for (TransportCostEvent e : CostRepository.getRoutes()){
 			if (!locations.containsKey(e.from)){
 				locations.put(e.from, new Location(e.from, 100, 100));
 			}
 			if (!locations.containsKey(e.to)){
 				locations.put(e.to, new Location(e.to, 100, 100));
 			}
-			processTransportCostUpdateEvent(e);
+			processTransportCostEvent(e);
 		}
 	}
 
@@ -208,19 +209,20 @@ public class DistributionNetwork {
 		
 		else if (event instanceof CustomerPriceEvent){
 			System.out.println("DistributionNetwork: processEvent: CustomerPriceEvent");
-			CustomerPriceEvent cpue = (CustomerPriceEvent)event;
-			return processCustomerPriceEvent(cpue);
+			CustomerPriceEvent cpe = (CustomerPriceEvent)event;
+			return processCustomerPriceEvent(cpe);
 		}
 		
-		else if (event instanceof TransportCostUpdateEvent){
-			TransportCostUpdateEvent tcue = (TransportCostUpdateEvent)event;
-			return processTransportCostUpdateEvent(tcue);
+		else if (event instanceof TransportCostEvent){
+			System.out.println("DistributionNetwork: processEvent: TransportCostEvent");
+			TransportCostEvent tce = (TransportCostEvent)event;
+			return processTransportCostEvent(tce);
 		}
 		
-		else if (event instanceof TransportDiscontinuedEvent){
-			TransportDiscontinuedEvent tde = (TransportDiscontinuedEvent)event;
-			return processTransportDiscontinuedEvent(tde);
-		}
+//		else if (event instanceof TransportDiscontinuedEvent){
+//			TransportDiscontinuedEvent tde = (TransportDiscontinuedEvent)event;
+//			return processTransportDiscontinuedEvent(tde);
+//		}
 		
 		else{
 			return new InvalidEventResult("Event type '" + event.getClass().getName() + "' not supported");
@@ -246,7 +248,7 @@ public class DistributionNetwork {
 		return new DiscontinueEventResult("Route removed successfully");
 	}
 
-	private EventResult processTransportCostUpdateEvent(TransportCostUpdateEvent event) {
+	private EventResult processTransportCostEvent(TransportCostEvent event) {
 		Company company = getOrAddCompany(event.company);
 		Location origin = locations.get(event.from);
 		Location destination = locations.get(event.to);
@@ -255,12 +257,12 @@ public class DistributionNetwork {
 		Route route = getRoute(company, origin, destination, type);
 		if (route != null){
 			route.update(event);
-			return new CostUpdateEventResult(route);
+			return new TransportCostEventResult(route);
 		}else{
 			route = new Route(origin, destination, company, event.weightCost, event.volumeCost,
 					event.volumeCost, event.maxWeight, event.maxVolume, event.frequency, type, event.day);
 			routes.add(route);
-			return new CostUpdateEventResult(route);
+			return new TransportCostEventResult(route);
 		}
 	}
 

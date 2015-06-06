@@ -7,7 +7,7 @@ import java.util.UUID;
 //
 //@XmlRootElement(name = "price")
 //@XmlType(propOrder = {"to", "from", "priority", "weightCost", "volumeCost", "action"})
-public abstract class TransportCostEvent extends DistributionNetworkEvent {
+public class TransportCostEvent extends DistributionNetworkEvent {
 	private static final long serialVersionUID = 1L;
 	
 	public final String company;
@@ -25,6 +25,26 @@ public abstract class TransportCostEvent extends DistributionNetworkEvent {
 	public final String action;
 	public final UUID id;
 
+	public TransportCostEvent(String company, String to, String from, String type,
+			double weightCost, double volumeCost, double maxWeight, double maxVolume,
+			double duration, double frequency, String day) {
+	
+		this.company = company;
+		this.to = to;
+		this.from = from;
+		this.type = type;
+		this.weightCost = weightCost;
+		this.volumeCost = volumeCost;
+		this.maxWeight = maxWeight;
+		this.maxVolume = maxVolume;
+		this.duration = duration;
+		this.frequency = frequency;
+		this.day = day;
+		
+		this.action = "none";
+		this.id = UUID.randomUUID();
+	}
+	
 	public TransportCostEvent(String company, String to, String from, String type,
 			double weightCost, double volumeCost, double maxWeight, double maxVolume,
 			double duration, double frequency, String day, String action) {
