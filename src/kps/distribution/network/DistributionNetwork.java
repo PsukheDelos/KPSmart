@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.xml.bind.annotation.*;
 
 import kps.backend.database.LocationRepository;
+import kps.backend.database.MailRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.CostRepository;
 import kps.distribution.event.TransportCostAddEvent;
@@ -347,6 +348,7 @@ public class DistributionNetwork {
 		System.out.println("Mail -> f: " + event.from + " t: " + event.to + " " + event.priority + " w: " + event.weight + " v: " + event.volume + " d: " + event.day);
 		Mail mail = new Mail(locations.get(event.from), locations.get(event.to),
 				event.weight, event.volume, Priority.fromString(event.priority), event.day);
+		MailRepository.add(event.day, event.from, event.to, event.weight, event.volume, event.priority);
 		try {
 			System.out.println("try DeliveryEventResult(deliver(mail))");
 			return new DeliveryEventResult(deliver(mail));
