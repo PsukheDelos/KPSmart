@@ -1,6 +1,6 @@
 package kps.backend;
 
-import kps.distribution.network.DistributionNetwork;
+import kps.distribution.event.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,23 +22,25 @@ public class XMLFileHandler {
 	 * Writes to the given file the Distribution Network expressed in xml format.
 	 * @param file : The file name/path to where the xml will be saved.
 	 */
-	public static void write(DistributionNetwork network){
+	public static void write(CustomerPriceEvent event){
 		
 		//Creates the new file.
 		File f = new File("lastUpdate.xml");
 		
 		//Checks to see if the file already exists.
+		/*
 		if(f.exists() && !f.isDirectory()){
 			
 			//If it does exists ask user if they would like to overwrite the file or not.
 			if(JOptionPane.showConfirmDialog(null, "File already exists.\nDo you want to overwrite?", "File already exists", 0)==1) return;
 		}
+		*/
 		
 		//Begins writing state to file
 		try{
 			
 			//Creates the context/template to generate marshaller from.
-			JAXBContext context = JAXBContext.newInstance(DistributionNetwork.class);
+			JAXBContext context = JAXBContext.newInstance(CustomerPriceEvent.class);
 			
 			//Creates a marshaller to be used to generate xml.
 			Marshaller m = context.createMarshaller();
@@ -47,7 +49,7 @@ public class XMLFileHandler {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			
 			//Writes the object out in xml to the given file.
-			m.marshal(network, f);
+			m.marshal(event, f);
 		}catch (JAXBException e){
 			e.printStackTrace();
 		}
@@ -62,7 +64,7 @@ public class XMLFileHandler {
 			
 			//Read the update
 			while(scan.hasNextLine()){
-				update += scan.nextLine();
+				update += scan.nextLine() + "\n";
 			}
 			
 			//Append it to log file
@@ -112,6 +114,6 @@ public class XMLFileHandler {
 	}*/
 	
 	public static void main(String[] args){
-		XMLFileHandler.write(new DistributionNetwork());
+		XMLFileHandler.write(new CustomerPriceUpdateEvent("Wellington","Auckland","Air",3.00,5.00));
 	}
 }

@@ -2,7 +2,9 @@ package kps.distribution.event;
 
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "price")
@@ -15,8 +17,11 @@ public class CustomerPriceEvent extends DistributionNetworkEvent {
 	public final String priority;
 	public final double weightCost;
 	public final double volumeCost;
+	
+	@XmlAttribute
 	public final String action;
 	
+	@XmlTransient
 	public final UUID id;
 
 	public CustomerPriceEvent(String from, String to, String priority,
@@ -30,4 +35,16 @@ public class CustomerPriceEvent extends DistributionNetworkEvent {
 		
 		this.id = UUID.randomUUID();
 	}
+	
+	public CustomerPriceEvent(){
+		this.from = "";
+		this.to = "";
+		this.priority = "";
+		this.weightCost = 0.00;
+		this.volumeCost = 0.00;
+		this.action = "";
+		
+		this.id = UUID.randomUUID();
+	};
+
 }

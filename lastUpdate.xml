@@ -1,10 +1,4 @@
-<price action="add">
-    <to>Auckland</to>
-    <from>Wellington</from>
-    <priority>Air</priority>
-    <weightCost>1.0</weightCost>
-    <volumeCost>5.0</volumeCost>
-</price>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <price action="update">
     <to>Auckland</to>
     <from>Wellington</from>
