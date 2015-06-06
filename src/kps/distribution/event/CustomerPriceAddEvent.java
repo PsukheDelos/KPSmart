@@ -6,7 +6,7 @@ public class CustomerPriceAddEvent extends CustomerPriceEvent{
 
 	public CustomerPriceAddEvent(String from, String to, String priority,
 			double weightCost, double volumeCost) {
-		super(from, to, priority, weightCost, volumeCost);
+		super(from, to, priority, weightCost, volumeCost, "add");
 	}
 
 }
