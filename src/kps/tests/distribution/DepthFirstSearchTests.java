@@ -16,7 +16,7 @@ public class DepthFirstSearchTests {
 		//set up
 		Location locA = new Location("locA", 1, 1);
 		Location locB = new Location("locB", 1, 1);
-		Location locC = new Location("locB", 1, 1);
+		Location locC = new Location("locC", 1, 1);
 		Route r = new Route(locA, locB, null, 1, 1, 1, 1, 1, 1, null, null);
 		locA.addRouteOut(r);
 
