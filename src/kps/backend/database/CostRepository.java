@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -168,6 +169,34 @@ public class CostRepository {
 			return true;			
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
+	}
+
+	public static ArrayList<Route> getRoutes(Map<String, Location> locations) {
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			ArrayList<Route> routes = new ArrayList<Route>();
+			Statement statement = db.createStatement();
+			String query = "SELECT * FROM cost";
+			ResultSet result = statement.executeQuery(query);
+			while(result.next()){
+				
+//				if (!locations.containsKey(r.getOrigin().getName())){
+//					locations.put(r.getOrigin().getName(), r.getOrigin());
+//				}
+//				if (!locations.containsKey(r.getDestination().getName())){
+//					locations.put(r.getDestination().getName(), r.getDestination());
+//				}
+				
+			    routes.add(new Route(locations.get(result.getString(2)), locations.get(result.getString(3)), new Company(result.getString(1)), 
+			    		Double.valueOf(result.getString(5)), 
+			    		Double.valueOf(result.getString(6)), Double.valueOf(result.getString(7)), 
+			    		Double.valueOf(result.getString(8)), Double.valueOf(result.getString(9)), 
+			    		Double.valueOf(result.getString(10)), TransportType.fromString(result.getString(4)), result.getString(11)));
+			}
+			db.close();
+			return routes;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
 	}
 	
 	

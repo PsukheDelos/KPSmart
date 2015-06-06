@@ -53,15 +53,17 @@ public class DistributionNetwork {
 		for (Location location : LocationRepository.getLocations()){
 			locations.put(location.name, location);
 		}
-		for (Route r : CostRepository.getRoutes()){
-			if (!locations.containsKey(r.getOrigin().getName())){
-				locations.put(r.getOrigin().getName(), r.getOrigin());
+
+		for (Route r : CostRepository.getRoutes(locations)){
+			try {
+				addRoute(r);
+			} catch (InvalidRouteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			if (!locations.containsKey(r.getDestination().getName())){
-				locations.put(r.getDestination().getName(), r.getDestination());
-			}
-			routes.add(r);
 		}
+
+
 
 	}
 
@@ -96,7 +98,7 @@ public class DistributionNetwork {
 	}
 
 	public void addRoute(Route route) throws InvalidRouteException{
-		System.out.println("DisributionNetwork: addRoute: " + route.getCompany().name);
+		System.out.println("DisributionNetwork: addRoute: " + route.getOrigin().name);
 		if (!getLocationsSet().contains(route.getOrigin()))
 			throw new InvalidRouteException("Origin location does not exist");
 		if (!getLocationsSet().contains(route.getDestination()))
@@ -109,6 +111,10 @@ public class DistributionNetwork {
 
 		routes.add(route);
 		route.getOrigin().addRouteOut(route);
+
+		for(Route r: route.getOrigin().getRoutesOut()){
+			System.err.println("getRoutesOut: " + r.getDestination().name + " " + r.getCompany().name + " " + r.getType().name());
+		}
 	}
 
 	public void addRoutes(Collection<Route> routes) throws InvalidRouteException{
@@ -136,6 +142,13 @@ public class DistributionNetwork {
 	 */
 	public MailDelivery deliver(Mail mail) throws PathNotFoundException {
 		System.err.println("DisributionNetwork: deliver()");
+
+		System.out.println("mail: " + mail.day);
+		System.out.println("mail: " + mail.origin.name);
+		System.out.println("mail: " + mail.destination.name);
+		System.out.println("mail: " + mail.weight);
+		System.out.println("mail: " + mail.volume);
+		System.out.println("mail: " + mail.priority);
 
 		switch (mail.priority){
 		case DOMESTIC_AIR:
@@ -226,7 +239,7 @@ public class DistributionNetwork {
 			TransportCostEvent tce = (TransportCostEvent)event;
 			return processTransportCostEvent(tce);
 		}
-		
+
 		else if (event instanceof UpdateTableEvent){
 			System.out.println("DistributionNetwork: processEvent: UpdateTableEvent");
 			UpdateTableEvent ute = (UpdateTableEvent)event;
@@ -273,7 +286,7 @@ public class DistributionNetwork {
 		else if(event instanceof UpdateTableUserEvent){
 			System.err.println("processUpdateTableEvent: updatetableusereevent");
 		}
-			
+
 		return new UpdateTableEventResult();
 	}
 
@@ -287,10 +300,10 @@ public class DistributionNetwork {
 
 		if(event instanceof TransportCostUpdateEvent){
 			System.out.println("DistributionNetwork: processTransportCostEvent: TransportCostUpdateEvent");
-//			Route route = getRoute(company, origin, destination, type);
-//			if (route != null){
-//				route.update(event);
-//			}
+			//			Route route = getRoute(company, origin, destination, type);
+			//			if (route != null){
+			//				route.update(event);
+			//			}
 			CostRepository.update(event.company, event.from, event.to, event.type, event.weightCost, event.volumeCost, event.maxWeight, event.maxVolume, event.duration, event.frequency, event.day);
 
 		}else if(event instanceof TransportCostAddEvent){
@@ -299,6 +312,9 @@ public class DistributionNetwork {
 					event.volumeCost, event.maxWeight, event.maxVolume, event.frequency, type, event.day);
 
 			routes.add(route);
+			for(Route r: routes){
+				System.out.println(r.getOrigin().name + " " + r.getDestination().name);
+			}
 			CostRepository.add(event.company, event.from, event.to, event.type, event.weightCost, event.volumeCost, event.maxWeight, event.maxVolume, event.duration, event.frequency, event.day);
 
 		}else if(event instanceof TransportCostRemoveEvent){
@@ -353,6 +369,7 @@ public class DistributionNetwork {
 			System.out.println("try DeliveryEventResult(deliver(mail))");
 			return new DeliveryEventResult(deliver(mail));
 		} catch (PathNotFoundException e) {
+			System.out.println("Could not find a path from origin to destination");
 			return new InvalidEventResult("Could not find a path from origin to destination");
 		}
 	}
