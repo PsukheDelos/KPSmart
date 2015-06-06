@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import kps.backend.database.PriceRepository;
+import kps.distribution.event.CustomerPriceAddEvent;
 import kps.distribution.event.CustomerPriceUpdateEvent;
 
 public class PriceFrame extends JFrame{
@@ -173,15 +175,14 @@ public class PriceFrame extends JFrame{
 				if(edit==true){
 					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 					parent.client.sendEvent(c);
-//					parent.client.processEvent(c);
-//					parent.getMailClient().sendEvent(new CustomerPriceUpdateEvent(fromText.getText(), toText.getText(), priorityText.getText(),Double.valueOf(weightText.getText()), Double.valueOf(volText.getText())));
-//					PriceRepository.updatePrice(fromText.getText(), toText.getText(), priorityText.getText(), Double.valueOf(weightText.getText()), Double.valueOf(volText.getText()));
 				}
 				else{
-					PriceRepository.add(origin.getText(), destination.getText(), priority.getText(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
+					CustomerPriceAddEvent c = new CustomerPriceAddEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
+					parent.client.sendEvent(c);
+					//					PriceRepository.add(origin.getText(), destination.getText(), priority.getText(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 				}
-				parent.updatePrices();
-				parent.updateOrigin();
+//				parent.updatePrices();
+//				parent.updateOrigin();
 				dispose();
 			}
 

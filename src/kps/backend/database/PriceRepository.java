@@ -149,7 +149,8 @@ public class PriceRepository {
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "INSERT INTO price (from\", \"to\", priority, weightCost, volumeCost) VALUES (\""+origin+"\",\""+destination+"\",\""+priority+"\","+weightcost+","+volumecost+")";
+			String query = "INSERT INTO price ([from], [to], [priority], [weightCost], [volumeCost]) VALUES (\""+origin+"\",\""+destination+"\",\""+priority+"\","+weightcost+","+volumecost+")";
+			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			

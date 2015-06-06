@@ -54,6 +54,8 @@ import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.UserRepository;
+import kps.distribution.event.CustomerPriceAddEvent;
+import kps.distribution.event.CustomerPriceRemoveEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
@@ -713,9 +715,11 @@ public class ClientFrame extends JFrame{
 					int dialogButton = JOptionPane.YES_NO_OPTION;
 					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
 					if(dialogResult == JOptionPane.YES_OPTION){
-						PriceRepository.remove(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
-						priceTable.setModel(PriceRepository.getPricesModel());
-						updateOrigin();
+						CustomerPriceRemoveEvent c = new CustomerPriceRemoveEvent(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
+						parent.client.sendEvent(c);
+						//						PriceRepository.remove(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
+//						priceTable.setModel(PriceRepository.getPricesModel());
+//						updateOrigin();
 					}
 				}
 			}

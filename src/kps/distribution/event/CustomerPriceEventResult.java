@@ -2,7 +2,7 @@ package kps.distribution.event;
 
 import java.util.UUID;
 
-public class PriceUpdateEventResult extends EventResult {
+public class CustomerPriceEventResult extends EventResult {
 	
 	public UUID id;
 
