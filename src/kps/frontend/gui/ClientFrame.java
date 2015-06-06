@@ -53,6 +53,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 
+import kps.backend.UserPermissions;
 import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
@@ -165,7 +166,7 @@ public class ClientFrame extends JFrame{
 
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
-
+		
 		createDashboardTab(tabbedPane);
 		createMailTab(getTabbedPane());
 		createRouteTab(getTabbedPane());
@@ -176,6 +177,13 @@ public class ClientFrame extends JFrame{
 		this.add(getTabbedPane());
 	}
 
+	public void setUserPermissions(UserPermissions up){
+		if(!(up==UserPermissions.MANAGER)){
+			tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
+			tabbedPane.removeTabAt(0);
+		}
+	}
+	
 	public void createDashboardTab(JTabbedPane tabbedPane) {
 
 		JLabel label = new JLabel("Dashboard");
