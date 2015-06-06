@@ -22,6 +22,8 @@ public class Server extends Thread{
 	private ServerSocket serverSocket;
 	private IMailSystem mailSystem;
 	
+	private UpdateThread updateThread;
+	
 	private boolean isRunning = true;
 	
 	private Map<Integer, ServerToClientConnection> connections;
@@ -47,12 +49,12 @@ public class Server extends Thread{
 		System.out.println(this + "Server Started!");
 		super.start();
 	}
-	
+		
 	public void run(){
 		
 		try{
 			int id = 0;
-			UpdateThread updateThread = new UpdateThread(this, mailSystem);
+			updateThread = new UpdateThread(this, mailSystem);
 			while(isRunning){
 				Socket socket = serverSocket.accept();
 				ServerToClientConnection newConnection = new ServerToClientConnection(socket, new ObjectOutputStream(socket.getOutputStream()));
@@ -74,8 +76,9 @@ public class Server extends Thread{
 		
 	}
 	
-	public void shutdown(){
+	public void shutdown() throws IOException{
 		this.isRunning = false;
+		serverSocket.close();
 		// TODO: Handle the Shutdown HERE;
 	}
 	

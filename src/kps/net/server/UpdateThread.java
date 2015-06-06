@@ -15,6 +15,7 @@ public class UpdateThread extends Thread{
 	
 	public UpdateThread(Server server, IMailSystem mailSystem){
 		this.server = server;
+		setDaemon(true);
 		start();
 	}
 	
