@@ -8,6 +8,8 @@ import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import kps.distribution.network.Location;
+
 public class MailRepository {
 
 	private static Connection db = null;
@@ -71,5 +73,48 @@ public class MailRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
 	}
+	
+	public static Double getRevenue(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "SELECT SUM(price) FROM mail";
+			ResultSet result = statement.executeQuery(query);
+			Double d = result.getDouble(1);
+			db.close();
+			return d;		
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
+	public static Double getExpenditure(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "SELECT SUM(cost) FROM mail";
+			ResultSet result = statement.executeQuery(query);
+			Double d = result.getDouble(1);
+			db.close();
+			return d;		
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
+	public static Integer getEventCount(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "SELECT COUNT(*) FROM mail";
+			System.out.println(query);
+			ResultSet result = statement.executeQuery(query);
+			System.err.println(result.getInt(1));
+			Integer i = result.getInt(1);
+			db.close();
+			return i;		
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
+	
 		
 }

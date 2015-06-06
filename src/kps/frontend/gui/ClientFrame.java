@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -56,6 +57,7 @@ import javax.swing.table.TableModel;
 import kps.backend.UserPermissions;
 import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
+import kps.backend.database.MailRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.UserRepository;
 import kps.distribution.event.CustomerPriceRemoveEvent;
@@ -172,6 +174,13 @@ public class ClientFrame extends JFrame{
 
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
+
+//		
+//		 tabbedPane.addChangeListener(new ChangeListener() {
+//		        public void stateChanged(ChangeEvent e) {
+//		            System.out.println("Tab: " + tabbedPane.getSelectedIndex());
+//		        }
+//		    });
 		
 		createDashboardTab(getTabbedPane());
 		createMailTab(getTabbedPane());
@@ -222,7 +231,7 @@ public class ClientFrame extends JFrame{
 
 		JLabel revenueLabel = new JLabel("Revenue: ", SwingConstants.LEFT);
 		revenueLabel.setFont(new Font(revenueLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel revenueDisp = new JLabel("$1000.00", SwingConstants.LEFT);
+		JLabel revenueDisp = new JLabel("$" + MailRepository.getRevenue().toString(), SwingConstants.LEFT);
 		revenueDisp.setFont(new Font(revenueLabel.getFont().getFontName(), Font.BOLD, 40));
 		revenueDisp.setForeground(Color.GREEN);
 
@@ -243,7 +252,7 @@ public class ClientFrame extends JFrame{
 
 		JLabel expLabel = new JLabel("Expenditure: ", SwingConstants.LEFT);
 		expLabel.setFont(new Font(expLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel expDisp = new JLabel("$3000.00", SwingConstants.LEFT);
+		JLabel expDisp = new JLabel("$" + MailRepository.getExpenditure().toString(), SwingConstants.LEFT);
 		expDisp.setFont(new Font(expLabel.getFont().getFontName(), Font.BOLD, 40));
 		expDisp.setForeground(Color.RED);
 
@@ -261,9 +270,9 @@ public class ClientFrame extends JFrame{
 		profPanel.setLayout(new GridLayout(2,1));
 		profPanel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));		
 		profPanel.setBackground(Color.white);
-		JLabel profLabel = new JLabel("Profit: ", SwingConstants.LEFT);
+		JLabel profLabel = new JLabel("Events: ", SwingConstants.LEFT);
 		profLabel.setFont(new Font(profLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel profDisp = new JLabel("-$2000.00", SwingConstants.LEFT);
+		JLabel profDisp = new JLabel(MailRepository.getEventCount().toString(), SwingConstants.LEFT);
 		profDisp.setFont(new Font(profDisp.getFont().getFontName(), Font.BOLD, 40));
 		profDisp.setForeground(Color.RED);
 
