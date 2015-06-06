@@ -150,7 +150,6 @@ public class PriceRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "INSERT INTO price ([from], [to], [priority], [weightCost], [volumeCost]) VALUES (\""+origin+"\",\""+destination+"\",\""+priority+"\","+weightcost+","+volumecost+")";
-			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			
@@ -163,7 +162,6 @@ public class PriceRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "UPDATE price SET [weightCost]="+weightcost+", [volumeCost]="+volumecost+" WHERE [from]=\""+origin+"\" and [to] = \""+destination+"\" and [priority]=\""+priority+"\"";
-			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			

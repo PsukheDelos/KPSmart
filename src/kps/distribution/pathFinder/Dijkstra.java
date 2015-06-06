@@ -21,7 +21,6 @@ public class Dijkstra implements PathFinder{
 	private PathCondition pathCondition;
 
 	public Dijkstra(PathCondition pathCondition){
-		System.out.println("Dijkstra");
 		this.pathCondition = pathCondition;
 		this.fringe = new PriorityQueue<DijkstraNode>(pathCondition);
 	}
@@ -33,8 +32,9 @@ public class Dijkstra implements PathFinder{
 		while (!fringe.isEmpty()) {
 			DijkstraNode node = fringe.poll();
 
-			if (node.location.equals(mail.destination))
+			if (node.location.equals(mail.destination)){
 				return new MailDelivery(mail, node.costToHere, node.timeToHere, pathTo(node));
+			}
 
 			if (visited.contains(node.location))
 				continue;
@@ -58,10 +58,10 @@ public class Dijkstra implements PathFinder{
 
 	private void evaluateNeighbors(DijkstraNode node){
 		List<Route> routesToAdd = node.location.getRoutesOut().stream()
-			.filter(r -> r.canShip(mail)
-				&& !visited.contains(r.getDestination())
-				&& pathCondition.accepts(r))
-			.collect(Collectors.toList());
+				.filter(r -> r.canShip(mail)
+						&& !visited.contains(r.getDestination())
+						&& pathCondition.accepts(r))
+						.collect(Collectors.toList());
 
 		for (Route route : routesToAdd) {
 			DijkstraNode neighbour = node.plusRoute(route, mail);

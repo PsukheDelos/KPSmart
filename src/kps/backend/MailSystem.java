@@ -12,6 +12,7 @@ import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.MailDeliveryEventResult;
 import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostEventResult;
 import kps.distribution.network.DistributionNetwork;
@@ -70,25 +71,21 @@ public class MailSystem implements IMailSystem{
 			returnEvent = network.processEvent(networkEvent);
 			// Then, if it's an event we need a specific return from, set its UUID.
 			if(event instanceof MailDeliveryEvent 
-					&& returnEvent instanceof DeliveryEventResult){
+					&& returnEvent instanceof MailDeliveryEventResult){
 				System.out.println("Adding UUID to return event for a MailDelivery");
 				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
-				((DeliveryEventResult)returnEvent).id = clientEventUUID;
+				((MailDeliveryEventResult)returnEvent).id = clientEventUUID;
 
 			}else if(event instanceof CustomerPriceEvent 
 					&& returnEvent instanceof CustomerPriceEventResult){
-				System.out.println("MailSystem: processEvent: CustomerPriceEvent");
 				UUID clientEventUUID = ((CustomerPriceEvent)event).id;
-				System.out.println("Adding UUID to return event for a CustomerPriceUpdate: " + clientEventUUID);
 				((CustomerPriceEventResult)returnEvent).id = clientEventUUID;
 				XMLFileHandler.write((CustomerPriceEvent)event);
 			}
 			else if(event instanceof TransportCostEvent 
 					&& returnEvent instanceof TransportCostEventResult){
-				System.out.println("MailSystem: processEvent: TransportCostEvent");
 				UUID clientEventUUID = ((TransportCostEvent)event).id;
 				((TransportCostEventResult)returnEvent).id = clientEventUUID;
-				System.out.println("Adding UUID to return event for a TransportCostEvent: " + clientEventUUID);
 			}
 		}
 		return returnEvent;

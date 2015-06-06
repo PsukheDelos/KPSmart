@@ -64,13 +64,7 @@ public class MailClient implements IMailClient{
 			setCurrentUser(evt.user);
 			
 			clientFrame.setUserPermissions(evt.user.permissions);
-			
-//			if(evt.user.permissions == UserPermissions.CLERK){
-//				System.out.println(evt.user.permissions);
-//				
-//				clientFrame.createManagerTab(clientFrame.getTabbedPane());
-//				clientFrame.createDashboardTab(clientFrame.getTabbedPane());
-//			}
+
 		}
 		else if(e instanceof NewUserResultEvent){
 			if(((NewUserResultEvent) e).successful)
@@ -95,13 +89,9 @@ public class MailClient implements IMailClient{
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
 			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
 		}else if(e instanceof CustomerPriceEventResult){
-			//			System.out.println("Recieved Return for PriceUpdateEvent" + ((PriceUpdateEventResult)e).id);
-			//			if(awaitingResponse.containsKey(((CustomerPriceEventResult)e).id)){
 			clientFrame.updateOrigin();
 			clientFrame.updatePrices();
-			//			}
 		}else if(e instanceof TransportCostEventResult){
-			System.out.println("mailclient: processevent: transportcosteventresult");
 			clientFrame.updateRoutes();
 		}
 
@@ -115,14 +105,11 @@ public class MailClient implements IMailClient{
 			System.out.println("Adding Awaiting Delivery for id: " + ((MailDeliveryEvent)e).id);
 			awaitingResponse.put(((MailDeliveryEvent) e).id, (MailDeliveryEvent)e);
 		}else if(e instanceof CustomerPriceEvent){
-			System.out.println("Adding Price Update Event awaiting return: " + ((CustomerPriceEvent)e).id);
 			awaitingResponse.put(((CustomerPriceEvent) e).id, (CustomerPriceEvent)e);
 		}
 		else if(e instanceof TransportCostEvent){
-			System.out.println("Adding Transport Update Event awaiting return: " + ((TransportCostEvent)e).id);
 			awaitingResponse.put(((TransportCostEvent) e).id, (TransportCostEvent)e);
 		}
-		System.out.println("MailClient: sendEvent: ");
 
 		client.sendEvent(e);
 	}
