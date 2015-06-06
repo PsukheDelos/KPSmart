@@ -96,7 +96,8 @@ public class UserRepository {
 		}
 	}
 	
-	private static boolean containsUser(String username){
+	public static boolean containsUser(String username){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
 			String query = "SELECT Count(*) FROM users WHERE username='" + username + "'";
@@ -106,5 +107,10 @@ public class UserRepository {
 			return res > 0;
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
+	}
+	
+	public static void forceClose() throws SQLException{
+		if(thereIsAConnectionToTheDatabase())
+			db.close();
 	}
 }

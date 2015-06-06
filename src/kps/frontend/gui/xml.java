@@ -22,7 +22,7 @@ public class xml {
 
 
 	public static void main(String[] args) {
-//		new xml("sample1.xml");
+		new xml("sample1.xml");
 	}
 	
 	public  xml(String filename){
