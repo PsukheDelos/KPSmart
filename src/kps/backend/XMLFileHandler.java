@@ -30,6 +30,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -139,33 +141,68 @@ public class XMLFileHandler {
 		model.addColumn("Volume Cost");
 		
 		//Read in the data
-		
+		File file = new File("log.xml");
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = null;
 		
 		try{
 			builder = builderFactory.newDocumentBuilder();
-			Document document = builder.parse(new FileInputStream("log.xml"));
+			Document document = builder.parse(file);
+			//Document document = builder.parse(new FileInputStream("log.xml"));
 			
+			document.getDocumentElement().normalize();
+			
+			System.out.println("Root Element : " + document.getDocumentElement().getNodeName());
+			
+			NodeList nodeList = document.getElementsByTagName("price");
+			
+			for(int i=0;i<nodeList.getLength();i++){
+				Node node = nodeList.item(i);
+				
+				System.out.println("Current Element : " + node.getNodeName());
+				
+				if(node.getNodeType() == Node.ELEMENT_NODE){
+					Element element = (Element) node;
+					
+					model.addRow(new Object[] {
+							element.getAttribute("action"),
+							element.getElementsByTagName("to").item(0).getTextContent(),
+							element.getElementsByTagName("from").item(0).getTextContent(),
+							element.getElementsByTagName("priority").item(0).getTextContent(),
+							element.getElementsByTagName("weightCost").item(0).getTextContent(),
+							element.getElementsByTagName("volumeCost").item(0).getTextContent()
+					});
+					
+					System.out.println("action : " + element.getAttribute("action"));
+					System.out.println("to : " + element.getElementsByTagName("to").item(0).getTextContent());
+					System.out.println("from : " + element.getElementsByTagName("from").item(0).getTextContent());
+					System.out.println("pri : " + element.getElementsByTagName("priority").item(0).getTextContent());
+					System.out.println("weight : " + element.getElementsByTagName("weightCost").item(0).getTextContent());
+					System.out.println("vol : " + element.getElementsByTagName("volumeCost").item(0).getTextContent());
+				}
+			}
+			
+			/*
 			XPath xPath = XPathFactory.newInstance().newXPath();
-			
-			String expression = "//price";
+
+			String expression = "/events/price[2]/to";
 			
 			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
 			
-			for(int i = 0; i<nodeList.getLength();i++){
+			for(int i = 0; nodeList!=null && i<nodeList.getLength();i++){
+
 				System.out.println(nodeList.item(i).getFirstChild().getNodeValue());
 			}
-			
+			*/
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
 			e.printStackTrace();
-		} catch (XPathExpressionException e) {
+		} /*catch (XPathExpressionException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		
 		//Return the updated table
@@ -173,7 +210,7 @@ public class XMLFileHandler {
 	}
 	
 	public static void main(String[] args){
-		XMLFileHandler.write(new CustomerPriceUpdateEvent("Wellington","Auckland","Air",3.00,5.00));
-		//XMLFileHandler.loadLog();
+		//XMLFileHandler.write(new CustomerPriceUpdateEvent("Wellington","Auckland","Air",3.00,5.00));
+		XMLFileHandler.loadLog();
 	}
 }
