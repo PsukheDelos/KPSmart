@@ -222,7 +222,7 @@ public class ClientFrame extends JFrame{
 		//Revenue
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = c.gridy + 1;
 
 		JPanel revenuePanel = new JPanel();
 		revenuePanel.setLayout(new GridLayout(2,1));
@@ -243,7 +243,6 @@ public class ClientFrame extends JFrame{
 		//Expenditure
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 1;
 
 		JPanel expPanel = new JPanel();
 		expPanel.setLayout(new GridLayout(2,1));
@@ -261,10 +260,9 @@ public class ClientFrame extends JFrame{
 
 		panel.add(expPanel,c);
 
-		//Profit
+		//Events
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 2;
-		c.gridy = 1;
 
 		JPanel profPanel = new JPanel();
 		profPanel.setLayout(new GridLayout(2,1));
@@ -283,8 +281,8 @@ public class ClientFrame extends JFrame{
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 3;
+		c.gridy = c.gridy + 1;
+		c.gridwidth = 4;
 
 		//Chart: Domestic
 		final JFXPanel jFXPanel = new JFXPanel();
@@ -378,21 +376,36 @@ public class ClientFrame extends JFrame{
 		JPanel i = new JPanel();
 		i.add(jFXPanel3);
 
-		//Mail
+
+		//Table: Amount of Mail
+		JTable aomTable = new JTable(MailRepository.getAmountOfMailModel());
+		aomTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		aomTable.setFillsViewportHeight(true);	
 		
+		//Table: Average Delivery Times
+		JTable adtTable = new JTable(MailRepository.getAmountOfMailModel());
+		adtTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		adtTable.setFillsViewportHeight(true);	
 		
+		//Table: Critical Routes
+		JTable crTable = new JTable(MailRepository.getAmountOfMailModel());
+		crTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		crTable.setFillsViewportHeight(true);
+
+		//Table: Events
+		client.sendEvent(new XMLGetEvent());
+		eventTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		eventTable.setFillsViewportHeight(true);
 		
-		JPanel m = new JPanel();
-		m.add(new JScrollPane(eventTable));
-		
-
 		JTabbedPane dashTab = new JTabbedPane();
-		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
-		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
-		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
-		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
-		dashTab.addTab("Events", null, m, "View a list of the latest mail events.");
+//		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
+//		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
+//		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
+//		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
+		dashTab.addTab("Amount of Mail", new JScrollPane(aomTable));
+//		dashTab.addTab("Average Delivery Times", new JScrollPane(adtTable));
+//		dashTab.addTab("Critical Routes", new JScrollPane(crTable));
+		dashTab.addTab("Events", null, new JScrollPane(eventTable), "View a list of the latest mail events.");
 		
 		dashTab.addChangeListener(new ChangeListener(){
 			@Override

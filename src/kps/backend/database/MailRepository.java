@@ -115,6 +115,78 @@ public class MailRepository {
 		return null;
 	}
 	
+	public static TableModel getAmountOfMailModel(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			DefaultTableModel model = new DefaultTableModel() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+			    public boolean isCellEditable(int row, int column) {
+			       //all cells false
+			       return false;
+			    }
+			};
+			model.addColumn("destination");
+			model.addColumn("origin");
+			model.addColumn("total volume");
+			model.addColumn("total weight");
+			model.addColumn("total items");
+
+			Statement statement = db.createStatement();
+			
+			String query = "select [to], [from], sum(volume), sum(weight), count(*) from mail group by [to],[from]";
+			ResultSet result = statement.executeQuery(query);
+			
+			while(result.next()){
+				model.addRow(new Object[] {result.getString(1), result.getString(2), result.getDouble(3), 
+			    		result.getDouble(4), result.getInt(5)});
+			}
+			
+			db.close();
+			
+			return model;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
+	public static TableModel getAverageDeliveryTimeModel(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			DefaultTableModel model = new DefaultTableModel() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+			    public boolean isCellEditable(int row, int column) {
+			       //all cells false
+			       return false;
+			    }
+			};
+			model.addColumn("destination");
+			model.addColumn("origin");
+			model.addColumn("total volume");
+			model.addColumn("total weight");
+			model.addColumn("total items");
+
+			Statement statement = db.createStatement();
+			
+			String query = "select [to], [from], sum(volume), sum(weight), count(*) from mail group by [to],[from]";
+			ResultSet result = statement.executeQuery(query);
+			
+			while(result.next()){
+				model.addRow(new Object[] {result.getString(1), result.getString(2), result.getDouble(3), 
+			    		result.getDouble(4), result.getInt(5)});
+			
+			}
+			
+			db.close();
+			
+			return model;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
 	
 		
 }

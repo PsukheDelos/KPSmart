@@ -14,4 +14,11 @@
         <weightCost>3.0</weightCost>
         <volumeCost>5.0</volumeCost>
     </price>
+    <price action="update">
+        <to>Hong Kong</to>
+        <from>Wellington</from>
+        <priority>International Air</priority>
+        <weightCost>4.0</weightCost>
+        <volumeCost>4.0</volumeCost>
+    </price>
 </events>

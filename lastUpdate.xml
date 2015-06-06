@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <price action="update">
-    <to>Auckland</to>
+    <to>Hong Kong</to>
     <from>Wellington</from>
-    <priority>Air</priority>
-    <weightCost>3.0</weightCost>
-    <volumeCost>5.0</volumeCost>
+    <priority>International Air</priority>
+    <weightCost>4.0</weightCost>
+    <volumeCost>4.0</volumeCost>
 </price>
