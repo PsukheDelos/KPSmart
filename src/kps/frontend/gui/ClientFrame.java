@@ -96,6 +96,8 @@ public class ClientFrame extends JFrame{
 	private Double entered_weight = (double) 0;
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
+	
+	private JTabbedPane tabbedPane;
 
 	private JTable routeTable = new JTable(CostRepository.getRoutesModel());
 	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
@@ -160,19 +162,19 @@ public class ClientFrame extends JFrame{
 	}
 
 	protected void createTabbedPane(){
-		JTabbedPane tabbedPane = new JTabbedPane();
+		setTabbedPane(new JTabbedPane());
 
-		createDashboardTab(tabbedPane);
-		createMailTab(tabbedPane);
-		createRouteTab(tabbedPane);
-		createPriceTab(tabbedPane);
-		createMapTab(tabbedPane);
-		createManagerTab(tabbedPane);
+		//createDashboardTab(tabbedPane);
+		createMailTab(getTabbedPane());
+		createRouteTab(getTabbedPane());
+		createPriceTab(getTabbedPane());
+		createMapTab(getTabbedPane());
+		//createManagerTab(tabbedPane);
 
-		this.add(tabbedPane);
+		this.add(getTabbedPane());
 	}
 
-	private void createDashboardTab(JTabbedPane tabbedPane) {
+	public void createDashboardTab(JTabbedPane tabbedPane) {
 
 		JLabel label = new JLabel("Dashboard");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
@@ -979,7 +981,7 @@ public class ClientFrame extends JFrame{
 		// Create Map tab
 	}
 
-	private void createManagerTab(JTabbedPane tabbedPane){
+	public void createManagerTab(JTabbedPane tabbedPane){
 		JLabel label = new JLabel("Users");
 		label.setHorizontalTextPosition(JLabel.TRAILING);
 		label.setIcon(createImageIcon("img/users-icon.png"));
@@ -1089,6 +1091,14 @@ public class ClientFrame extends JFrame{
 			System.err.println("Couldn't find file: " + path);
 			return null;
 		}
+	}
+
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+
+	public void setTabbedPane(JTabbedPane tabbedPane) {
+		this.tabbedPane = tabbedPane;
 	}
 
 }
