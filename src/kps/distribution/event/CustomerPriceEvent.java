@@ -2,7 +2,7 @@ package kps.distribution.event;
 
 import java.util.UUID;
 
-public class CustomerPriceUpdateEvent extends DistributionNetworkEvent {
+public class CustomerPriceEvent extends DistributionNetworkEvent {
 	private static final long serialVersionUID = 1L;
 
 	public final String to;
@@ -13,7 +13,7 @@ public class CustomerPriceUpdateEvent extends DistributionNetworkEvent {
 	
 	public final UUID id;
 
-	public CustomerPriceUpdateEvent(String from, String to, String priority,
+	public CustomerPriceEvent(String from, String to, String priority,
 			double weightCost, double volumeCost) {
 		this.from = from;
 		this.to = to;
