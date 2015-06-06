@@ -3,6 +3,7 @@ package kps.tests.net;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -24,6 +25,7 @@ import kps.net.event.RemoveUserResultEvent;
 import kps.net.server.Server;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -38,6 +40,11 @@ public class UserTests {
 		server = startupServer();
 		server.start();
 		client = startupClient();
+	}
+	
+	@AfterClass
+	public static void classShutDown() throws InterruptedException, IOException{
+		server.shutdown();
 	}
 	
 	private static Server startupServer(){
