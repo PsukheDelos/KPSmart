@@ -11,6 +11,8 @@ import kps.distribution.event.CustomerPriceEvent;
 import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
+import kps.distribution.event.LocationEvent;
+import kps.distribution.event.LocationEventResult;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.MailDeliveryEventResult;
 import kps.distribution.event.TransportCostEvent;
@@ -86,6 +88,11 @@ public class MailSystem implements IMailSystem{
 					&& returnEvent instanceof TransportCostEventResult){
 				UUID clientEventUUID = ((TransportCostEvent)event).id;
 				((TransportCostEventResult)returnEvent).id = clientEventUUID;
+			}
+			else if(event instanceof LocationEvent 
+					&& returnEvent instanceof LocationEventResult){
+				UUID clientEventUUID = ((LocationEvent)event).id;
+				((LocationEventResult)returnEvent).id = clientEventUUID;
 			}
 		}
 		return returnEvent;

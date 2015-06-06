@@ -5,6 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 import kps.distribution.network.Location;
 
 public class LocationRepository {
@@ -22,6 +26,32 @@ public class LocationRepository {
 		return true;
 	}
 
+	public static TableModel getModel(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			DefaultTableModel model = new DefaultTableModel() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+			model.addColumn("location");
+			model.addColumn("longitude");
+			model.addColumn("latitude");
+			Statement statement = db.createStatement();
+			String query = "SELECT * FROM locations";
+			ResultSet result = statement.executeQuery(query);
+			while(result.next()){
+				model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3)});
+			}
+			db.close();
+			return model;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
 	public static Location getCity(String city){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
@@ -50,4 +80,45 @@ public class LocationRepository {
 		} catch (SQLException e) {e.printStackTrace();}
 		return null;
 	}
+	
+	public static Boolean remove(String location){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "DELETE FROM locations where [name]=\""+location+"\"";
+			statement.execute(query);
+			System.err.println(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
+	
+	public static Boolean add(String location, Double lon, Double lat){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "INSERT INTO locations ([name], [lon], [lat]) VALUES (\""+location+"\","+lon+","+lat+")";
+			System.err.println(query);
+			statement.execute(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
+	
+	public static Boolean update(String location, Double lon, Double lat){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			Statement statement = db.createStatement();
+			String query = "UPDATE locations SET [lon]="+lon+", [lat]="+lat+" WHERE [name]=\""+location+"\"";
+			System.err.println(query);
+
+			statement.execute(query);
+			db.close();
+			return true;			
+		} catch (SQLException e) {e.printStackTrace();}
+		return false;
+	}
+	
 }
