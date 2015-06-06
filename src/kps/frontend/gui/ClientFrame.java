@@ -529,8 +529,6 @@ public class ClientFrame extends JFrame{
 				Double price_volume2 = PriceRepository.getVolumeCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				total_price = (double)2;
 				total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
-
-				System.err.println(total_price);
 				
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}

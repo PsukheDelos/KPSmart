@@ -129,7 +129,6 @@ public class CostRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "DELETE FROM cost where [company]=\""+company+"\" and [from]=\""+origin+"\" and [to]=\""+destination+"\" and [type]=\""+type+"\"";
-			System.err.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			

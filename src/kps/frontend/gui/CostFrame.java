@@ -264,7 +264,6 @@ public class CostFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(edit==true){
-					System.err.println("Submit Route Edit");
 					TransportCostUpdateEvent t = new TransportCostUpdateEvent(company.getText(), origin.getText(), destination.getText(),
 							(String)type.getSelectedItem(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()),
 							Double.valueOf(maxweight.getText()), Double.valueOf(maxvolume.getText()), Double.valueOf(duration.getText()),
