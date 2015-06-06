@@ -1,6 +1,15 @@
 package kps.distribution.event;
 
-public class TransportCostUpdateEvent extends DistributionNetworkEvent {
+import java.util.UUID;
+
+//import javax.xml.bind.annotation.XmlRootElement;
+//import javax.xml.bind.annotation.XmlType;
+//
+//@XmlRootElement(name = "price")
+//@XmlType(propOrder = {"to", "from", "priority", "weightCost", "volumeCost", "action"})
+public abstract class TransportCostEvent extends DistributionNetworkEvent {
+	private static final long serialVersionUID = 1L;
+	
 	public final String company;
 	public final String to;
 	public final String from;
@@ -12,10 +21,14 @@ public class TransportCostUpdateEvent extends DistributionNetworkEvent {
 	public final double duration;
 	public final double frequency;
 	public final String day;
+	
+	public final String action;
+	public final UUID id;
 
-	public TransportCostUpdateEvent(String company, String to, String from, String type,
+	public TransportCostEvent(String company, String to, String from, String type,
 			double weightCost, double volumeCost, double maxWeight, double maxVolume,
-			double duration, double frequency, String day) {
+			double duration, double frequency, String day, String action) {
+	
 		this.company = company;
 		this.to = to;
 		this.from = from;
@@ -27,5 +40,8 @@ public class TransportCostUpdateEvent extends DistributionNetworkEvent {
 		this.duration = duration;
 		this.frequency = frequency;
 		this.day = day;
+		
+		this.action = action;
+		this.id = UUID.randomUUID();
 	}
 }
