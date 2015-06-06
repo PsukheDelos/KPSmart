@@ -58,6 +58,7 @@ import kps.backend.database.UserRepository;
 import kps.distribution.event.CustomerPriceAddEvent;
 import kps.distribution.event.CustomerPriceRemoveEvent;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.TransportCostRemoveEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 import kps.net.event.RemoveUserEvent;
@@ -93,6 +94,7 @@ public class ClientFrame extends JFrame{
 	private Double entered_volume = (double) 0;
 	private Double total_price = (double) 0;
 
+	private JTable routeTable = new JTable(CostRepository.getRoutesModel());
 	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
 	private JTable userTable = new JTable(UserRepository.getUserModel());
 	private JTable eventTable = new JTable(XMLFileHandler.loadLog());
@@ -107,7 +109,7 @@ public class ClientFrame extends JFrame{
 	}
 
 	public ClientFrame() {
-		
+
 		super("--// KPSmart Mail System (Version 0.1) //--");
 		setPreferredSize(new Dimension(CLIENT_WIDTH, CLIENT_HEIGHT));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -142,7 +144,7 @@ public class ClientFrame extends JFrame{
 			ClientLoginFrame frame = new ClientLoginFrame(client, this);
 			frame.revalidate();
 		}
-		
+
 		initialise();
 
 		pack();
@@ -166,9 +168,9 @@ public class ClientFrame extends JFrame{
 
 		this.add(tabbedPane);
 	}
-	
+
 	private void createDashboardTab(JTabbedPane tabbedPane) {
-		
+
 		JLabel label = new JLabel("Dashboard");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
 		label.setIcon(createImageIcon("img/dash-icon.png"));
@@ -608,40 +610,40 @@ public class ClientFrame extends JFrame{
 
 		});
 		panel.add(submit,c);	
-		
-		//Enter Weight
-				c.fill = GridBagConstraints.HORIZONTAL;
-				c.gridx = 0;
-				c.gridy = 8;
-				c.gridwidth = 1;
 
-//				panel.add(new JLabel("Test: ",SwingConstants.RIGHT),c);	
-//
-//				c.fill = GridBagConstraints.HORIZONTAL;
-//				c.gridx = 1;
-//				c.gridy = 8;
-//
-//
-//				JTextField comboBox = new JTextField();
-//				JList list = new JList();
-//				DefaultListModel model = new DefaultListModel();
-//				list.setModel(model);
-//				model.addElement("Hey");
-//				model.addElement("Yo");
-////				elements
-////				elements.
-//				AutoCompleteDecorator.decorate(list, comboBox);
-////				AutoCompleteDecorator.decorate(elements, comboBox);
-////				AutoCompleteSupport.install(comboBox, GlazedLists.eventListOf(elements));
-//				
-//				panel.add(comboBox,c);
-				
+		//Enter Weight
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 8;
+		c.gridwidth = 1;
+
+		//				panel.add(new JLabel("Test: ",SwingConstants.RIGHT),c);	
+		//
+		//				c.fill = GridBagConstraints.HORIZONTAL;
+		//				c.gridx = 1;
+		//				c.gridy = 8;
+		//
+		//
+		//				JTextField comboBox = new JTextField();
+		//				JList list = new JList();
+		//				DefaultListModel model = new DefaultListModel();
+		//				list.setModel(model);
+		//				model.addElement("Hey");
+		//				model.addElement("Yo");
+		////				elements
+		////				elements.
+		//				AutoCompleteDecorator.decorate(list, comboBox);
+		////				AutoCompleteDecorator.decorate(elements, comboBox);
+		////				AutoCompleteSupport.install(comboBox, GlazedLists.eventListOf(elements));
+		//				
+		//				panel.add(comboBox,c);
+
 	}
-	
+
 	/**
 	 * @param tabbedPane
 	 */
-	
+
 
 	/**
 	 * @param tabbedPane
@@ -728,8 +730,8 @@ public class ClientFrame extends JFrame{
 						CustomerPriceRemoveEvent c = new CustomerPriceRemoveEvent(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
 						parent.client.sendEvent(c);
 						//						PriceRepository.remove(priceTable.getModel().getValueAt(sr, 0).toString(), priceTable.getModel().getValueAt(sr, 1).toString(), priceTable.getModel().getValueAt(sr, 2).toString());
-//						priceTable.setModel(PriceRepository.getPricesModel());
-//						updateOrigin();
+						//						priceTable.setModel(PriceRepository.getPricesModel());
+						//						updateOrigin();
 					}
 				}
 			}
@@ -760,8 +762,6 @@ public class ClientFrame extends JFrame{
 		tabbedPane.addTab("Routes", null, panel,"View and Edit the current Routes of KPSmart");
 		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
 
-		JTable jt = new JTable();
-
 		//Title: Routes
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -785,15 +785,12 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				new CostFrame(null);
-				//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-				//						jt.setModel(PriceRepository.getPricesModel());
-
+				new CostFrame(parent);
 			}
 		});
 		panel.add(addRoute,c);
 
-		//Button: Edit Route
+		//Button: Edit Cost
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 1;
@@ -803,11 +800,11 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int sr = jt.getSelectedRow();
+				int sr = routeTable.getSelectedRow();
 				if(sr!=-1){
-//					new CostFrame(null,jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString(),jt.getModel().getValueAt(sr, 3).toString() );
-					//						PriceRepository.removePrice(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 2).toString());
-					//						jt.setModel(PriceRepository.getPricesModel());
+					new CostFrame (parent, routeTable.getModel().getValueAt(sr, 0).toString(), routeTable.getModel().getValueAt(sr, 1).toString(), routeTable.getModel().getValueAt(sr, 2).toString(), routeTable.getModel().getValueAt(sr, 3).toString(),
+							routeTable.getModel().getValueAt(sr, 4).toString(), routeTable.getModel().getValueAt(sr, 5).toString(), routeTable.getModel().getValueAt(sr, 6).toString(), routeTable.getModel().getValueAt(sr, 7).toString(),
+							routeTable.getModel().getValueAt(sr, 8).toString(),routeTable.getModel().getValueAt(sr, 9).toString(), routeTable.getModel().getValueAt(sr, 10).toString());
 				}
 
 			}
@@ -826,13 +823,13 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				int sr = jt.getSelectedRow();
+				int sr = routeTable.getSelectedRow();
 				if(sr!=-1){
 					int dialogButton = JOptionPane.YES_NO_OPTION;
 					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
 					if(dialogResult == JOptionPane.YES_OPTION){
-//						CostRepository.remove(jt.getModel().getValueAt(sr, 0).toString(), jt.getModel().getValueAt(sr, 1).toString(), jt.getModel().getValueAt(sr, 3).toString());
-						jt.setModel(CostRepository.getRoutesModel());
+						client.sendEvent(new TransportCostRemoveEvent(routeTable.getModel().getValueAt(sr, 0).toString(), routeTable.getModel().getValueAt(sr, 2).toString(), routeTable.getModel().getValueAt(sr, 1).toString(),routeTable.getModel().getValueAt(sr, 3).toString()));
+						updateRoutes();
 					}
 				}
 
@@ -845,12 +842,12 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
-		jt.setModel(CostRepository.getRoutesModel());
-		jt.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		jt.setFillsViewportHeight(true);
-		panel.add(new JScrollPane(jt),c);
+		routeTable.setModel(CostRepository.getRoutesModel());
+		routeTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		routeTable.setFillsViewportHeight(true);
+		panel.add(new JScrollPane(routeTable),c);
 	}
-	
+
 	private void createMapTab(JTabbedPane tabbedPane) {
 		/*
 		 * The BasicMapPanel automatically creates many default components,
@@ -864,7 +861,7 @@ public class ClientFrame extends JFrame{
 		label.setIcon(createImageIcon("img/map-icon.png"));
 		tabbedPane.addTab("Locations", null, (Component) mapPanel,"Here you can view all the locations.");
 		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
-		
+
 		LatLonPoint wellingtonLocation = new LatLonPoint.Double(-41.21039581,175.1449432);
 
 		// Get the default MapHandler the BasicMapPanel created.
@@ -941,20 +938,20 @@ public class ClientFrame extends JFrame{
 			// Add an OMLine
 			//OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
 
-			
+
 			cityList.add(basicLocation);
 		}
-		
+
 		for(String origin: CostRepository.getOrigins()){
-			
+
 			Location start = LocationRepository.getCity(origin);
-			
+
 			for(String destination: CostRepository.getDestinations(origin)){
-				
+
 				Location end = LocationRepository.getCity(destination);
-				
+
 				OMLine line = new OMLine(start.lat,start.lon,end.lat,end.lon,OMGraphic.LINETYPE_GREATCIRCLE);
-				
+
 				line.setStroke(new BasicStroke(1f));
 				line.setLinePaint(Color.red);
 
@@ -969,16 +966,16 @@ public class ClientFrame extends JFrame{
 
 		// Create Map tab
 	}
-	
+
 	private void createManagerTab(JTabbedPane tabbedPane){
 		JLabel label = new JLabel("Users");
 		label.setHorizontalTextPosition(JLabel.TRAILING);
 		label.setIcon(createImageIcon("img/users-icon.png"));
 		JPanel panel = new JPanel();
-		
+
 		tabbedPane.addTab("Users", null, panel,"Here you can edit users");
 		tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1, label);
-		
+
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -993,23 +990,23 @@ public class ClientFrame extends JFrame{
 		title.setForeground(Color.decode("#fffe9a"));
 
 		panel.add(title,c);
-		
+
 		//Table: Users
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 3;
-		
+
 		userTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		userTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(userTable), c);
-		
+
 		//Button: Add User
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		
+
 		JButton button = new JButton("+");
 		button.addActionListener(new ActionListener(){
 			@Override
@@ -1024,34 +1021,37 @@ public class ClientFrame extends JFrame{
 		c.gridx = 1;
 		c.gridy = 2;
 		c.gridwidth = 1;
-		
+
 		button = new JButton("-");
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int rowIndex = userTable.getSelectedRow();
 				String username = (String)userTable.getModel().getValueAt(rowIndex, 1);
-				
+
 				int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + username + " from the database?", "WARNING", JOptionPane.YES_NO_OPTION);
 				if(reply == JOptionPane.YES_OPTION){
 					client.sendEvent(new RemoveUserEvent(username));
 				}
-				
-				
-				
-				
-				
+
+
+
+
+
 			}
 		});
 		panel.add(button, c);
 
 	}
 
-	
+	public void updateRoutes() {
+		routeTable.setModel(CostRepository.getRoutesModel());		
+	}
+
 	public void updatePrices(){
 		priceTable.setModel(PriceRepository.getPricesModel());
 	}
-	
+
 	public void updateUsers(){
 		userTable.setModel(UserRepository.getUserModel());
 	}
@@ -1062,7 +1062,7 @@ public class ClientFrame extends JFrame{
 			fromDropDown.addItem(toCity);
 		}
 	}
-	
+
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
 		path.replace("/", File.separator);

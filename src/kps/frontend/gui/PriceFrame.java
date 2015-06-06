@@ -171,7 +171,6 @@ public class PriceFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				if(edit==true){
 					CustomerPriceUpdateEvent c = new CustomerPriceUpdateEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 					parent.client.sendEvent(c);
@@ -179,10 +178,7 @@ public class PriceFrame extends JFrame{
 				else{
 					CustomerPriceAddEvent c = new CustomerPriceAddEvent(origin.getText(), destination.getText(), priority.getText(),Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 					parent.client.sendEvent(c);
-					//					PriceRepository.add(origin.getText(), destination.getText(), priority.getText(), Double.valueOf(weightcost.getText()), Double.valueOf(volumecost.getText()));
 				}
-//				parent.updatePrices();
-//				parent.updateOrigin();
 				dispose();
 			}
 
@@ -190,73 +186,6 @@ public class PriceFrame extends JFrame{
 		submit.setText("Submit");
 		priceForm.add(submit,c);
 
-		//		JPanel usernamePanel = new JPanel();
-		//		usernamePanel.setLayout(new GridLayout(1, 2));
-		//		
-		//		userLabel = new JLabel("Username");
-		//		usernamePanel.add(userLabel);
-		//
-		//		userText = new JTextField(20);
-		//		usernamePanel.add(userText);
-		//		
-		//		JPanel passwordPanel = new JPanel();
-		//		passwordPanel.setLayout(new GridLayout(1, 2));
-		//		
-		//		JPanel buttonPanel = new JPanel();
-		//		buttonPanel.setLayout(new GridLayout(1, 2, 20, 10));
-		//
-		//		loginButton = new JButton("Login");
-		//		loginButton.addActionListener(new ActionListener(){
-		//			public void actionPerformed(ActionEvent e) {
-		////				// Plain Text Username
-		////				String username = userText.getText();
-		////				String password = null;
-		////				// Nab the Password, and hash it immediately
-		////				try {
-		////					password = passwordHash(passwordText.getPassword());
-		////				} catch (NoSuchAlgorithmException | InvalidKeySpecException | UnsupportedEncodingException ex) {
-		////					ex.printStackTrace();
-		////				}
-		////						
-		////				mailClient.authenticateUser(username, password);
-		////				User user = mailClient.getCurrentUser();
-		////				while(user == null){
-		////					//TODO: Better Lock plz
-		////					mailClient.update();
-		////					user = mailClient.getCurrentUser();
-		////				}
-		////				setVisible(false);
-		////				parent.setEnabled(true);
-		////				parent.setTitle(parent.getTitle()+ " User: " + mailClient.getCurrentUser().username);
-		////				parent.requestFocus();
-		////				// We don't need this anymore, so we should dispose it.
-		////				dispose();
-		//				
-		//			}
-		//			
-		//		});
-		//		buttonPanel.add(loginButton);
-		//		
-		//		JButton cancelButton = new JButton("Cancel");
-		//		//cancelButton.setBounds(180, 80, 80, 25);
-		//		cancelButton.addActionListener(new ActionListener() {
-		//			public void actionPerformed(ActionEvent e) {
-		//				showExitDialog();
-		//			}
-		//		});
-		//		buttonPanel.add(cancelButton);
-		//				
-		//		priceForm.add(usernamePanel);
-		//		priceForm.add(passwordPanel);
-		//		priceForm.add(buttonPanel);
-		//		// Padding for Styling.
-		//		
-		//		add(new JPanel(), BorderLayout.EAST);
-		//		add(new JPanel(), BorderLayout.WEST);
-		//		add(new JPanel(), BorderLayout.NORTH);
-		//		add(new JPanel(), BorderLayout.SOUTH);
-		//		
-		//		
 		add(priceForm);		
 		pack();
 		setLocationRelativeTo(null);

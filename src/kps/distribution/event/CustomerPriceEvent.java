@@ -31,8 +31,8 @@ public class CustomerPriceEvent extends DistributionNetworkEvent {
 		this.priority = priority;
 		this.weightCost = weightCost;
 		this.volumeCost = volumeCost;
-		this.action = action;
 		
+		this.action = action;
 		this.id = UUID.randomUUID();
 	}
 	

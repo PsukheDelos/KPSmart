@@ -1,5 +1,5 @@
 package kps.distribution.event;
 
-public class CustomerPriceEventResult extends EventResult {
+public class TransportCostEventResult extends EventResult {
 	private static final long serialVersionUID = 1L;
 }

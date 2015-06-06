@@ -13,6 +13,8 @@ import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.DistributionNetworkEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.CustomerPriceEventResult;
+import kps.distribution.event.TransportCostEvent;
+import kps.distribution.event.TransportCostEventResult;
 import kps.distribution.network.DistributionNetwork;
 import kps.interfaces.IMailSystem;
 import kps.net.event.DummyEvent;
@@ -28,23 +30,23 @@ public class MailSystem implements IMailSystem{
 	
 	private List<User> loggedInUsers = new ArrayList<User>();
 	private DistributionNetwork network = new DistributionNetwork();
-	
+
 	public MailSystem(){
-		
+
 	}
-	
+
 	/**
 	 * Kinda holds onto the idea that there is ALWAYS a return event to be made
 	 * @param event
 	 * @return
 	 */
 	public Event processEvent(Event event){
-		
+
 		Event returnEvent = null;
-		
+
 		if(event instanceof DummyEvent){
 			System.out.println(((DummyEvent)event).message);
-		
+
 		}else if(event instanceof UserAuthenticationEvent){
 			UserAuthenticationEvent auth = (UserAuthenticationEvent)event;
 			System.out.println(this + "Authenicating User: " + auth.username);
@@ -59,7 +61,7 @@ public class MailSystem implements IMailSystem{
 			RemoveUserEvent rue = (RemoveUserEvent) event;
 			UserRepository.removeUser(rue.username);
 			returnEvent = new RemoveUserResultEvent();
-		
+
 		}else if(event instanceof DistributionNetworkEvent){
 			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
 
@@ -70,19 +72,26 @@ public class MailSystem implements IMailSystem{
 				System.out.println("Adding UUID to return event for a MailDelivery");
 				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
 				((DeliveryEventResult)returnEvent).id = clientEventUUID;
-			
+
 			}else if(event instanceof CustomerPriceEvent 
 					&& returnEvent instanceof CustomerPriceEventResult){
 				System.out.println("MailSystem: processEvent: CustomerPriceEvent");
 				UUID clientEventUUID = ((CustomerPriceEvent)event).id;
-//				System.out.println("Adding UUID to return event for a CustomerPriceUpdate: " + clientEventUUID);
+				System.out.println("Adding UUID to return event for a CustomerPriceUpdate: " + clientEventUUID);
 				((CustomerPriceEventResult)returnEvent).id = clientEventUUID;
-				
+
+			}
+			else if(event instanceof TransportCostEvent 
+					&& returnEvent instanceof TransportCostEventResult){
+				System.out.println("MailSystem: processEvent: TransportCostEvent");
+				UUID clientEventUUID = ((TransportCostEvent)event).id;
+				((TransportCostEventResult)returnEvent).id = clientEventUUID;
+				System.out.println("Adding UUID to return event for a TransportCostEvent: " + clientEventUUID);
 			}
 		}
 		return returnEvent;
 	}
-	
+
 	public String toString(){
 		return "[MAIL SYSTEM] ";
 	}
