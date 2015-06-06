@@ -63,7 +63,7 @@ public class MailRepository {
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "INSERT INTO mail ([day], [from], [to], [weight], [volume], [priority]) VALUES (\""+day+"\",\""+origin+"\",\""+destination+"\","+weight+","+volume+",\""+priority+"\")";
+			String query = "INSERT INTO mail ([day], [from], [to], [weight], [volume], [priority], [datetime]) VALUES (\""+day+"\",\""+origin+"\",\""+destination+"\","+weight+","+volume+",\""+priority+"\", " + System.currentTimeMillis()/1000 + ")";
 			System.out.println(query);
 			statement.execute(query);
 			db.close();
