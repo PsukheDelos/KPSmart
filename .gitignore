@@ -12,5 +12,3 @@
 hs_err_pid*
 /bin/
 *.log
-*.db
-kpsmart.db
