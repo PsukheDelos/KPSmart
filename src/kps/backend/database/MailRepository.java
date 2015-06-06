@@ -164,20 +164,55 @@ public class MailRepository {
 			       return false;
 			    }
 			};
-			model.addColumn("destination");
+			model.addColumn("priority");
 			model.addColumn("origin");
-			model.addColumn("total volume");
-			model.addColumn("total weight");
-			model.addColumn("total items");
+			model.addColumn("destination");
+			model.addColumn("average delivery time");
 
 			Statement statement = db.createStatement();
 			
-			String query = "select [to], [from], sum(volume), sum(weight), count(*) from mail group by [to],[from]";
+			String query = "select [priority], [from], [to], avg([time]) from mail group by [priority], [from], [to] order by [priority], [from], [to] ";
 			ResultSet result = statement.executeQuery(query);
 			
 			while(result.next()){
-				model.addRow(new Object[] {result.getString(1), result.getString(2), result.getDouble(3), 
-			    		result.getDouble(4), result.getInt(5)});
+				model.addRow(new Object[] {result.getString(1), result.getString(2), 
+						result.getString(3), result.getDouble(4)});
+			
+			}
+			
+			db.close();
+			
+			return model;
+		} catch (SQLException e) {e.printStackTrace();}
+		return null;
+	}
+	
+	public static TableModel getCriticalRoutesModel(){
+		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
+		try {
+			DefaultTableModel model = new DefaultTableModel() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+			    public boolean isCellEditable(int row, int column) {
+			       //all cells false
+			       return false;
+			    }
+			};
+			model.addColumn("destination");
+			model.addColumn("origin");
+			model.addColumn("priority");
+			model.addColumn("average (per item) difference");
+
+			Statement statement = db.createStatement();
+			
+			String query = "select [to], [from], [priority], avg(price)-avg(cost) as avgdiff, avg(cost) as avgcost, avg(price) as avgprice  from mail group by [to],[from],[priority] having avgcost > avgprice";
+			ResultSet result = statement.executeQuery(query);
+			
+			while(result.next()){
+				model.addRow(new Object[] {result.getString(1), result.getString(2), 
+						result.getString(3), "$" + String.format("%.2f", result.getDouble(4))});
 			
 			}
 			

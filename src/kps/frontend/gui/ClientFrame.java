@@ -231,7 +231,7 @@ public class ClientFrame extends JFrame{
 
 		JLabel revenueLabel = new JLabel("Revenue: ", SwingConstants.LEFT);
 		revenueLabel.setFont(new Font(revenueLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel revenueDisp = new JLabel("$" + MailRepository.getRevenue().toString(), SwingConstants.LEFT);
+		JLabel revenueDisp = new JLabel("$" + String.format("%.2f", MailRepository.getRevenue()), SwingConstants.LEFT);
 		revenueDisp.setFont(new Font(revenueLabel.getFont().getFontName(), Font.BOLD, 40));
 		revenueDisp.setForeground(Color.GREEN);
 
@@ -251,7 +251,7 @@ public class ClientFrame extends JFrame{
 
 		JLabel expLabel = new JLabel("Expenditure: ", SwingConstants.LEFT);
 		expLabel.setFont(new Font(expLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel expDisp = new JLabel("$" + MailRepository.getExpenditure().toString(), SwingConstants.LEFT);
+		JLabel expDisp = new JLabel("$" + String.format("%.2f", MailRepository.getExpenditure()), SwingConstants.LEFT);
 		expDisp.setFont(new Font(expLabel.getFont().getFontName(), Font.BOLD, 40));
 		expDisp.setForeground(Color.RED);
 
@@ -383,12 +383,12 @@ public class ClientFrame extends JFrame{
 		aomTable.setFillsViewportHeight(true);	
 		
 		//Table: Average Delivery Times
-		JTable adtTable = new JTable(MailRepository.getAmountOfMailModel());
+		JTable adtTable = new JTable(MailRepository.getAverageDeliveryTimeModel());
 		adtTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		adtTable.setFillsViewportHeight(true);	
 		
 		//Table: Critical Routes
-		JTable crTable = new JTable(MailRepository.getAmountOfMailModel());
+		JTable crTable = new JTable(MailRepository.getCriticalRoutesModel());
 		crTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		crTable.setFillsViewportHeight(true);
 
@@ -403,8 +403,8 @@ public class ClientFrame extends JFrame{
 //		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
 //		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
 		dashTab.addTab("Amount of Mail", new JScrollPane(aomTable));
-//		dashTab.addTab("Average Delivery Times", new JScrollPane(adtTable));
-//		dashTab.addTab("Critical Routes", new JScrollPane(crTable));
+		dashTab.addTab("Average Delivery Times", new JScrollPane(adtTable));
+		dashTab.addTab("Critical Routes", new JScrollPane(crTable));
 		dashTab.addTab("Events", null, new JScrollPane(eventTable), "View a list of the latest mail events.");
 		
 		dashTab.addChangeListener(new ChangeListener(){
