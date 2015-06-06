@@ -27,5 +27,6 @@ public class DepthFirstSearchTests {
 		assertEquals(reachable.size(), 2); //this node and the node we have a route to
 		assertTrue(reachable.contains(locA));
 		assertTrue(reachable.contains(locB));
+		assertFalse(reachable.contains(locC));
 	}
 }
