@@ -17,16 +17,11 @@ public class CustomerPriceEvent extends DistributionNetworkEvent {
 	public final String priority;
 	public final double weightCost;
 	public final double volumeCost;
-<<<<<<< HEAD
-	
-	public final String action;
-=======
 	
 	@XmlAttribute
 	public final String action;
 	
 	@XmlTransient
->>>>>>> master
 	public final UUID id;
 
 	public CustomerPriceEvent(String from, String to, String priority,
