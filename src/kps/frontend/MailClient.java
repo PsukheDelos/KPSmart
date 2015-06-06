@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.swing.JOptionPane;
 
+import kps.backend.UserPermissions;
 import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceEvent;
 import kps.distribution.event.CustomerPriceEventResult;
@@ -61,6 +62,11 @@ public class MailClient implements IMailClient{
 
 			System.out.println(this + "Response Recieved for " + evt.user.username);
 			setCurrentUser(evt.user);
+			
+			if(evt.user.permissions == UserPermissions.MANAGER){
+				clientFrame.createManagerTab(clientFrame.getTabbedPane());
+				clientFrame.createDashboardTab(clientFrame.getTabbedPane());
+			}
 		}
 		else if(e instanceof NewUserResultEvent){
 			if(((NewUserResultEvent) e).successful)
