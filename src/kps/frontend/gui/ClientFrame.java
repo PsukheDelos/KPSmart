@@ -57,6 +57,7 @@ import kps.backend.database.UserRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
+import kps.net.event.RemoveUserEvent;
 
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
@@ -924,16 +925,30 @@ public class ClientFrame extends JFrame{
 			basicLocation.setShowName(false);
 
 			// Add an OMLine
-			OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
+			//OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
 
-			line.setStroke(new BasicStroke(1f));
-			line.setLinePaint(Color.red);
-
-			routeList.add(line);
+			
 			cityList.add(basicLocation);
 		}
+		
+		for(String origin: CostRepository.getOrigins()){
+			
+			Location start = LocationRepository.getCity(origin);
+			
+			for(String destination: CostRepository.getDestinations(origin)){
+				
+				Location end = LocationRepository.getCity(destination);
+				
+				OMLine line = new OMLine(start.lat,start.lon,end.lat,end.lon,OMGraphic.LINETYPE_GREATCIRCLE);
+				
+				line.setStroke(new BasicStroke(1f));
+				line.setLinePaint(Color.red);
+
+				routeList.add(line);
+			}
+		}
 		omList.add(cityList);
-		//		omList.add(routeList);
+		omList.add(routeList);
 		basicLayer.setRenderPolicy(new BufferedImageRenderPolicy());
 		basicLayer.setList(omList);
 		mapHandler.add(basicLayer);
@@ -1000,7 +1015,18 @@ public class ClientFrame extends JFrame{
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO --
+				int rowIndex = userTable.getSelectedRow();
+				String username = (String)userTable.getModel().getValueAt(rowIndex, 1);
+				
+				int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + username + " from the database?", "WARNING", JOptionPane.YES_NO_OPTION);
+				if(reply == JOptionPane.YES_OPTION){
+					client.sendEvent(new RemoveUserEvent(username));
+				}
+				
+				
+				
+				
+				
 			}
 		});
 		panel.add(button, c);

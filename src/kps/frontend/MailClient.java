@@ -16,6 +16,7 @@ import kps.net.client.Client;
 import kps.net.event.Event;
 import kps.net.event.LoginResponseEvent;
 import kps.net.event.NewUserResultEvent;
+import kps.net.event.RemoveUserResultEvent;
 import kps.net.event.UserAuthenticationEvent;
 
 public class MailClient {
@@ -58,7 +59,14 @@ public class MailClient {
 			setCurrentUser(evt.user);
 		}
 		else if(e instanceof NewUserResultEvent){
-			JOptionPane.showMessageDialog(clientFrame, "User Added Successfully");
+			if(((NewUserResultEvent) e).successful)
+				JOptionPane.showMessageDialog(clientFrame, "User Added Successfully");
+			else
+				JOptionPane.showMessageDialog(clientFrame, "Error Adding User");
+			clientFrame.updateUsers();
+		}
+		else if(e instanceof RemoveUserResultEvent){
+			JOptionPane.showMessageDialog(clientFrame, "User Removed Successfully");
 			clientFrame.updateUsers();
 		}
 		else if(e instanceof DeliveryEventResult){
