@@ -376,18 +376,26 @@ public class ClientFrame extends JFrame{
 		JPanel i = new JPanel();
 		i.add(jFXPanel3);
 
-		//Mail
-		
-		
-		eventTable.setFillsViewportHeight(true);
-		
-		JPanel m = new JPanel();
-		m.add(new JScrollPane(eventTable));
-		
+
 		//Table: Amount of Mail
 		JTable aomTable = new JTable(MailRepository.getAmountOfMailModel());
 		aomTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
-		aomTable.setFillsViewportHeight(true);		
+		aomTable.setFillsViewportHeight(true);	
+		
+		//Table: Average Delivery Times
+		JTable adtTable = new JTable(MailRepository.getAmountOfMailModel());
+		adtTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		adtTable.setFillsViewportHeight(true);	
+		
+		//Table: Critical Routes
+		JTable crTable = new JTable(MailRepository.getAmountOfMailModel());
+		crTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		crTable.setFillsViewportHeight(true);
+
+		//Table: Events
+		client.sendEvent(new XMLGetEvent());
+		eventTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
+		eventTable.setFillsViewportHeight(true);
 		
 		JTabbedPane dashTab = new JTabbedPane();
 //		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
@@ -395,7 +403,9 @@ public class ClientFrame extends JFrame{
 //		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
 //		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
 		dashTab.addTab("Amount of Mail", new JScrollPane(aomTable));
-		dashTab.addTab("Events", null, m, "View a list of the latest mail events.");
+//		dashTab.addTab("Average Delivery Times", new JScrollPane(adtTable));
+//		dashTab.addTab("Critical Routes", new JScrollPane(crTable));
+		dashTab.addTab("Events", null, new JScrollPane(eventTable), "View a list of the latest mail events.");
 		
 		dashTab.addChangeListener(new ChangeListener(){
 			@Override
