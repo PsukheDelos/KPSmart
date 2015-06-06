@@ -49,19 +49,22 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableModel;
 
 import kps.backend.XMLFileHandler;
 import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
 import kps.backend.database.UserRepository;
-import kps.distribution.event.CustomerPriceAddEvent;
 import kps.distribution.event.CustomerPriceRemoveEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.TransportCostRemoveEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 import kps.net.event.RemoveUserEvent;
+import kps.net.event.XMLGetEvent;
 
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
@@ -97,7 +100,7 @@ public class ClientFrame extends JFrame{
 	private JTable routeTable = new JTable(CostRepository.getRoutesModel());
 	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
 	private JTable userTable = new JTable(UserRepository.getUserModel());
-	private JTable eventTable = new JTable(XMLFileHandler.loadLog());
+	private JTable eventTable = new JTable();
 	private JComboBox<String> fromDropDown;
 
 	private ClientFrame parent = this;
@@ -362,6 +365,15 @@ public class ClientFrame extends JFrame{
 		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
 		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
 		dashTab.addTab("Events", null, m, "View a list of the latest mail events.");
+		
+		dashTab.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent e) {
+			JTabbedPane pane = (JTabbedPane)e.getSource();
+				if(pane.getSelectedIndex() == 4)
+					client.sendEvent(new XMLGetEvent());
+			}
+		});
 
 		panel.add(dashTab,c);
 
@@ -1054,6 +1066,10 @@ public class ClientFrame extends JFrame{
 
 	public void updateUsers(){
 		userTable.setModel(UserRepository.getUserModel());
+	}
+	
+	public void updateXML(TableModel tableModel){
+		eventTable.setModel(tableModel);
 	}
 
 	public void updateOrigin(){

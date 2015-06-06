@@ -9,8 +9,6 @@ import kps.net.event.Event;
 
 public class UpdateThread extends Thread{
 	
-	
-	
 	Server server;
 	
 	public UpdateThread(Server server, IMailSystem mailSystem){
