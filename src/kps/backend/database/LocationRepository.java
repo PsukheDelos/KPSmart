@@ -87,7 +87,6 @@ public class LocationRepository {
 			Statement statement = db.createStatement();
 			String query = "DELETE FROM locations where [name]=\""+location+"\"";
 			statement.execute(query);
-			System.err.println(query);
 			db.close();
 			return true;			
 		} catch (SQLException e) {e.printStackTrace();}
@@ -99,7 +98,6 @@ public class LocationRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "INSERT INTO locations ([name], [lon], [lat]) VALUES (\""+location+"\","+lon+","+lat+")";
-			System.err.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			
