@@ -57,6 +57,7 @@ import kps.backend.database.UserRepository;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
+import kps.net.event.RemoveUserEvent;
 
 import com.bbn.openmap.LayerHandler;
 import com.bbn.openmap.MapBean;
@@ -1000,7 +1001,18 @@ public class ClientFrame extends JFrame{
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO --
+				int rowIndex = userTable.getSelectedRow();
+				String username = (String)userTable.getModel().getValueAt(rowIndex, 1);
+				
+				int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove " + username + " from the database?", "WARNING", JOptionPane.YES_NO_OPTION);
+				if(reply == JOptionPane.YES_OPTION){
+					client.sendEvent(new RemoveUserEvent(username));
+				}
+				
+				
+				
+				
+				
 			}
 		});
 		panel.add(button, c);
