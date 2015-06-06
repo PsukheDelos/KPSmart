@@ -2,19 +2,18 @@ package kps.net.client;
 
 import java.util.List;
 
-import kps.frontend.MailClient;
+import kps.interfaces.IMailClient;
 import kps.net.event.Event;
 
 public class Client extends Thread{
 	
 	private ClientToServerConnection connection;
-	private MailClient mailClient;
+	private IMailClient mailClient;
 	
-	public Client(String ip, MailClient mailClient){
+	public Client(String ip, IMailClient mailClient){
 		this.connection = new ClientToServerConnection(ip);
 		this.mailClient = mailClient;
 		connection.start();
-		
 		setDaemon(true);
 		start();
 	}
