@@ -53,7 +53,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 
-import kps.backend.XMLFileHandler;
+import kps.backend.UserPermissions;
 import kps.backend.database.CostRepository;
 import kps.backend.database.LocationRepository;
 import kps.backend.database.PriceRepository;
@@ -61,6 +61,9 @@ import kps.backend.database.UserRepository;
 import kps.distribution.event.CustomerPriceRemoveEvent;
 import kps.distribution.event.MailDeliveryEvent;
 import kps.distribution.event.TransportCostRemoveEvent;
+import kps.distribution.event.UpdateTablePriceEvent;
+import kps.distribution.event.UpdateTableRouteEvent;
+import kps.distribution.event.UpdateTableUserEvent;
 import kps.distribution.network.Location;
 import kps.frontend.MailClient;
 import kps.net.event.RemoveUserEvent;
@@ -99,12 +102,15 @@ public class ClientFrame extends JFrame{
 	
 	private JTabbedPane tabbedPane;
 
-	private JTable routeTable = new JTable(CostRepository.getRoutesModel());
-	private JTable priceTable = new JTable(PriceRepository.getPricesModel());
-	private JTable userTable = new JTable(UserRepository.getUserModel());
+	private JTable routeTable = new JTable();
+	private JTable priceTable = new JTable();
+	private JTable userTable = new JTable();
 	private JTable eventTable = new JTable();
+
 	private JComboBox<String> fromDropDown;
 
+	String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+	
 	private ClientFrame parent = this;
 
 	public MailClient client;
@@ -163,17 +169,24 @@ public class ClientFrame extends JFrame{
 
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
-
-		//createDashboardTab(tabbedPane);
+		
+		createDashboardTab(tabbedPane);
 		createMailTab(getTabbedPane());
 		createRouteTab(getTabbedPane());
 		createPriceTab(getTabbedPane());
 		createMapTab(getTabbedPane());
-		//createManagerTab(tabbedPane);
+		createManagerTab(tabbedPane);
 
 		this.add(getTabbedPane());
 	}
 
+	public void setUserPermissions(UserPermissions up){
+		if(!(up==UserPermissions.MANAGER)){
+			tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
+			tabbedPane.removeTabAt(0);
+		}
+	}
+	
 	public void createDashboardTab(JTabbedPane tabbedPane) {
 
 		JLabel label = new JLabel("Dashboard");
@@ -400,12 +413,24 @@ public class ClientFrame extends JFrame{
 		title.setForeground(Color.decode("#fffe9a"));
 		panel.add(title,c);	
 		//
+//		private JComboBox<String> type = new JComboBox<String>(types);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 1;
-		JLabel source = new JLabel("Source: ",SwingConstants.RIGHT);
+		JLabel source = new JLabel("Day: ",SwingConstants.RIGHT);
+		panel.add(source,c);	
+		JComboBox<String> dayDropDown = new JComboBox<String>(days);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		panel.add(dayDropDown,c);
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = c.gridy+1;
+		c.gridwidth = 1;
+		source = new JLabel("Source: ",SwingConstants.RIGHT);
 		panel.add(source,c);	
 		fromDropDown = new JComboBox<String>();
 		for (String fromCity : PriceRepository.getOriginCities()){
@@ -413,20 +438,18 @@ public class ClientFrame extends JFrame{
 		}
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 1;
 		panel.add(fromDropDown,c);
 
 		//To Cities Drop Down
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = c.gridy+1;
 		JLabel dest = new JLabel("Destination: ",SwingConstants.RIGHT);
 		panel.add(dest,c);	
 
 		JComboBox<String> toDropDown = new JComboBox<String>();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 2;
 		panel.add(toDropDown,c);
 
 		fromDropDown.addActionListener(new ActionListener() {//add actionlistner to listen for change
@@ -445,7 +468,7 @@ public class ClientFrame extends JFrame{
 		//Priority Drop Down
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = c.gridy+1;
 		JLabel priority = new JLabel("Priority: ",SwingConstants.RIGHT);
 		panel.add(priority,c);	
 
@@ -459,7 +482,6 @@ public class ClientFrame extends JFrame{
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 3;
 		panel.add(priorityDropDown,c);
 
 		toDropDown.addActionListener(new ActionListener() {
@@ -502,11 +524,14 @@ public class ClientFrame extends JFrame{
 					}
 				}
 
+				
 				Double price_weight2 = PriceRepository.getWeightCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
 				Double price_volume2 = PriceRepository.getVolumeCost(fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), priorityDropDown.getSelectedItem().toString());
-
+				total_price = (double)2;
 				total_price = (entered_weight * price_weight2) + (entered_volume * price_volume2);
 
+				System.err.println(total_price);
+				
 				totalPrice.setText("$" + new BigDecimal(total_price).setScale(2, BigDecimal.ROUND_HALF_UP));
 			}
 
@@ -568,26 +593,24 @@ public class ClientFrame extends JFrame{
 		//Enter Weight
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = c.gridy+1;
 		JLabel weight = new JLabel("Weight: ",SwingConstants.RIGHT);
 		panel.add(weight,c);	
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 4;
 
 		panel.add(weightText,c);
 
 		//Enter Volume
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = c.gridy+1;
 		JLabel volume = new JLabel("Volume: ",SwingConstants.RIGHT);
 		panel.add(volume,c);	
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 5;
 		panel.add(volumeText,c);
 
 		Font g = new Font(totalPrice.getFont().getFontName(), Font.BOLD, 18);
@@ -595,7 +618,7 @@ public class ClientFrame extends JFrame{
 		//Display Price
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 6;
+		c.gridy = c.gridy+1;
 		JLabel priceLabel = new JLabel("Total Price: ",SwingConstants.RIGHT);
 		panel.add(priceLabel,c);	
 
@@ -603,7 +626,6 @@ public class ClientFrame extends JFrame{
 
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
-		c.gridy = 6;
 		panel.add(totalPrice,c);
 
 		totalPrice.setFont(g);
@@ -611,7 +633,7 @@ public class ClientFrame extends JFrame{
 		//Submit Button
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 7;
+		c.gridy = c.gridy+1;
 		c.gridwidth = 2;
 		JButton submit = new JButton();
 		submit.setText("Submit");
@@ -619,7 +641,7 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.sendEvent(new MailDeliveryEvent("Monday", toDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
+				client.sendEvent(new MailDeliveryEvent(dayDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
 			}
 
 		});
@@ -628,40 +650,11 @@ public class ClientFrame extends JFrame{
 		//Enter Weight
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 8;
+		c.gridy = c.gridy+1;
 		c.gridwidth = 1;
-
-		//				panel.add(new JLabel("Test: ",SwingConstants.RIGHT),c);	
-		//
-		//				c.fill = GridBagConstraints.HORIZONTAL;
-		//				c.gridx = 1;
-		//				c.gridy = 8;
-		//
-		//
-		//				JTextField comboBox = new JTextField();
-		//				JList list = new JList();
-		//				DefaultListModel model = new DefaultListModel();
-		//				list.setModel(model);
-		//				model.addElement("Hey");
-		//				model.addElement("Yo");
-		////				elements
-		////				elements.
-		//				AutoCompleteDecorator.decorate(list, comboBox);
-		////				AutoCompleteDecorator.decorate(elements, comboBox);
-		////				AutoCompleteSupport.install(comboBox, GlazedLists.eventListOf(elements));
-		//				
-		//				panel.add(comboBox,c);
 
 	}
 
-	/**
-	 * @param tabbedPane
-	 */
-
-
-	/**
-	 * @param tabbedPane
-	 */
 	private void createPriceTab(JTabbedPane tabbedPane) {
 		JLabel label = new JLabel("Prices");
 		label.setHorizontalTextPosition(JLabel.TRAILING); // Set the text position regarding its icon
@@ -758,6 +751,7 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
+		client.sendEvent(new UpdateTablePriceEvent(priceTable));
 		priceTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		priceTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(priceTable),c);
@@ -842,7 +836,7 @@ public class ClientFrame extends JFrame{
 					int dialogButton = JOptionPane.YES_NO_OPTION;
 					int dialogResult = JOptionPane.showConfirmDialog (null, "Are you sure?","Warning",dialogButton);
 					if(dialogResult == JOptionPane.YES_OPTION){
-						client.sendEvent(new TransportCostRemoveEvent(routeTable.getModel().getValueAt(sr, 0).toString(), routeTable.getModel().getValueAt(sr, 2).toString(), routeTable.getModel().getValueAt(sr, 1).toString(),routeTable.getModel().getValueAt(sr, 3).toString()));
+						client.sendEvent(new TransportCostRemoveEvent(routeTable.getModel().getValueAt(sr, 0).toString(), routeTable.getModel().getValueAt(sr, 1).toString(), routeTable.getModel().getValueAt(sr, 2).toString(),routeTable.getModel().getValueAt(sr, 3).toString()));
 						updateRoutes();
 					}
 				}
@@ -856,7 +850,8 @@ public class ClientFrame extends JFrame{
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 4;
-		routeTable.setModel(CostRepository.getRoutesModel());
+//		routeTable.setModel(CostRepository.getRoutesModel());
+		client.sendEvent(new UpdateTableRouteEvent(routeTable));
 		routeTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		routeTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(routeTable),c);
@@ -1011,6 +1006,7 @@ public class ClientFrame extends JFrame{
 		c.gridy = 1;
 		c.gridwidth = 3;
 
+		client.sendEvent(new UpdateTableUserEvent(userTable));
 		userTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		userTable.setFillsViewportHeight(true);
 		panel.add(new JScrollPane(userTable), c);
@@ -1058,16 +1054,20 @@ public class ClientFrame extends JFrame{
 
 	}
 
+	
 	public void updateRoutes() {
-		routeTable.setModel(CostRepository.getRoutesModel());		
+		client.sendEvent(new UpdateTableRouteEvent(routeTable));
+//		routeTable.setModel(CostRepository.getRoutesModel());		
 	}
 
 	public void updatePrices(){
-		priceTable.setModel(PriceRepository.getPricesModel());
+		client.sendEvent(new UpdateTablePriceEvent(priceTable));
+//		priceTable.setModel(PriceRepository.getPricesModel());
 	}
 
 	public void updateUsers(){
-		userTable.setModel(UserRepository.getUserModel());
+		client.sendEvent(new UpdateTableUserEvent(userTable));
+//		userTable.setModel(UserRepository.getUserModel());
 	}
 	
 	public void updateXML(TableModel tableModel){

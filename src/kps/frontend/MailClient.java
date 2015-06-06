@@ -63,10 +63,14 @@ public class MailClient implements IMailClient{
 			System.out.println(this + "Response Recieved for " + evt.user.username);
 			setCurrentUser(evt.user);
 			
-			if(evt.user.permissions == UserPermissions.MANAGER){
-				clientFrame.createManagerTab(clientFrame.getTabbedPane());
-				clientFrame.createDashboardTab(clientFrame.getTabbedPane());
-			}
+			clientFrame.setUserPermissions(evt.user.permissions);
+			
+//			if(evt.user.permissions == UserPermissions.CLERK){
+//				System.out.println(evt.user.permissions);
+//				
+//				clientFrame.createManagerTab(clientFrame.getTabbedPane());
+//				clientFrame.createDashboardTab(clientFrame.getTabbedPane());
+//			}
 		}
 		else if(e instanceof NewUserResultEvent){
 			if(((NewUserResultEvent) e).successful)
@@ -97,6 +101,7 @@ public class MailClient implements IMailClient{
 			clientFrame.updatePrices();
 			//			}
 		}else if(e instanceof TransportCostEventResult){
+			System.out.println("mailclient: processevent: transportcosteventresult");
 			clientFrame.updateRoutes();
 		}
 
