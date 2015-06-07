@@ -175,7 +175,7 @@ public class ClientFrame extends JFrame{
 
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
-
+		createMailTab(getTabbedPane());
 		new JFXPanel();
 		Platform.runLater(new Runnable(){
 			public void run(){
@@ -183,7 +183,8 @@ public class ClientFrame extends JFrame{
 				return;
 			}
 		});
-		createMailTab(getTabbedPane());
+		
+
 		createRouteTab(getTabbedPane());
 		createPriceTab(getTabbedPane());
 		createMapTab(getTabbedPane());
@@ -195,6 +196,7 @@ public class ClientFrame extends JFrame{
 
 	public void setUserPermissions(UserPermissions up){
 		if(!(up==UserPermissions.MANAGER)){
+			tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
 			tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
 			tabbedPane.removeTabAt(0);
 		}
