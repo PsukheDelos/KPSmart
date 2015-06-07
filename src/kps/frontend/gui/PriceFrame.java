@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -38,7 +40,7 @@ public class PriceFrame extends JFrame{
 
 
 	private ClientFrame parent;
-	private String type;
+	private String action;
 	
 	String[] priorities = {"Domestic Standard", "Domestic Air", "International Standard", "International Air"};
 	
@@ -50,10 +52,13 @@ public class PriceFrame extends JFrame{
 
 	Boolean edit = false;
 
-	public PriceFrame(ClientFrame parent, String type){
-		super("--<< " + type + " Price >>--");
+	public PriceFrame(ClientFrame parent, String action){
+		super("--<< " + action + " Price >>--");
 		this.parent = parent;
-		this.type = type;
+		this.action = action;
+		this.weightcost.setText("0");
+		this.volumecost.setText("0");
+		
 		JPanel panel = new JPanel();
 		initialise(panel);
 		add(panel);
@@ -62,7 +67,7 @@ public class PriceFrame extends JFrame{
 	public PriceFrame(ClientFrame parent, String fromText, String toText, String priorityText,String weightText,String volText){
 		super("--<< Edit Price >>--");
 		this.parent = parent;
-		this.type = "Edit";
+		this.action = "Edit";
 		this.edit = true;
 		this.origin.setSelectedItem(fromText);
 		this.destination.setSelectedItem(toText);
@@ -91,6 +96,54 @@ public class PriceFrame extends JFrame{
 		setMinimumSize(new Dimension(320, 210));
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		//Input Constraints
+		
+		//weightcost
+		weightcost.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) 
+						&& (c != KeyEvent.VK_PERIOD || weightcost.getText().contains(".") ) )
+					e.consume();
+			}
+		});
+		
+		weightcost.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(weightcost.getText().equals("0")) weightcost.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(weightcost.getText().equals("")) weightcost.setText("0");
+			}
+		});
+		
+		//volumecost
+		volumecost.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) 
+						&& (c != KeyEvent.VK_PERIOD || volumecost.getText().contains(".") ) )
+					e.consume();
+			}
+		});
+		
+		volumecost.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(volumecost.getText().equals("0")) volumecost.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(volumecost.getText().equals("")) volumecost.setText("0");
+			}
+		});
+		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				showExitDialog();
@@ -107,7 +160,7 @@ public class PriceFrame extends JFrame{
 		c.gridy = 0;
 		c.gridwidth = 1;
 
-		JLabel priceTitle = new JLabel(type + " Price", SwingConstants.LEFT);
+		JLabel priceTitle = new JLabel(action + " Price", SwingConstants.LEFT);
 		priceTitle.setFont(new Font(priceTitle.getFont().getFontName(), Font.PLAIN, 30));
 		priceTitle.setForeground(Color.decode("#fffe9a"));
 
