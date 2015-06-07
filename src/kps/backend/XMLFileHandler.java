@@ -164,6 +164,7 @@ public class XMLFileHandler {
 		model.addColumn("Volume Cost");
 		*/
 		
+		model.addColumn("Index");
 		model.addColumn("Type");
 		model.addColumn("Action");
 		model.addColumn("Description");
@@ -180,7 +181,7 @@ public class XMLFileHandler {
 			
 			NodeList nodeList = document.getElementsByTagName("event");
 			
-			for(int i=0;i<nodeList.getLength();i++){
+			for(int i=nodeList.getLength()-1;i>-1;i--){
 				Node node = nodeList.item(i);
 				
 				if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -198,6 +199,7 @@ public class XMLFileHandler {
 					*/
 					
 					model.addRow(new Object[] {
+							nodeList.getLength()-i,
 							element.getAttribute("xmlType"),
 							element.getAttribute("action"),
 							""
