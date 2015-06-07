@@ -1,8 +1,9 @@
 package kps.distribution.network;
 
+import java.io.Serializable;
 import java.security.InvalidParameterException;
 
-public enum TransportType {
+public enum TransportType implements Serializable{
 	LAND,
 	SEA,
 	AIR;

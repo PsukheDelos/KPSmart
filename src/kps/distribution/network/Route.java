@@ -1,11 +1,14 @@
 package kps.distribution.network;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlType;
 
 import kps.distribution.event.TransportCostEvent;
 
 @XmlType(propOrder = {"company", "origin", "destination", "maxWeight", "maxVolume", "weightCost", "volumeCost", "duration", "frequency", "day", "type"})
-public class Route {
+public class Route implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private Location origin;
 	private Location destination;
 	private Company company;

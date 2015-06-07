@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.swing.JOptionPane;
 
 import kps.backend.UserPermissions;
+import kps.backend.database.MailRepository;
 import kps.backend.users.User;
 import kps.distribution.event.CustomerPriceEvent;
 import kps.distribution.event.CustomerPriceEventResult;
@@ -84,7 +85,7 @@ public class MailClient implements IMailClient{
 		else if(e instanceof DeliveryEventResult){
 			System.out.println("Received Return for DeliveryEventResult");
 			if(awaitingResponse.containsKey(((DeliveryEventResult) e).id)){
-				System.out.println("DeliveryEventResult Success!");
+				MailRepository.add(((DeliveryEventResult) e).mailDelivery.mail.day, ((DeliveryEventResult) e).mailDelivery.mail.origin.name, ((DeliveryEventResult) e).mailDelivery.mail.destination.name, ((DeliveryEventResult) e).mailDelivery.mail.weight, ((DeliveryEventResult) e).mailDelivery.mail.volume, ((DeliveryEventResult) e).mailDelivery.mail.priority.toString(), 10.0, ((DeliveryEventResult) e).mailDelivery.cost, ((DeliveryEventResult) e).mailDelivery.time);
 			}
 			// Then you know the key is in there, and since it is stored with the corresponding Event, you know what you sent.
 			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.

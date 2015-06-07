@@ -1,8 +1,9 @@
 package kps.distribution.network;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MailDelivery {
+public class MailDelivery implements Serializable{
 	public final Mail mail;
 	public final double cost;
 	public final double time;

@@ -213,7 +213,6 @@ public class DistributionNetwork {
 			MailDeliveryEvent mde = (MailDeliveryEvent)event;
 			return processMailDeliveryEvent(mde);
 		}
-
 		else if (event instanceof CustomerPriceEvent){
 			CustomerPriceEvent cpe = (CustomerPriceEvent)event;
 			return processCustomerPriceEvent(cpe);
@@ -322,20 +321,21 @@ public class DistributionNetwork {
 		System.out.println("Mail -> f: " + event.from + " t: " + event.to + " " + event.priority + " w: " + event.weight + " v: " + event.volume + " d: " + event.day);
 		Mail mail = new Mail(locations.get(event.from), locations.get(event.to),
 				event.weight, event.volume, Priority.fromString(event.priority), event.day);
-		MailRepository.add(event.day, event.from, event.to, event.weight, event.volume, event.priority);
+//		MailRepository.add(event.day, event.from, event.to, event.weight, event.volume, event.priority);
 		/**
 		 * TODO: The DeliveryEventResult was not working.  I suspect it has to do with it not 
 		 * being serialisable bc it contains a MailDelivery object, but not sure yet. 
 		 * So far just simple EventResults return. Jack know what's up here?
 		 * leave the commented code below as it may reveal its secrets soon
 		**/ 
-		//		try {
-		//			System.out.println("try DeliveryEventResult(deliver(mail))");
-		return new MailDeliveryEventResult();
-		//			return new DeliveryEventResult(deliver(mail));
-		//		} catch (PathNotFoundException e) {
-		//			System.out.println("Could not find a path from origin to destination");
-		//			return new InvalidEventResult("Could not find a path from origin to destination");
-		//		}
+//		return new MailDeliveryEventResult();
+
+				try {
+					System.out.println("try DeliveryEventResult(deliver(mail))");
+					return new DeliveryEventResult(deliver(mail));
+				} catch (PathNotFoundException e) {
+					System.out.println("Could not find a path from origin to destination");
+					return new InvalidEventResult("Could not find a path from origin to destination");
+				}
 	}
 }

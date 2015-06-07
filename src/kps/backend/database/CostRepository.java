@@ -38,7 +38,11 @@ public class CostRepository {
 			String query = "SELECT * FROM cost";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-			    routes.add(new Route(new Location(result.getString(2),100,100), new Location(result.getString(3),100,100), new Company(result.getString(1)), 
+				Location origin = new Location(result.getString(2),100,100);
+				Location destination = new Location(result.getString(3),100,100);
+				System.err.println("CostRepo: origin: " + origin.name);
+				System.err.println("\tCostRepo: destination: " + destination.name);
+			    routes.add(new Route(origin, destination, new Company(result.getString(1)), 
 			    		Double.valueOf(result.getString(5)), 
 			    		Double.valueOf(result.getString(6)), Double.valueOf(result.getString(7)), 
 			    		Double.valueOf(result.getString(8)), Double.valueOf(result.getString(9)), 
@@ -183,6 +187,9 @@ public class CostRepository {
 //				if (!locations.containsKey(r.getDestination().getName())){
 //					locations.put(r.getDestination().getName(), r.getDestination());
 //				}
+				
+				System.err.println("getroutes - o: " + locations.get(result.getString(2)).name);
+				System.err.println("getroutes - d: " + locations.get(result.getString(3)).name);
 				
 			    routes.add(new Route(locations.get(result.getString(2)), locations.get(result.getString(3)), new Company(result.getString(1)), 
 			    		Double.valueOf(result.getString(5)), 

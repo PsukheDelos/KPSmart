@@ -1,6 +1,8 @@
 package kps.distribution.network;
 
-public class Mail {
+import java.io.Serializable;
+
+public class Mail implements Serializable{
 	public final Location origin;
 	public final Location destination;
 
