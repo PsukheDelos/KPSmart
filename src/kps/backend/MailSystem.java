@@ -77,6 +77,12 @@ public class MailSystem implements IMailSystem{
 				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
 				((DeliveryEventResult)returnEvent).id = clientEventUUID;
 				System.out.println("Adding UUID to return event for a MailDelivery");
+			}
+			else if(event instanceof MailDeliveryEvent 
+					&& returnEvent instanceof MailDeliveryEventResult){
+				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
+				((MailDeliveryEventResult)returnEvent).id = clientEventUUID;
+//				XMLFileHandler.write((CMailDeliveryEvent)event);
 			}else if(event instanceof CustomerPriceEvent 
 					&& returnEvent instanceof CustomerPriceEventResult){
 				UUID clientEventUUID = ((CustomerPriceEvent)event).id;
