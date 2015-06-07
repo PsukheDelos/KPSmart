@@ -44,7 +44,7 @@ public class LocationRepository {
 			model.addColumn("longitude");
 			model.addColumn("latitude");
 			Statement statement = db.createStatement();
-			String query = "SELECT * FROM locations";
+			String query = "SELECT * FROM locations ORDER BY name";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
 				model.addRow(new Object[] {result.getString(1), result.getString(2), result.getString(3)});
@@ -73,7 +73,7 @@ public class LocationRepository {
 		try {
 			ArrayList<Location> cities = new ArrayList<Location>();
 			Statement statement = db.createStatement();
-			String query = "SELECT * FROM locations";
+			String query = "SELECT * FROM locations ORDER BY name";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
 				cities.add(new Location(result.getString(1), result.getDouble(2), result.getDouble(3)));		
