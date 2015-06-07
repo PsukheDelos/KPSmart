@@ -164,6 +164,7 @@ public class XMLFileHandler {
 		model.addColumn("Volume Cost");
 		*/
 		
+		model.addColumn("Index");
 		model.addColumn("Type");
 		model.addColumn("Action");
 		model.addColumn("Description");
@@ -198,6 +199,7 @@ public class XMLFileHandler {
 					*/
 					
 					model.addRow(new Object[] {
+							i,
 							element.getAttribute("xmlType"),
 							element.getAttribute("action"),
 							""
