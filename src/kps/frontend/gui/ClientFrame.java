@@ -628,7 +628,10 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.sendEvent(new MailDeliveryEvent(dayDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), entered_weight, entered_volume, total_price, priorityDropDown.getSelectedItem().toString()));
+				int reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to submit?", "WARNING", JOptionPane.YES_NO_OPTION);
+				if(reply == JOptionPane.YES_OPTION){
+					client.sendEvent(new MailDeliveryEvent(dayDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), entered_weight, entered_volume, total_price, priorityDropDown.getSelectedItem().toString()));
+				}
 			}
 
 		});
