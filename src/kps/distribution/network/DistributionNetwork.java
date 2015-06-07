@@ -227,7 +227,7 @@ public class DistributionNetwork {
 			UpdateTableEvent ute = (UpdateTableEvent)event;
 			return processUpdateTableEvent(ute);
 		}
-		
+
 		else if (event instanceof LocationEvent){
 			LocationEvent ute = (LocationEvent)event;
 			return processLocationEvent(ute);
@@ -250,19 +250,22 @@ public class DistributionNetwork {
 		TransportType type = TransportType.fromString(event.type);
 
 		if(event instanceof TransportCostUpdateEvent){
-			//TODO: This needs to be looked at - G/L
-			//			Route route = getRoute(company, origin, destination, type);
-			//			if (route != null){
-			//				route.update(event);
-			//			}
+			Route route = getRoute(company, origin, destination, type);
+			if (route != null){
+				route.update(event);
+			}
 			CostRepository.update(event.company, event.from, event.to, event.type, event.weightCost, event.volumeCost, event.maxWeight, event.maxVolume, event.duration, event.frequency, event.day);
 
 		}else if(event instanceof TransportCostAddEvent){
 			Route route = new Route(origin, destination, company, event.weightCost, event.volumeCost,
 					event.volumeCost, event.maxWeight, event.maxVolume, event.frequency, type, event.day);
-
-			routes.add(route);
-			CostRepository.add(event.company, event.from, event.to, event.type, event.weightCost, event.volumeCost, event.maxWeight, event.maxVolume, event.duration, event.frequency, event.day);
+			
+			try {
+				addRoute(route);
+				CostRepository.add(event.company, event.from, event.to, event.type, event.weightCost, event.volumeCost, event.maxWeight, event.maxVolume, event.duration, event.frequency, event.day);
+			} catch (InvalidRouteException e) {
+				e.printStackTrace();
+			}
 
 		}else if(event instanceof TransportCostRemoveEvent){
 			Set<Route> routesToRemove = routes.stream()
@@ -308,7 +311,7 @@ public class DistributionNetwork {
 
 		return new LocationEventResult();
 	}
-	
+
 	private EventResult processMailDeliveryEvent(MailDeliveryEvent event) {
 		Mail mail = new Mail(locations.get(event.from), locations.get(event.to),
 				event.weight, event.volume, Priority.fromString(event.priority), event.day);
