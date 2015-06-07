@@ -77,7 +77,6 @@ public class LocationRepository {
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
 				Location l = new Location(result.getString(1), result.getDouble(2), result.getDouble(3));
-				System.out.println("L: " + l.name);
 				cities.add(l);		
 			}
 			db.close();
@@ -132,8 +131,6 @@ public class LocationRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "UPDATE locations SET [lon]="+lon+", [lat]="+lat+" WHERE [name]=\""+location+"\"";
-			System.err.println(query);
-
 			statement.execute(query);
 			db.close();
 			return true;			
