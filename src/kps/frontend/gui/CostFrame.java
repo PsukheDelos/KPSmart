@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -33,6 +35,7 @@ public class CostFrame extends JFrame{
 	protected JLabel userLabel;
 	protected JTextField userText;
 	protected JButton loginButton;
+	private String action; 
 	private Boolean edit = false;
 	String[] types = { "Land", "Sea", "Air" };
 	String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
@@ -49,9 +52,17 @@ public class CostFrame extends JFrame{
 	private JTextField frequency = new JTextField(20);
 	private JComboBox day = new JComboBox(days);
 
-	public CostFrame(ClientFrame parent){
-		super("--<< Edit Cost >>--");
+	public CostFrame(ClientFrame parent, String action){
+		super("--<< " + action +" Cost >>--");
 		this.parent = parent;
+		this.action = action;
+		this.weightcost.setText("0");
+		this.volumecost.setText("0");
+		this.maxweight.setText("0");
+		this.maxvolume.setText("0");
+		this.duration.setText("0");
+		this.frequency.setText("0");
+		
 		JPanel panel = new JPanel();
 		initialise(panel);
 		add(panel);
@@ -62,6 +73,7 @@ public class CostFrame extends JFrame{
 			String duration, String frequency, String day){
 		super("--<< Edit Cost >>--");
 		this.parent = parent;
+		this.action = "Edit";
 		this.edit = true;
 
 		this.company.setText(company);
@@ -100,6 +112,144 @@ public class CostFrame extends JFrame{
 		//		setMinimumSize(new Dimension(320, 210));
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		//Input Constraints
+		
+		//weightcost
+		weightcost.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) 
+						&& (c != KeyEvent.VK_PERIOD || weightcost.getText().contains(".") ) )
+					e.consume();
+			}
+		});
+		
+		weightcost.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(weightcost.getText().equals("0")) weightcost.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(weightcost.getText().equals("")) weightcost.setText("0");
+			}
+		});
+		
+		//volumecost
+		volumecost.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) 
+						&& (c != KeyEvent.VK_PERIOD || volumecost.getText().contains(".") ) )
+					e.consume();
+			}
+		});
+		
+		volumecost.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(volumecost.getText().equals("0")) volumecost.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(volumecost.getText().equals("")) volumecost.setText("0");
+			}
+		});
+		
+		//maxweight
+		maxweight.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) 
+						&& (c != KeyEvent.VK_PERIOD || maxweight.getText().contains(".") ) )
+					e.consume();
+			}
+		});
+		
+		maxweight.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(maxweight.getText().equals("0")) maxweight.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(maxweight.getText().equals("")) maxweight.setText("0");
+			}
+		});
+		
+		//maxvolume
+		maxvolume.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) 
+						&& (c != KeyEvent.VK_PERIOD || maxvolume.getText().contains(".") ) )
+					e.consume();
+			}
+		});
+		
+		maxvolume.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(maxvolume.getText().equals("0")) maxvolume.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(maxvolume.getText().equals("")) maxvolume.setText("0");
+			}
+		});
+		
+		//duration
+		duration.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) )
+					e.consume();
+			}
+		});
+		
+		duration.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(duration.getText().equals("0")) duration.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(duration.getText().equals("")) duration.setText("0");
+			}
+		});
+		
+		//frequency
+		frequency.addKeyListener(new KeyAdapter() {
+			
+			public void keyTyped(KeyEvent e){
+				char c = e.getKeyChar();
+				if( ( (c < '0') || (c > '9') ) 
+						&& (c != KeyEvent.VK_BACK_SPACE) )
+					e.consume();
+			}
+		});
+		
+		frequency.addFocusListener(new FocusAdapter() {
+			
+			public void focusGained(FocusEvent e){
+				if(frequency.getText().equals("0")) frequency.setText("");
+			}
+			
+			public void focusLost(FocusEvent e){
+				if(frequency.getText().equals("")) frequency.setText("0");
+			}
+		});
+		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				showExitDialog();
@@ -116,7 +266,7 @@ public class CostFrame extends JFrame{
 		c.gridy = 0;
 		c.gridwidth = 1;
 
-		JLabel title = new JLabel("Edit Cost", SwingConstants.LEFT);
+		JLabel title = new JLabel(this.action + " Cost", SwingConstants.LEFT);
 		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
 		title.setForeground(Color.decode("#fffe9a"));
 

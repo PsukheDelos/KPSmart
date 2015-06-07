@@ -35,15 +35,20 @@ public class LocationFrame extends JFrame{
 
 
 	private ClientFrame parent;
+	private String action;
 	private JTextField location = new JTextField(20);
 	private JTextField lon = new JTextField(20);
 	private JTextField lat = new JTextField(20);
 
 	Boolean edit = false;
 
-	public LocationFrame(ClientFrame parent){
-		super("--<< Edit Location >>--");
+	public LocationFrame(ClientFrame parent, String action){
+		super("--<< " + action + " Location >>--");
 		this.parent = parent;
+		this.action = action;
+		this.lon.setText("0.00");
+		this.lat.setText("0.00");
+		
 		JPanel panel = new JPanel();
 		initialise(panel);
 		add(panel);
@@ -52,6 +57,7 @@ public class LocationFrame extends JFrame{
 	public LocationFrame(ClientFrame parent, String location, String lon,String lat){
 		super("--<< Edit Location >>--");
 		this.parent = parent;
+		this.action = "Edit";
 		this.edit = true;
 		this.location.setText(location);
 		this.lon.setText(lon);
@@ -88,7 +94,7 @@ public class LocationFrame extends JFrame{
 		c.gridy = 0;
 		c.gridwidth = 1;
 
-		JLabel title = new JLabel("Edit Location", SwingConstants.LEFT);
+		JLabel title = new JLabel(this.action + " Location", SwingConstants.LEFT);
 		title.setFont(new Font(title.getFont().getFontName(), Font.PLAIN, 30));
 		title.setForeground(Color.decode("#fffe9a"));
 

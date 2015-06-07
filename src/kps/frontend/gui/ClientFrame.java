@@ -778,7 +778,7 @@ public class ClientFrame extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				new CostFrame(parent);
+				new CostFrame(parent, "Add");
 			}
 		});
 		panel.add(addRoute,c);
@@ -1078,7 +1078,7 @@ public class ClientFrame extends JFrame{
 		button.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new LocationFrame(parent);
+				new LocationFrame(parent, "Add");
 			}
 		});
 		panel.add(button, c);

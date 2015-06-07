@@ -46,15 +46,6 @@ public class XMLFileHandler {
 		//Creates the new file.
 		File f = new File("lastUpdate.xml");
 		
-		//Checks to see if the file already exists.
-		/*
-		if(f.exists() && !f.isDirectory()){
-			
-			//If it does exists ask user if they would like to overwrite the file or not.
-			if(JOptionPane.showConfirmDialog(null, "File already exists.\nDo you want to overwrite?", "File already exists", 0)==1) return;
-		}
-		*/
-		
 		//Begins writing state to file
 		try{
 			
@@ -96,7 +87,6 @@ public class XMLFileHandler {
 			
 			//Save all prior logs
 			while(true){
-				//System.out.println(line);
 				line = scan.nextLine();
 				if(line.equals("</events>")) break;
 				data += line + "\n";
@@ -148,18 +138,12 @@ public class XMLFileHandler {
 		try{
 			builder = builderFactory.newDocumentBuilder();
 			Document document = builder.parse(file);
-			//Document document = builder.parse(new FileInputStream("log.xml"));
-			
 			document.getDocumentElement().normalize();
-			
-			System.out.println("Root Element : " + document.getDocumentElement().getNodeName());
 			
 			NodeList nodeList = document.getElementsByTagName("price");
 			
 			for(int i=0;i<nodeList.getLength();i++){
 				Node node = nodeList.item(i);
-				
-				System.out.println("Current Element : " + node.getNodeName());
 				
 				if(node.getNodeType() == Node.ELEMENT_NODE){
 					Element element = (Element) node;
@@ -172,38 +156,16 @@ public class XMLFileHandler {
 							element.getElementsByTagName("weightCost").item(0).getTextContent(),
 							element.getElementsByTagName("volumeCost").item(0).getTextContent()
 					});
-					
-					System.out.println("action : " + element.getAttribute("action"));
-					System.out.println("to : " + element.getElementsByTagName("to").item(0).getTextContent());
-					System.out.println("from : " + element.getElementsByTagName("from").item(0).getTextContent());
-					System.out.println("pri : " + element.getElementsByTagName("priority").item(0).getTextContent());
-					System.out.println("weight : " + element.getElementsByTagName("weightCost").item(0).getTextContent());
-					System.out.println("vol : " + element.getElementsByTagName("volumeCost").item(0).getTextContent());
 				}
 			}
-			
-			/*
-			XPath xPath = XPathFactory.newInstance().newXPath();
 
-			String expression = "/events/price[2]/to";
-			
-			NodeList nodeList = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
-			
-			for(int i = 0; nodeList!=null && i<nodeList.getLength();i++){
-
-				System.out.println(nodeList.item(i).getFirstChild().getNodeValue());
-			}
-			*/
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
 			e.printStackTrace();
-		} /*catch (XPathExpressionException e) {
-			e.printStackTrace();
-		}*/
-		
+		}
 		
 		//Return the updated table
 		return model;
