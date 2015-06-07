@@ -112,6 +112,16 @@ public class ClientFrame extends JFrame{
 	private JTable userTable = new JTable();
 	private JTable locationTable = new JTable();
 	private JTable eventTable = new JTable();
+	
+	JLabel revenueDisp = new JLabel("$" + String.format("%.2f", MailRepository.getRevenue()), SwingConstants.LEFT);
+	JLabel expDisp = new JLabel("$" + String.format("%.2f", MailRepository.getExpenditure()), SwingConstants.LEFT);
+	JLabel profDisp = new JLabel(MailRepository.getEventCount().toString(), SwingConstants.LEFT);
+
+	JTable aomTable = new JTable(MailRepository.getAmountOfMailModel());
+	JTable adtTable = new JTable(MailRepository.getAverageDeliveryTimeModel());
+	JTable crTable = new JTable(MailRepository.getCriticalRoutesModel());
+	BasicLayer basicLayer = new BasicLayer();
+
 
 	private JComboBox<String> fromDropDown;
 
@@ -198,7 +208,7 @@ public class ClientFrame extends JFrame{
 		if(!(up==UserPermissions.MANAGER)){
 			tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
 			tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
-			tabbedPane.removeTabAt(0);
+			tabbedPane.removeTabAt(1);
 		}
 	}
 	
@@ -233,7 +243,7 @@ public class ClientFrame extends JFrame{
 
 		JLabel revenueLabel = new JLabel("Revenue: ", SwingConstants.LEFT);
 		revenueLabel.setFont(new Font(revenueLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel revenueDisp = new JLabel("$" + String.format("%.2f", MailRepository.getRevenue()), SwingConstants.LEFT);
+		revenueDisp = new JLabel("$" + String.format("%.2f", MailRepository.getRevenue()), SwingConstants.LEFT);
 		revenueDisp.setFont(new Font(revenueLabel.getFont().getFontName(), Font.BOLD, 40));
 		revenueDisp.setForeground(Color.GREEN);
 
@@ -253,7 +263,7 @@ public class ClientFrame extends JFrame{
 
 		JLabel expLabel = new JLabel("Expenditure: ", SwingConstants.LEFT);
 		expLabel.setFont(new Font(expLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel expDisp = new JLabel("$" + String.format("%.2f", MailRepository.getExpenditure()), SwingConstants.LEFT);
+		expDisp = new JLabel("$" + String.format("%.2f", MailRepository.getExpenditure()), SwingConstants.LEFT);
 		expDisp.setFont(new Font(expLabel.getFont().getFontName(), Font.BOLD, 40));
 		expDisp.setForeground(Color.RED);
 
@@ -272,7 +282,7 @@ public class ClientFrame extends JFrame{
 		profPanel.setBackground(Color.white);
 		JLabel profLabel = new JLabel("Events: ", SwingConstants.LEFT);
 		profLabel.setFont(new Font(profLabel.getFont().getFontName(), Font.PLAIN, 30));
-		JLabel profDisp = new JLabel(MailRepository.getEventCount().toString(), SwingConstants.LEFT);
+		profDisp = new JLabel(MailRepository.getEventCount().toString(), SwingConstants.LEFT);
 		profDisp.setFont(new Font(profDisp.getFont().getFontName(), Font.BOLD, 40));
 		profDisp.setForeground(Color.RED);
 
@@ -341,17 +351,17 @@ public class ClientFrame extends JFrame{
 
 
 		//Table: Amount of Mail
-		JTable aomTable = new JTable(MailRepository.getAmountOfMailModel());
+		aomTable = new JTable(MailRepository.getAmountOfMailModel());
 		aomTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		aomTable.setFillsViewportHeight(true);	
 		
 		//Table: Average Delivery Times
-		JTable adtTable = new JTable(MailRepository.getAverageDeliveryTimeModel());
+		adtTable = new JTable(MailRepository.getAverageDeliveryTimeModel());
 		adtTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		adtTable.setFillsViewportHeight(true);	
 		
 		//Table: Critical Routes
-		JTable crTable = new JTable(MailRepository.getCriticalRoutesModel());
+		crTable = new JTable(MailRepository.getCriticalRoutesModel());
 		crTable.setPreferredScrollableViewportSize(new Dimension(700, 300));
 		crTable.setFillsViewportHeight(true);
 
@@ -855,6 +865,7 @@ public class ClientFrame extends JFrame{
 		 * different types of objects.
 		 */
 		MapPanel mapPanel = new OverlayMapPanel();
+		
 		JLabel label = new JLabel("Map");
 		label.setHorizontalTextPosition(JLabel.TRAILING);
 		label.setIcon(createImageIcon("img/map-icon.png"));
@@ -869,7 +880,6 @@ public class ClientFrame extends JFrame{
 		MapBean mapBean = mapPanel.getMapBean();
 		// Set the map's center to Wellington
 		mapBean.setCenter(wellingtonLocation);
-
 		// Set the map's scale 1:120 million
 		mapBean.setScale(120000000f);
 
@@ -919,7 +929,7 @@ public class ClientFrame extends JFrame{
 
 		// Last on top.
 		mapHandler.add(shapeLayer);
-		BasicLayer basicLayer = new BasicLayer();
+		basicLayer = new BasicLayer();
 
 		OMGraphicList omList = new OMGraphicList();
 
@@ -1156,6 +1166,62 @@ public class ClientFrame extends JFrame{
 
 	public void setTabbedPane(JTabbedPane tabbedPane) {
 		this.tabbedPane = tabbedPane;
+		this.tabbedPane.addChangeListener(new ChangeListener() {
+	        public void stateChanged(ChangeEvent e) {
+	        	revenueDisp.setText("$" + String.format("%.2f", MailRepository.getRevenue()));
+	        	expDisp.setText("$" + String.format("%.2f", MailRepository.getExpenditure()));
+	        	profDisp.setText(MailRepository.getEventCount().toString());
+	        	routeTable.setModel(CostRepository.getRoutesModel());
+	        	priceTable.setModel(PriceRepository.getPricesModel());
+	        	userTable.setModel(UserRepository.getUserModel());
+	        	locationTable.setModel(LocationRepository.getModel());
+	        	aomTable.setModel(MailRepository.getAmountOfMailModel());
+	        	adtTable.setModel(MailRepository.getAverageDeliveryTimeModel());
+	        	crTable.setModel(MailRepository.getCriticalRoutesModel());
+	        	client.sendEvent(new XMLGetEvent()); //this is ideally how we'd do all of these updates
+	        	
+	    		OMGraphicList omList = new OMGraphicList();
+
+	    		OMGraphicList cityList = new OMGraphicList();
+	    		OMGraphicList routeList = new OMGraphicList();
+
+	    		for(Location city: LocationRepository.getLocations()){
+	    			OMPoint point = new OMPoint(city.lat, city.lon, 3);
+	    			point.setFillPaint(Color.yellow);
+	    			point.setStroke(new BasicStroke(0));
+	    			point.setOval(true);
+	    			BasicLocation basicLocation = new BasicLocation(city.lat, city.lon, city.name, point);
+	    			basicLocation.setShowName(false);
+
+	    			// Add an OMLine
+	    			//OMLine line = new OMLine(wellingtonLocation.getLatitude(), wellingtonLocation.getLongitude(), city.lat, city.lon, OMGraphic.LINETYPE_GREATCIRCLE);
+
+
+	    			cityList.add(basicLocation);
+	    		}
+
+	    		for(String origin: CostRepository.getOrigins()){
+
+	    			Location start = LocationRepository.getCity(origin);
+
+	    			for(String destination: CostRepository.getDestinations(origin)){
+
+	    				Location end = LocationRepository.getCity(destination);
+
+	    				OMLine line = new OMLine(start.lat,start.lon,end.lat,end.lon,OMGraphic.LINETYPE_GREATCIRCLE);
+
+	    				line.setStroke(new BasicStroke(1f));
+	    				line.setLinePaint(Color.red);
+
+	    				routeList.add(line);
+	    			}
+	    		}
+	    		omList.add(cityList);
+	    		omList.add(routeList);
+	    		basicLayer.setList(omList);
+
+	        }
+	    });
 	}
 
 }
