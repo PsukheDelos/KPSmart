@@ -21,4 +21,25 @@
         <weightCost>4.0</weightCost>
         <volumeCost>4.0</volumeCost>
     </price>
+    <price action="add">
+        <to>Abu Zaby</to>
+        <from>Auckland</from>
+        <priority>Domestic Standard</priority>
+        <weightCost>5.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </price>
+    <price action="add">
+        <to>Abu Zaby</to>
+        <from>Wellington</from>
+        <priority>Domestic Standard</priority>
+        <weightCost>234.0</weightCost>
+        <volumeCost>2342.0</volumeCost>
+    </price>
+    <price action="add">
+        <to>Christchurch</to>
+        <from>Wellington</from>
+        <priority>Domestic Standard</priority>
+        <weightCost>1.0</weightCost>
+        <volumeCost>1.0</volumeCost>
+    </price>
 </events>
