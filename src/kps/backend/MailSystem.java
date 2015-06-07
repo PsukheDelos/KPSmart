@@ -69,14 +69,12 @@ public class MailSystem implements IMailSystem{
 
 		}else if(event instanceof DistributionNetworkEvent){
 			DistributionNetworkEvent networkEvent = (DistributionNetworkEvent)event;
-			System.out.println("mailsystem: processevent--");
 			returnEvent = network.processEvent(networkEvent);
 			// Then, if it's an event we need a specific return from, set its UUID.
 			if(event instanceof MailDeliveryEvent 
 					&& returnEvent instanceof DeliveryEventResult){
 				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
 				((DeliveryEventResult)returnEvent).id = clientEventUUID;
-				System.out.println("Adding UUID to return event for a MailDelivery");
 			}
 			else if(event instanceof MailDeliveryEvent 
 					&& returnEvent instanceof MailDeliveryEventResult){
@@ -100,7 +98,6 @@ public class MailSystem implements IMailSystem{
 				((LocationEventResult)returnEvent).id = clientEventUUID;
 			}
 		}
-		System.err.println("about to return evenet");
 		return returnEvent;
 	}
 

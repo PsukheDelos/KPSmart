@@ -63,7 +63,7 @@ public class MailClient implements IMailClient{
 		if(e instanceof LoginResponseEvent){
 			LoginResponseEvent evt = (LoginResponseEvent)e;
 
-			System.out.println(this + "Response Recieved for " + evt.user.username);
+			System.out.println(this + "Response Received for " + evt.user.username);
 			setCurrentUser(evt.user);
 			
 			clientFrame.setUserPermissions(evt.user.permissions);
@@ -84,7 +84,6 @@ public class MailClient implements IMailClient{
 			clientFrame.updateXML(((XMLReplyEvent)e).tableModel);
 		}
 		else if(e instanceof MailDeliveryEventResult){
-			System.out.println("Return for MailDeliveryEventResult!");
 			if(awaitingResponse.containsKey(((MailDeliveryEventResult) e).id)){
 				MailRepository.add(((MailDeliveryEventResult)e).day, ((MailDeliveryEventResult)e).origin, ((MailDeliveryEventResult)e).destination, ((MailDeliveryEventResult)e).weight, ((MailDeliveryEventResult)e).volume, ((MailDeliveryEventResult)e).priority, ((MailDeliveryEventResult)e).price, ((MailDeliveryEventResult)e).cost, ((MailDeliveryEventResult)e).time);
 			}
@@ -106,7 +105,6 @@ public class MailClient implements IMailClient{
 		// For now, I'll add it to the Mail Delivery Event
 		// Look in MailSystem for the response method.
 		if(e instanceof MailDeliveryEvent){
-			System.out.println("Adding Awaiting Delivery for id: " + ((MailDeliveryEvent)e).id);
 			awaitingResponse.put(((MailDeliveryEvent) e).id, (MailDeliveryEvent)e);
 		}else if(e instanceof CustomerPriceEvent){
 			awaitingResponse.put(((CustomerPriceEvent) e).id, (CustomerPriceEvent)e);

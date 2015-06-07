@@ -73,7 +73,6 @@ public class MailRepository {
 			Statement statement = db.createStatement();
 			String query = "INSERT INTO mail ([day], [from], [to], [weight], [volume], [priority], [datetime], [price], [cost], [time]) "
 					+ "VALUES (\""+day+"\",\""+origin+"\",\""+destination+"\","+weight+","+volume+",\""+priority+"\", " + System.currentTimeMillis()/1000 + ", " + price + ", " + cost + ", " + time + ")";
-			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			
@@ -123,9 +122,7 @@ public class MailRepository {
 		try {
 			Statement statement = db.createStatement();
 			String query = "SELECT COUNT(*) FROM mail";
-			System.out.println(query);
 			ResultSet result = statement.executeQuery(query);
-			System.err.println(result.getInt(1));
 			Integer i = result.getInt(1);
 			db.close();
 			return i;		
