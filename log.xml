@@ -24,4 +24,70 @@
         <longtitude>0.0</longtitude>
         <latitude>0.0</latitude>
     </event>
+    <event action="update" xmlType="price">
+        <to>Auckland</to>
+        <from>Wellington</from>
+        <priority>Air</priority>
+        <weightCost>3.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </event>
+    <event xmlType="location" action="add">
+        <location>Dubai</location>
+        <longtitude>50.0</longtitude>
+        <latitude>1000.0</latitude>
+    </event>
+    <event xmlType="mail" action="delivery">
+        <from></from>
+        <to></to>
+        <priority></priority>
+        <weight>0.0</weight>
+        <volume>0.0</volume>
+    </event>
+    <event action="update" xmlType="cost">
+        <to>Dubai</to>
+        <from>Wellington</from>
+        <type>Air</type>
+        <weightCost>2.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </event>
+    <event action="update" xmlType="price">
+        <to>Auckland</to>
+        <from>Wellington</from>
+        <priority>Air</priority>
+        <weightCost>20.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </event>
+    <event action="update" xmlType="price">
+        <to>Auckland</to>
+        <from>Wellington</from>
+        <priority>Air</priority>
+        <weightCost>3.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </event>
+    <event xmlType="location" action="add">
+        <location>Dubai</location>
+        <longtitude>50.0</longtitude>
+        <latitude>1000.0</latitude>
+    </event>
+    <event xmlType="mail" action="delivery">
+        <from></from>
+        <to></to>
+        <priority></priority>
+        <weight>0.0</weight>
+        <volume>0.0</volume>
+    </event>
+    <event action="update" xmlType="cost">
+        <to>Dubai</to>
+        <from>Wellington</from>
+        <type>Air</type>
+        <weightCost>2.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </event>
+    <event action="update" xmlType="price">
+        <to>Auckland</to>
+        <from>Wellington</from>
+        <priority>Air</priority>
+        <weightCost>20.0</weightCost>
+        <volumeCost>5.0</volumeCost>
+    </event>
 </events>

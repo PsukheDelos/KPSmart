@@ -197,12 +197,36 @@ public class XMLFileHandler {
 							element.getElementsByTagName("volumeCost").item(0).getTextContent()
 					});
 					*/
+					String description = "";
+					if(element.getAttribute("xmlType").equals("cost")){
+						description = "To:" + element.getElementsByTagName("to").item(0).getTextContent()
+								+ "; From:" + element.getElementsByTagName("from").item(0).getTextContent()
+								+ "; Type:" + element.getElementsByTagName("type").item(0).getTextContent()
+								+ "; WeightCost:" + element.getElementsByTagName("weightCost").item(0).getTextContent()
+								+ "; VolumeCost:" + element.getElementsByTagName("volumeCost").item(0).getTextContent();
+					}else if(element.getAttribute("xmlType").equals("price")){
+						description = "To:" + element.getElementsByTagName("to").item(0).getTextContent()
+								+ "; From:" + element.getElementsByTagName("from").item(0).getTextContent()
+								+ "; Type:" + element.getElementsByTagName("priority").item(0).getTextContent()
+								+ "; WeightCost:" + element.getElementsByTagName("weightCost").item(0).getTextContent()
+								+ "; VolumeCost:" + element.getElementsByTagName("volumeCost").item(0).getTextContent();
+					}else if(element.getAttribute("xmlType").equals("location")){
+						description = "Location:" + element.getElementsByTagName("location").item(0).getTextContent()
+								+ "; Longtitude:" + element.getElementsByTagName("longtitude").item(0).getTextContent()
+								+ "; Latitude:" + element.getElementsByTagName("latitude").item(0).getTextContent();
+					}else if(element.getAttribute("xmlType").equals("mail")){
+						description = "To:" + element.getElementsByTagName("to").item(0).getTextContent()
+								+ "; From:" + element.getElementsByTagName("from").item(0).getTextContent()
+								+ "; Type:" + element.getElementsByTagName("priority").item(0).getTextContent()
+								+ "; Weight:" + element.getElementsByTagName("weight").item(0).getTextContent()
+								+ "; Volume:" + element.getElementsByTagName("volume").item(0).getTextContent();
+					}
 					
 					model.addRow(new Object[] {
 							nodeList.getLength()-i,
 							element.getAttribute("xmlType"),
 							element.getAttribute("action"),
-							""
+							description
 					});
 				}
 			}
