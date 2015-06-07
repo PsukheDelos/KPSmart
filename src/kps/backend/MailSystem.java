@@ -75,12 +75,13 @@ public class MailSystem implements IMailSystem{
 					&& returnEvent instanceof DeliveryEventResult){
 				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
 				((DeliveryEventResult)returnEvent).id = clientEventUUID;
+				XMLFileHandler.write((MailDeliveryEvent)event);
 			}
 			else if(event instanceof MailDeliveryEvent 
 					&& returnEvent instanceof MailDeliveryEventResult){
 				UUID clientEventUUID = ((MailDeliveryEvent)event).id;
 				((MailDeliveryEventResult)returnEvent).id = clientEventUUID;
-//				XMLFileHandler.write((CMailDeliveryEvent)event);
+				XMLFileHandler.write((MailDeliveryEvent)event);
 			}else if(event instanceof CustomerPriceEvent 
 					&& returnEvent instanceof CustomerPriceEventResult){
 				UUID clientEventUUID = ((CustomerPriceEvent)event).id;
@@ -91,11 +92,13 @@ public class MailSystem implements IMailSystem{
 					&& returnEvent instanceof TransportCostEventResult){
 				UUID clientEventUUID = ((TransportCostEvent)event).id;
 				((TransportCostEventResult)returnEvent).id = clientEventUUID;
+				XMLFileHandler.write((TransportCostEvent)event);
 			}
 			else if(event instanceof LocationEvent 
 					&& returnEvent instanceof LocationEventResult){
 				UUID clientEventUUID = ((LocationEvent)event).id;
 				((LocationEventResult)returnEvent).id = clientEventUUID;
+				XMLFileHandler.write((LocationEvent)event);
 			}
 		}
 		return returnEvent;
