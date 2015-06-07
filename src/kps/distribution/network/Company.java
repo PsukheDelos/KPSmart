@@ -1,6 +1,8 @@
 package kps.distribution.network;
 
-public class Company {
+import java.io.Serializable;
+
+public class Company implements Serializable{
 	public final String name;
 
 	public Company(String name){

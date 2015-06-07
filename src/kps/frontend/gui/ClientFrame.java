@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Properties;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -175,14 +176,13 @@ public class ClientFrame extends JFrame{
 	protected void createTabbedPane(){
 		setTabbedPane(new JTabbedPane());
 
-//		
-//		 tabbedPane.addChangeListener(new ChangeListener() {
-//		        public void stateChanged(ChangeEvent e) {
-//		            System.out.println("Tab: " + tabbedPane.getSelectedIndex());
-//		        }
-//		    });
-		
-		createDashboardTab(getTabbedPane());
+		new JFXPanel();
+		Platform.runLater(new Runnable(){
+			public void run(){
+				createDashboardTab(getTabbedPane());
+				return;
+			}
+		});
 		createMailTab(getTabbedPane());
 		createRouteTab(getTabbedPane());
 		createPriceTab(getTabbedPane());
@@ -626,7 +626,7 @@ public class ClientFrame extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				client.sendEvent(new MailDeliveryEvent(dayDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), entered_weight, entered_volume, priorityDropDown.getSelectedItem().toString()));
+				client.sendEvent(new MailDeliveryEvent(dayDropDown.getSelectedItem().toString(), fromDropDown.getSelectedItem().toString(), toDropDown.getSelectedItem().toString(), entered_weight, entered_volume, total_price, priorityDropDown.getSelectedItem().toString()));
 			}
 
 		});

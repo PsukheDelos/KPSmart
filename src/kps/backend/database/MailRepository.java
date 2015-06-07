@@ -67,17 +67,29 @@ public class MailRepository {
 		return null;
 	}
 
-	public static Boolean add(String day, String origin, String destination, Double weight, Double volume, String priority){
+	public static Boolean add(String day, String origin, String destination, Double weight, Double volume, String priority, Double price, Double cost, Double time){
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 			Statement statement = db.createStatement();
-			String query = "INSERT INTO mail ([day], [from], [to], [weight], [volume], [priority], [datetime]) VALUES (\""+day+"\",\""+origin+"\",\""+destination+"\","+weight+","+volume+",\""+priority+"\", " + System.currentTimeMillis()/1000 + ")";
+			String query = "INSERT INTO mail ([day], [from], [to], [weight], [volume], [priority], [datetime], [price], [cost], [time]) "
+					+ "VALUES (\""+day+"\",\""+origin+"\",\""+destination+"\","+weight+","+volume+",\""+priority+"\", " + System.currentTimeMillis()/1000 + ", " + price + ", " + cost + ", " + time + ")";
 			System.out.println(query);
 			statement.execute(query);
 			db.close();
 			return true;			
 		} catch (SQLException e) {e.printStackTrace();}
 		return false;
+	}
+
+	static String toCamelCase(String s){
+		String[] parts = s.split("_");
+		String camelCaseString = toProperCase(parts[0]) + " " + toProperCase(parts[1]);
+		return camelCaseString;
+	}
+
+	static String toProperCase(String s) {
+		return s.substring(0, 1).toUpperCase() +
+				s.substring(1).toLowerCase();
 	}
 
 	public static Double getRevenue(){
@@ -270,7 +282,7 @@ public class MailRepository {
 	}
 
 	public static Boolean setMonthlyineChartData(LineChart<String,Number> lineChart){
-		
+
 		if(!thereIsAConnectionToTheDatabase()) db = KPSDatabase.createConnection();
 		try {
 
@@ -291,7 +303,7 @@ public class MailRepository {
 			lineChart.getData().addAll(revenue);
 			lineChart.getData().addAll(expense);
 
-			
+
 			db.close();
 
 			return true;

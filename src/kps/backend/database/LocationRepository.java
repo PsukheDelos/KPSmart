@@ -76,7 +76,9 @@ public class LocationRepository {
 			String query = "SELECT * FROM locations ORDER BY name";
 			ResultSet result = statement.executeQuery(query);
 			while(result.next()){
-				cities.add(new Location(result.getString(1), result.getDouble(2), result.getDouble(3)));		
+				Location l = new Location(result.getString(1), result.getDouble(2), result.getDouble(3));
+				System.out.println("L: " + l.name);
+				cities.add(l);		
 			}
 			db.close();
 			return cities;

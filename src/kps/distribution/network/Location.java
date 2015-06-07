@@ -1,9 +1,10 @@
 package kps.distribution.network;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Location {
+public class Location implements Serializable{
 	public final String name;
 	public final Double lon;
 	public final Double lat;
@@ -50,6 +51,9 @@ public class Location {
 
 	@Override
 	public int hashCode() {
+		if(name==null){
+			return "hashcode".hashCode();
+		}
 		return name.hashCode();
 	}
 

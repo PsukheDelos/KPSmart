@@ -1,8 +1,10 @@
 package kps.distribution.network;
 
+import java.io.Serializable;
+
 import kps.distribution.exception.InvalidPriorityException;
 
-public enum Priority {
+public enum Priority implements Serializable{
 	INTERNATIONAL_AIR,
 	INTERNATIONAL_STANDARD,
 	DOMESTIC_AIR,
