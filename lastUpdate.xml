@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<price action="add">
-    <to>Christchurch</to>
+<event action="update" xmlType="price">
+    <to>Auckland</to>
     <from>Wellington</from>
-    <priority>Domestic Standard</priority>
-    <weightCost>1.0</weightCost>
-    <volumeCost>1.0</volumeCost>
-</price>
+    <priority>Air</priority>
+    <weightCost>20.0</weightCost>
+    <volumeCost>5.0</volumeCost>
+</event>

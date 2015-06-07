@@ -7,8 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "location")
-@XmlType(propOrder = {"location", "longitude", "latitude"})
+@XmlRootElement(name = "event")
+@XmlType(propOrder = {"location", "longtitude", "latitude"})
 public abstract class LocationEvent extends DistributionNetworkEvent {
 	
 	private static final long serialVersionUID = 1L;
@@ -16,6 +16,9 @@ public abstract class LocationEvent extends DistributionNetworkEvent {
 	public final String location;
 	public final double longtitude;
 	public final double latitude;
+	
+	@XmlAttribute
+	public final String xmlType;
 	
 	@XmlAttribute
 	public final String action;
@@ -29,7 +32,38 @@ public abstract class LocationEvent extends DistributionNetworkEvent {
 		this.latitude = latitude;
 		
 		this.action = action;
+		this.xmlType = "location";
 		this.id = UUID.randomUUID();
+	}
+	
+	public LocationEvent() {
+		this.location = "";
+		this.longtitude = 0.00;
+		this.latitude = 0.00;
+		
+		this.action = "";
+		this.xmlType = "location";
+		this.id = UUID.randomUUID();
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public double getLongtitude() {
+		return longtitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public String getXmlType() {
+		return xmlType;
+	}
+	
+	public String getAction() {
+		return action;
 	}
 
 }
