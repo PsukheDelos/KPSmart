@@ -289,29 +289,21 @@ public class ClientFrame extends JFrame{
 		Group root = new Group();
 		Scene scene = new Scene(root);
 
-		ObservableList<PieChart.Data> pieChartData =
-				FXCollections.observableArrayList(
-						new PieChart.Data("Revenue", 134),
-						new PieChart.Data("Expense", 27));
-		final PieChart revchart = new PieChart(pieChartData);
+		final PieChart revchart = new PieChart(MailRepository.getDomesticPieChart());
 		revchart.setTitle("Domestic");
 		revchart.setStyle("-fx-background-color: rgba(184,219,254,1);");		
 		((Group) scene.getRoot()).getChildren().add(revchart);
 
 		jFXPanel.setScene(scene);
-		JPanel j = new JPanel();
-		j.add(jFXPanel);
+		JPanel domPieChart = new JPanel();
+		domPieChart.add(jFXPanel);
 
 		//Chart: International
 		final JFXPanel jFXPanel2 = new JFXPanel();
 		Group root2 = new Group();
 		Scene scene2 = new Scene(root2);
 
-		ObservableList<PieChart.Data> pieChartData2 =
-				FXCollections.observableArrayList(
-						new PieChart.Data("Revenue", 2),
-						new PieChart.Data("Expense", 300));
-		final PieChart revchart2 = new PieChart(pieChartData2);
+		final PieChart revchart2 = new PieChart(MailRepository.getInternationalPieChart());
 		revchart2.setTitle("International");
 		revchart2.setStyle("-fx-background-color: rgba(184,219,254,1);");
 		revchart2.setTitle("International");
@@ -319,8 +311,8 @@ public class ClientFrame extends JFrame{
 		((Group) scene2.getRoot()).getChildren().add(revchart2);
 
 		jFXPanel2.setScene(scene2);
-		JPanel k = new JPanel();
-		k.add(jFXPanel2);
+		JPanel intPieChart = new JPanel();
+		intPieChart.add(jFXPanel2);
 
 
 		//Chart: Trend
@@ -330,51 +322,20 @@ public class ClientFrame extends JFrame{
 		final CategoryAxis xAxis = new CategoryAxis();
 		final NumberAxis yAxis = new NumberAxis();
 		xAxis.setLabel("Month");
-		yAxis.setLabel("Profit ($100)");
+		yAxis.setLabel("Dollars");
 
 		//Creating the chart
 		final LineChart<String,Number> lineChart = 
 				new LineChart<String,Number>(xAxis,yAxis);
 
-		lineChart.setTitle("KPS Monthly Profit, 2015");
-		lineChart.setLegendVisible(false);
-		//defining a series
-		XYChart.Series<String,Number> series1 = new XYChart.Series<String,Number>();
-		series1.setName("Profit");
-
-		series1.getData().add(new XYChart.Data<String,Number>("Jan", 23));
-		series1.getData().add(new XYChart.Data<String,Number>("Feb", 14));
-		series1.getData().add(new XYChart.Data<String,Number>("Mar", 15));
-		series1.getData().add(new XYChart.Data<String,Number>("Apr", 24));
-		series1.getData().add(new XYChart.Data<String,Number>("May", 34));
-		series1.getData().add(new XYChart.Data<String,Number>("Jul", 22));
-		series1.getData().add(new XYChart.Data<String,Number>("Aug", 45));
-		series1.getData().add(new XYChart.Data<String,Number>("Sep", 43));
-		series1.getData().add(new XYChart.Data<String,Number>("Oct", 17));
-		series1.getData().add(new XYChart.Data<String,Number>("Nov", 29));
-		series1.getData().add(new XYChart.Data<String,Number>("Dec", 25));
-
-		//	        XYChart.Series series2 = new XYChart.Series();
-		//	        series2.setName("Expenses");
-		//	        series2.getData().add(new XYChart.Data("Jan", 33));
-		//	        series2.getData().add(new XYChart.Data("Feb", 34));
-		//	        series2.getData().add(new XYChart.Data("Mar", 25));
-		//	        series2.getData().add(new XYChart.Data("Apr", 44));
-		//	        series2.getData().add(new XYChart.Data("May", 39));
-		//	        series2.getData().add(new XYChart.Data("Jun", 16));
-		//	        series2.getData().add(new XYChart.Data("Jul", 55));
-		//	        series2.getData().add(new XYChart.Data("Aug", 54));
-		//	        series2.getData().add(new XYChart.Data("Sep", 48));
-		//	        series2.getData().add(new XYChart.Data("Oct", 27));
-		//	        series2.getData().add(new XYChart.Data("Nov", 37));
-		//	        series2.getData().add(new XYChart.Data("Dec", 29));
-
-		lineChart.getData().addAll(series1);
+		lineChart.setTitle("KPS Revenue/Expense Trends");
+		lineChart.setLegendVisible(true);
+		MailRepository.setMonthlyineChartData(lineChart);		
 
 		((Group) scene3.getRoot()).getChildren().add(lineChart);
 		jFXPanel3.setScene(scene3);
-		JPanel i = new JPanel();
-		i.add(jFXPanel3);
+		JPanel trendLineChart = new JPanel();
+		trendLineChart.add(jFXPanel3);
 
 
 		//Table: Amount of Mail
@@ -398,9 +359,9 @@ public class ClientFrame extends JFrame{
 		eventTable.setFillsViewportHeight(true);
 		
 		JTabbedPane dashTab = new JTabbedPane();
-//		dashTab.addTab("Trends", null, i,"View the current financial status of KPSmart");
-//		dashTab.addTab("Domestic", null,j,"View the current financial status of KPSmart");
-//		dashTab.addTab("International", null,k,"View the current financial status of KPSmart");
+		dashTab.addTab("Trends", null, trendLineChart,"View the current financial status of KPSmart");
+		dashTab.addTab("Domestic", null,domPieChart,"View the current financial status of KPSmart");
+		dashTab.addTab("International", null,intPieChart,"View the current financial status of KPSmart");
 //		dashTab.addTab("Export", null, new JPanel(),"View the current financial status of KPSmart");
 		dashTab.addTab("Amount of Mail", new JScrollPane(aomTable));
 		dashTab.addTab("Average Delivery Times", new JScrollPane(adtTable));
