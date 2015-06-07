@@ -3,7 +3,7 @@ package kps.net.server;
 import java.io.IOException;
 import java.util.List;
 
-import kps.backend.MailSystem;
+import kps.interfaces.IGlobalEvent;
 import kps.interfaces.IMailSystem;
 import kps.net.event.Event;
 
@@ -23,7 +23,10 @@ public class UpdateThread extends Thread{
 			Update update = server.popEvent();
 			Event event = server.processEvent(update.event);
 			
-			if(event != null){
+			if(event instanceof IGlobalEvent){
+				sendAllClients(event);
+			}
+			else if(event != null){
 				sendClient(event, server.getConnection(update.client));
 			}
 			
