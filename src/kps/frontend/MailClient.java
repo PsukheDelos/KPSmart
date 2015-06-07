@@ -14,6 +14,7 @@ import kps.distribution.event.CustomerPriceEventResult;
 import kps.distribution.event.DeliveryEventResult;
 import kps.distribution.event.LocationEventResult;
 import kps.distribution.event.MailDeliveryEvent;
+import kps.distribution.event.MailDeliveryEventResult;
 import kps.distribution.event.TransportCostEvent;
 import kps.distribution.event.TransportCostEventResult;
 import kps.frontend.gui.ClientFrame;
@@ -82,15 +83,13 @@ public class MailClient implements IMailClient{
 		else if(e instanceof XMLReplyEvent){
 			clientFrame.updateXML(((XMLReplyEvent)e).tableModel);
 		}
-		else if(e instanceof DeliveryEventResult){
-			System.out.println("Received Return for DeliveryEventResult");
-			if(awaitingResponse.containsKey(((DeliveryEventResult) e).id)){
-				MailRepository.add(((DeliveryEventResult) e).mailDelivery.mail.day, ((DeliveryEventResult) e).mailDelivery.mail.origin.name, ((DeliveryEventResult) e).mailDelivery.mail.destination.name, ((DeliveryEventResult) e).mailDelivery.mail.weight, ((DeliveryEventResult) e).mailDelivery.mail.volume, ((DeliveryEventResult) e).mailDelivery.mail.priority.toString(), 10.0, ((DeliveryEventResult) e).mailDelivery.cost, ((DeliveryEventResult) e).mailDelivery.time);
+		else if(e instanceof MailDeliveryEventResult){
+			System.out.println("Return for MailDeliveryEventResult!");
+			if(awaitingResponse.containsKey(((MailDeliveryEventResult) e).id)){
+				MailRepository.add(((MailDeliveryEventResult)e).day, ((MailDeliveryEventResult)e).origin, ((MailDeliveryEventResult)e).destination, ((MailDeliveryEventResult)e).weight, ((MailDeliveryEventResult)e).volume, ((MailDeliveryEventResult)e).priority, ((MailDeliveryEventResult)e).price, ((MailDeliveryEventResult)e).cost, ((MailDeliveryEventResult)e).time);
 			}
-			// Then you know the key is in there, and since it is stored with the corresponding Event, you know what you sent.
-			// Maybe pass this to a method somewhere, and make sure that you remove it from the map once done. Just to avoid collisions.
-			System.err.println(this + "" + ((DeliveryEventResult)e).mailDelivery.cost);
-		}else if(e instanceof CustomerPriceEventResult){
+		}
+		else if(e instanceof CustomerPriceEventResult){
 			clientFrame.updateOrigin();
 			clientFrame.updatePrices();
 		}else if(e instanceof TransportCostEventResult){

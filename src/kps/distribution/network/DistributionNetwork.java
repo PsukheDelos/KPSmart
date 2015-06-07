@@ -329,13 +329,20 @@ public class DistributionNetwork {
 		 * leave the commented code below as it may reveal its secrets soon
 		**/ 
 //		return new MailDeliveryEventResult();
-
-				try {
-					System.out.println("try DeliveryEventResult(deliver(mail))");
-					return new DeliveryEventResult(deliver(mail));
-				} catch (PathNotFoundException e) {
-					System.out.println("Could not find a path from origin to destination");
-					return new InvalidEventResult("Could not find a path from origin to destination");
-				}
+		MailDelivery md = null;
+		try {
+			md = deliver(mail);
+			return new MailDeliveryEventResult(event.day, event.from, event.to, event.weight, event.volume, event.priority, event.price, md.cost, md.time);
+		} catch (PathNotFoundException e) {
+			return new InvalidEventResult("Could not find a path from origin to destination");
+		}
+		
+//				try {
+//					System.out.println("try DeliveryEventResult(deliver(mail))");
+//					return new DeliveryEventResult(deliver(mail));
+//				} catch (PathNotFoundException e) {
+//					System.out.println("Could not find a path from origin to destination");
+//					return new InvalidEventResult("Could not find a path from origin to destination");
+//				}
 	}
 }
